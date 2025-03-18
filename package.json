@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.0.0",
+    "@fastify/jwt": "^9.1.0",
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.1",

@@ -1,3 +1,4 @@
+import fastify from "fastify";
 import { db } from "../drizzle/client";
 import { users } from "../drizzle/schema/users";
 import type { NewAccountTemporaryData } from "../types/auth";
