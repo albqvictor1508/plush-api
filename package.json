@@ -5,6 +5,7 @@
 		"@fastify/cors": "^11.0.0",
 		"@fastify/jwt": "^9.1.0",
 		"@types/pg": "^8.11.11",
+		"aws-sdk": "^2.1692.0",
 		"drizzle-kit": "^0.30.5",
 		"drizzle-orm": "^0.40.1",
 		"envalid": "^8.0.0",
@@ -15,9 +16,12 @@
 	},
 	"type": "module",
 	"scripts": {
-		"dev": "node src/server.ts"
+		"dev": "tsx --env-file .env --watch src/server.ts"
 	},
 	"devDependencies": {
-		"@neondatabase/serverless": "^0.10.4"
+		"@neondatabase/serverless": "^0.10.4",
+		"@types/node": "^22.13.10",
+		"tsx": "^4.19.3",
+		"typescript": "^5.8.2"
 	}
 }

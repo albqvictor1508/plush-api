@@ -1,4 +1,6 @@
 import type { CreateUserParams, NewAccountTemporaryData } from "../types/auth";
+import { sendSms } from "../utils/sendSms";
+import { createUser } from "./create-user";
 
 export const codes = {} as Record<string, NewAccountTemporaryData>;
 const ONE_SECOND_IN_MS = 1000;
@@ -14,7 +16,8 @@ setInterval(() => {
 
 export async function sendCodeToUser({ name, phone }: CreateUserParams) {
 	const generatedCode = Math.random().toString().slice(2, 6);
-	//"83991303948": {name: victor, code: "1649", phone: "83991303948", generatedAt: um numero imenso}
+	//"83991303948": {name: "victor", code: "1649", phone: "83991303948", generatedAt: um numero imenso}
+	await sendSms({ message: `Bom dia, ${generatedCode}` });
 	codes[phone] = {
 		name,
 		code: generatedCode,
@@ -22,9 +25,5 @@ export async function sendCodeToUser({ name, phone }: CreateUserParams) {
 		generatedAt: Date.now(),
 	};
 
-	//enviar SMS com código
-	//salvar o código na memória por uns 5 minutos
-	//validar código por sms
-	//salvar user no banco
-	//posso até redirecionar o usuário pra outra tela, ou deixo isso com o front
+	return await createUser({ phone });
 }

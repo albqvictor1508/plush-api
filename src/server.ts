@@ -10,7 +10,7 @@ import {
 import { home } from "./routes/home";
 import { env } from "./common/env";
 
-const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
+const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.register(fastifyCors);
 app.register(jwt, {
