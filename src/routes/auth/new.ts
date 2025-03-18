@@ -19,7 +19,7 @@ export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 			if (userAlreadyExists) return "";
 
 			const result = await sendCodeToUser({ name, phone });
-			const token = app.jwt.sign({});
+			const token = app.jwt.sign({ name, phone });
 			reply.setCookie("jwt", token).send({ result });
 			// if (!setting) {
 			//   throw new Error("Bad Request: missing your data");
