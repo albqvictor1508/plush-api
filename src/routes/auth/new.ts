@@ -11,22 +11,18 @@ export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 		{ schema: { body: z.object({ name: z.string(), phone: z.string() }) } },
 		async (request, reply) => {
 			const { name, phone } = request.body;
-			const userAlreadyExists = await db
-				.select()
-				.from(users)
-				.where(eq(users.phone, phone));
+			// const userAlreadyExists = await db
+			// 	.select()
+			// 	.from(users)
+			// 	.where(eq(users.phone, phone));
 
-			if (userAlreadyExists) return "";
+			// if (userAlreadyExists) {
+			//   //logar o user
+			// };
 
-			const result = await sendCodeToUser({ name, phone });
+			const { user } = await sendCodeToUser({ name, phone });
 			const token = app.jwt.sign({ name, phone });
-			reply.setCookie("jwt", token).send({ result });
-			// if (!setting) {
-			//   throw new Error("Bad Request: missing your data");
-			// }
-			// if (setting.code !== code) {
-			//   throw new Error("Bad Request: invalid code");
-			// }
+			reply.setCookie("jwt", token).status(201).send({ user });
 		},
 	);
 };

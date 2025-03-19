@@ -1,5 +1,5 @@
 import type { CreateUserParams, NewAccountTemporaryData } from "../types/auth";
-import { sendSms } from "../utils/sendSms";
+import { sendSms } from "../utils/send-sms";
 import { createUser } from "./create-user";
 
 export const codes = {} as Record<string, NewAccountTemporaryData>;
@@ -17,13 +17,17 @@ setInterval(() => {
 export async function sendCodeToUser({ name, phone }: CreateUserParams) {
 	const generatedCode = Math.random().toString().slice(2, 6);
 	//"83991303948": {name: "victor", code: "1649", phone: "83991303948", generatedAt: um numero imenso}
-	await sendSms({ message: `Bom dia, ${generatedCode}` });
-	codes[phone] = {
-		name,
-		code: generatedCode,
-		phone,
-		generatedAt: Date.now(),
-	};
-
-	return await createUser({ phone });
+	try {
+		await sendSms({ message: `Bom dia, ${generatedCode}` });
+		codes[phone] = {
+			name,
+			code: generatedCode,
+			phone,
+			generatedAt: Date.now(),
+		};
+	} catch (e) {
+		console.log(e);
+	}
+	const user = await createUser({ phone });
+	return { user };
 }
