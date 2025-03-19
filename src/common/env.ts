@@ -4,6 +4,6 @@ export const env = cleanEnv(process.env, {
 	DATABASE_URL: url(),
 	JWT_SECRET: str(),
 	MY_PHONE: str(),
-	AWS_SECRET_ACCESS_KEY: str(),
-	AWS_ACCESS_KEY_ID: str(),
+	VONAGE_API_KEY: str(),
+	VONAGE_API_SECRET: str(),
 });

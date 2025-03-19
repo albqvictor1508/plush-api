@@ -9,3 +9,5 @@ export type NewAccountTemporaryData = {
 	code: string;
 	generatedAt: number;
 };
+
+export type ValidateUserParams = { phone: string; code: string };

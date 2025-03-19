@@ -1,16 +1,12 @@
+import { Vonage } from "@vonage/server-sdk";
 import { env } from "../common/env";
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
-export async function sendSms({ message }: { message: string }) {
-	const sns = new SNSClient({
-		region: "sa-east-1",
-		credentials: {
-			accessKeyId: env.AWS_ACCESS_KEY_ID,
-			secretAccessKey: AWS_SECRET_ACCESS_KEY,
-		},
+import type { SMSParams } from "../types/sms";
+export async function sendSms({ phone, text }: SMSParams) {
+	const vonage = new Vonage({
+		apiKey: env.VONAGE_API_KEY,
+		apiSecret: env.VONAGE_API_SECRET,
 	});
-	const params = {
-		Message: message,
-		PhoneNumber: env.MY_PHONE,
-	};
-	await sns.send(new PublishCommand(params));
+
+	const sms = await vonage.sms.send({ to: phone, from: "Plush", text });
+	return sms;
 }

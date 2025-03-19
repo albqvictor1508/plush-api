@@ -18,7 +18,8 @@ export async function sendCodeToUser({ name, phone }: CreateUserParams) {
 	const generatedCode = Math.random().toString().slice(2, 6);
 	//"83991303948": {name: "victor", code: "1649", phone: "83991303948", generatedAt: um numero imenso}
 	try {
-		await sendSms({ message: `Bom dia, ${generatedCode}` });
+		//depois eu analiso se tem possibilidade de rodar isso em paralelo pra ganho de performance
+		await sendSms({ text: `Bom dia, ${generatedCode}`, phone });
 		codes[phone] = {
 			name,
 			code: generatedCode,
@@ -28,6 +29,4 @@ export async function sendCodeToUser({ name, phone }: CreateUserParams) {
 	} catch (e) {
 		console.log(e);
 	}
-	const user = await createUser({ phone });
-	return { user };
 }
