@@ -14,6 +14,7 @@ import fastifyIO from "fastify-socket.io";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyIO);
+
 app.register(fastifyCors);
 app.register(jwt, {
 	secret: env.JWT_SECRET,
@@ -26,6 +27,6 @@ app.setValidatorCompiler(validatorCompiler);
 app.register(createUserRoute);
 app.register(sendCodeToUserRoute);
 //escolhe a porta que vai ser aberta pra API e abre essa porta (e o console.log pra avisar que subiu)
-app.listen({ port: 3333 }, () => {
+app.listen({ port: env.PORT }, () => {
 	console.log("HTTP Server running!");
 });
