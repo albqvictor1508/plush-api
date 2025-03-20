@@ -10,9 +10,10 @@ import {
 import { env } from "./common/env";
 import { createUserRoute } from "./routes/auth/new";
 import { sendCodeToUserRoute } from "./routes/auth/send";
+import fastifyIO from "fastify-socket.io";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
-
+app.register(fastifyIO);
 app.register(fastifyCors);
 app.register(jwt, {
 	secret: env.JWT_SECRET,
