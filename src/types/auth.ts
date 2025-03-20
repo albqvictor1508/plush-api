@@ -1,16 +1,19 @@
 export type CreateUserParams = {
 	name: string;
-	phone: string;
+	email: string;
 };
 
 export type NewAccountTemporaryData = {
 	name: string;
-	phone: string;
+	email: string;
 	code: string;
 	generatedAt: number;
 };
 
 export type SendEmailParams = {
+	subject?: string;
+	html?: string;
+	text: string;
 	message: string;
 	email: string;
 };
