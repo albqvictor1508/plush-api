@@ -25,6 +25,11 @@ app.setValidatorCompiler(validatorCompiler);
 app.register(createUserRoute);
 app.register(sendCodeToUserRoute);
 //escolhe a porta que vai ser aberta pra API e abre essa porta (e o console.log pra avisar que subiu)
-app.listen({ port: 3333 }, () => {
-	console.log("HTTP Server running!");
-});
+app
+	.listen({ port: env.PORT, host: "0.0.0.0" })
+	.then(() => {
+		console.log("HTTP Server running!");
+	})
+	.catch((e) => {
+		console.log(e);
+	});
