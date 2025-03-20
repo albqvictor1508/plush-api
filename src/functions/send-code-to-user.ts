@@ -1,6 +1,5 @@
 import type { CreateUserParams, NewAccountTemporaryData } from "../types/auth";
 import { sendSms } from "../utils/send-sms";
-import { createUser } from "./create-user";
 
 export const codes = {} as Record<string, NewAccountTemporaryData>;
 const ONE_SECOND_IN_MS = 1000;
