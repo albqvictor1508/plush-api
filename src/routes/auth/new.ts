@@ -18,7 +18,7 @@ export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 			const user = await createUser({ phone });
 			const token = app.jwt.sign({
 				name: user.name,
-				phone: user.phone,
+				email: user.email,
 			});
 			return reply.setCookie("jwt", token).status(201).send(user);
 		},
