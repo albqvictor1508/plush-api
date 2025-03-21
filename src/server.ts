@@ -10,12 +10,14 @@ import {
 import { env } from "./common/env";
 import { createUserRoute } from "./routes/auth/new";
 import { sendCodeToUserRoute } from "./routes/auth/send";
+import { fastifyWebsocket } from "@fastify/websocket";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors);
 app.register(jwt, {
 	secret: env.JWT_SECRET,
 });
+app.register(fastifyWebsocket);
 app.register(fastifyCookie);
 
 app.setSerializerCompiler(serializerCompiler);

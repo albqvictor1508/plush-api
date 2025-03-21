@@ -4,6 +4,7 @@
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/cors": "^11.0.0",
 		"@fastify/jwt": "^9.1.0",
+		"@fastify/websocket": "^11.0.2",
 		"@types/pg": "^8.11.11",
 		"@types/ws": "^8.18.0",
 		"@vonage/server-sdk": "^3.20.0",
@@ -14,11 +15,13 @@
 		"fastify-type-provider-zod": "^4.0.2",
 		"nodemailer": "^6.10.0",
 		"postgres": "^3.4.5",
-		"ws": "^8.18.1"
+		"ws": "^8.18.1",
+		"wscat": "^6.0.1"
 	},
 	"type": "module",
 	"scripts": {
-		"dev": "tsx --env-file .env --watch src/server.ts"
+		"dev": "tsx --env-file .env --watch src/server.ts",
+		"websocket": "tsx --env-file .env --watch src/common/websocket/index.ts"
 	},
 	"devDependencies": {
 		"@neondatabase/serverless": "^0.10.4",
