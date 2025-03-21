@@ -1,18 +1,33 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import type WebSocket from "ws";
+import { sendMessage } from "../../functions/send-message";
 
-const clients = new Set<WebSocket>(); //criar um conjunto pra guardar as conexões
+//vou criar uma rota pra re
 
 export const sendMessageRoute: FastifyPluginAsyncZod = async (app) => {
-	app.get("/api/messages/send", { websocket: true }, (socket, req) => {
-		clients.add(socket);
-		socket.on("message", (data) => {
-			for (const client of clients) {
-				//ver se não sou eu e pegar todos que estão com a comunicação aberta (conectados)
-				if (client !== socket && client.readyState === client.OPEN) {
-					client.send(data);
-				}
-			}
-		});
-	});
+	app.get(
+		"/api/messages/send",
+		{
+			websocket: true,
+		},
+		(socket, request) => {
+			socket.on("connection", () => {
+				console.log("teste");
+				socket.on("message", async () => {
+					const clients = new Set<typeof socket>(); //criar um conjunto pra guardar as conexões
+
+					const [message] = await db
+						.insert(messages)
+						.values({ userId, content })
+						.returning();
+
+					for (const client of clients) {
+						if (client !== socket && client.readyState === client.OPEN) {
+							client.send(message.content);
+						}
+					}
+					return { message };
+				});
+			});
+		},
+	);
 };

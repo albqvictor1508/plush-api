@@ -1,4 +1,4 @@
-import { pgTable, serial, text, uuid } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, uuid, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 export const messages = pgTable("messages", {
@@ -7,4 +7,5 @@ export const messages = pgTable("messages", {
 		.notNull()
 		.references(() => users.id),
 	content: text("content").notNull(),
+	sentAt: timestamp("sent_at").notNull().defaultNow(),
 });
