@@ -17,10 +17,11 @@ export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 
 			const user = await createUser({ phone });
 			const token = app.jwt.sign({
+				id: user.id,
 				name: user.name,
 				phone: user.phone,
 			});
-			return reply.setCookie("jwt", token).status(201).send(user);
+			return reply.setCookie("plush_auth", token).status(201).send(user);
 		},
 	);
 };

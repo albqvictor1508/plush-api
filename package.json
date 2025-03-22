@@ -4,21 +4,24 @@
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/cors": "^11.0.0",
 		"@fastify/jwt": "^9.1.0",
+		"@fastify/websocket": "^11.0.2",
 		"@types/pg": "^8.11.11",
+		"@types/ws": "^8.18.0",
 		"@vonage/server-sdk": "^3.20.0",
 		"drizzle-kit": "^0.30.5",
 		"drizzle-orm": "^0.40.1",
 		"envalid": "^8.0.0",
-		"fastify": "^4.29.0",
-		"fastify-socket.io": "^5.1.0",
-		"fastify-type-provider-zod": "^2.1.0",
+		"fastify": "^5.2.1",
+		"fastify-type-provider-zod": "^4.0.2",
+		"nodemailer": "^6.10.0",
 		"postgres": "^3.4.5",
-		"socket.io": "^4.8.1",
-		"zod": "^3.24.2"
+		"ws": "^8.18.1",
+		"wscat": "^6.0.1"
 	},
 	"type": "module",
 	"scripts": {
-		"dev": "tsx --env-file .env --watch src/server.ts"
+		"dev": "tsx --env-file .env --watch src/server.ts",
+		"websocket": "tsx --env-file .env --watch src/common/websocket/index.ts"
 	},
 	"devDependencies": {
 		"@neondatabase/serverless": "^0.10.4",
