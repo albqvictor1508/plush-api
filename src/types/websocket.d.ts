@@ -1,5 +1,7 @@
+import { WebSocket } from "ws";
+
 declare module "ws" {
-	interface Websocket {
+	interface WebSocket {
 		user?: {
 			id: string;
 			email: string;
