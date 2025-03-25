@@ -16,7 +16,8 @@
 		"fastify-type-provider-zod": "^4.0.2",
 		"nodemailer": "^6.10.0",
 		"postgres": "^3.4.5",
-		"ws": "^8.18.1"
+		"ws": "^8.18.1",
+		"wscat": "^6.0.1"
 	},
 	"type": "module",
 	"scripts": {

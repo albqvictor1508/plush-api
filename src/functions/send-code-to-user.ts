@@ -1,5 +1,4 @@
 import type { CreateUserParams, NewAccountTemporaryData } from "../types/auth";
-import { handleSendEmail }from "../utils/send-email";
 
 export const codes = {} as Record<string, NewAccountTemporaryData>;
 const ONE_SECOND_IN_MS = 1000;
@@ -26,6 +25,7 @@ export async function sendCodeToUser({ name, email }: CreateUserParams) {
 			email,
 			text: emailText,
 			message: emailText, });
+    
 			codes[email] = {
 			name,
 			code: generatedCode,

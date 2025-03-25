@@ -18,12 +18,17 @@ export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 				return reply.status(400).send({ error: "invalid or expired code" });
 			}
 
-			const user = await createUser({ email });
-			const token = app.jwt.sign({
-				name: user.name,
-				email: user.email,
+			const user = await createUser({ phone });
+			const token = await reply.jwtSign({ id: user.id, phone: user.phone });
+
+			reply.setCookie("plush_auth", token, {
+				path: "/",
+				httpOnly: true,
+				signed: true,
+				//sameSite: "strict" vou ver isso dps
 			});
-			return reply.setCookie("jwt", token).status(201).send(user);
+
+			return { success: true };
 		},
 	);
 };
