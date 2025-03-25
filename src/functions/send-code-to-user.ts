@@ -1,3 +1,4 @@
+import { app } from "../server";
 import type { CreateUserParams, NewAccountTemporaryData } from "../types/auth";
 import { handleSendEmail } from "../utils/send-email";
 
@@ -35,6 +36,7 @@ export async function sendCodeToUser({ name, email }: CreateUserParams) {
 			//"myemail@gmail.com": {name: "victor", code: "1649", email: "myemail@gmail.com", generatedAt: um numero imenso}
 		]);
 	} catch (e) {
+		app.log.error(`Error sending email: ${e}`);
 		console.log(e);
 	}
 }
