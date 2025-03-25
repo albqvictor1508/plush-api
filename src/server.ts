@@ -10,11 +10,9 @@ import {
 import { env } from "./common/env";
 import { createUserRoute } from "./routes/auth/new";
 import { sendCodeToUserRoute } from "./routes/auth/send";
-import { fastifyWebsocket } from "@fastify/websocket";
 import { sendMessageRoute } from "./routes/messages/send-message";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
-app.register(fastifyWebsocket);
 app.register(fastifyCors, { credentials: true }); //pra enviar cookie pro front
 app.register(jwt, {
 	secret: env.JWT_SECRET,
