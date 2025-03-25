@@ -5,3 +5,8 @@ export type SendMessageParams = {
 	userId: string;
 	socket: WebSocket;
 };
+
+export type CreateChatParams = {
+	userId: string;
+	title: string;
+};

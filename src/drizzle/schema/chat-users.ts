@@ -1,6 +1,15 @@
-import { pgTable, primaryKey, serial, uuid } from "drizzle-orm/pg-core";
+import {
+	pgEnum,
+	pgTable,
+	primaryKey,
+	serial,
+	timestamp,
+	uuid,
+} from "drizzle-orm/pg-core";
 import { chats } from "./chats";
 import { users } from "./users";
+
+const roleEnum = pgEnum("member", ["admin"]);
 
 export const chatUsers = pgTable(
 	"chat_users",
@@ -11,6 +20,8 @@ export const chatUsers = pgTable(
 		userId: uuid("user_id")
 			.notNull()
 			.references(() => users.id),
+		role: roleEnum(),
+		joined_at: timestamp().defaultNow(),
 	},
 	(table) => ({
 		pk: primaryKey({ columns: [table.chatId, table.userId] }),

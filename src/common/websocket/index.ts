@@ -1,7 +1,7 @@
 import { app } from "../../server";
-import { websocketAuth } from "./websocket-auth";
-import { handleMessage } from "./handlers/message";
 import { WebSocketServer } from "ws";
+import { websocketAuth } from "../../functions/websocket/websocket-auth";
+import { handleMessage } from "../../functions/websocket/handlers/message";
 
 export const wss = new WebSocketServer({
 	server: app.server,
