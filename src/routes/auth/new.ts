@@ -29,7 +29,8 @@ export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 
 			reply.setCookie("plush_auth", token, {
 				path: "/",
-				signed: true,
+				signed: false,
+				httpOnly: true,
 				//sameSite: "strict" vou ver isso dps
 			});
 
