@@ -1,7 +1,5 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import "fastify";
-import fastifyCookie from "fastify-cookie";
-import fastifyJwt from "fastify-jwt";
 import { z } from "zod";
 import { codes } from "../../functions/send-code-to-user";
 import { createUser } from "../../functions/create-user";
