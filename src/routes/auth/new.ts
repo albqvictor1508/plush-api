@@ -1,7 +1,7 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import 'fastify';
-import fastifyCookie from 'fastify-cookie';
-import fastifyJwt from 'fastify-jwt';
+import "fastify";
+import fastifyCookie from "fastify-cookie";
+import fastifyJwt from "fastify-jwt";
 import { z } from "zod";
 import { codes } from "../../functions/send-code-to-user";
 import { createUser } from "../../functions/create-user";
@@ -18,8 +18,8 @@ export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 				return reply.status(400).send({ error: "invalid or expired code" });
 			}
 
-			const user = await createUser({ phone });
-			const token = await reply.jwtSign({ id: user.id, phone: user.phone });
+			const user = await createUser({ email });
+			const token = await reply.jwtSign({ id: user.id, email: user.email });
 
 			reply.setCookie("plush_auth", token, {
 				path: "/",
