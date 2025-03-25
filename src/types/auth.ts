@@ -18,4 +18,4 @@ export type SendEmailParams = {
 	email: string;
 };
 
-export type ValidateUserParams = { phone: string; code: string };
+export type ValidateUserParams = { email: string; code: string };
