@@ -14,7 +14,6 @@ export type SendEmailParams = {
 	subject?: string;
 	html?: string;
 	text: string;
-	message: string;
 	email: string;
 };
 

@@ -5,7 +5,6 @@ import type { JWTDecoded } from "../../types/auth";
 export async function websocketAuth(
 	app: FastifyInstance,
 	info: { req: IncomingMessage },
-	done: (result: boolean) => void,
 ): Promise<JWTDecoded | null> {
 	try {
 		const cookieHeader = info.req.headers.cookie || ""; //pega o cookie se tiver o cookie
@@ -15,17 +14,17 @@ export async function websocketAuth(
 			throw new Error("Missing auth cookie");
 		}
 
-		const decoded = await app.jwt.verify<JWTDecoded>(cookies.plush_auth); //verifica se o cookie é válido
+		const token = decodeURIComponent(cookies.plush_auth); //tira os caracter especial do token
 
-		if (!decoded) {
-			throw new Error("Invalid JWT!");
+		const decoded = app.jwt.verify<JWTDecoded>(token); //verifica se o cookie é válido
+
+		if (!decoded?.id || !decoded?.email) {
+			throw new Error("Invalid JWT payload!");
 		}
 
-		done(true);
 		return { id: decoded.id, email: decoded.email };
 	} catch (e) {
 		app.log.error(`Failed to authenticate on Websocket: ${e}`);
-		done(false);
 		return null;
 	}
 }
