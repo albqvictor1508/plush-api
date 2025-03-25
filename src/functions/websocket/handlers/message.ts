@@ -1,4 +1,4 @@
-import WebSocket from "ws";
+import type WebSocket from "ws";
 import { db } from "../../../drizzle/client";
 import { and, eq } from "drizzle-orm";
 import { chatUsers } from "../../../drizzle/schema/chat-users";
@@ -20,14 +20,15 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 	const [chat] = await db
 		.select()
 		.from(chats)
-		.where(
+		.innerJoin(
+			chatUsers,
 			and(
 				eq(chatUsers.chatId, message.chatId),
 				eq(chatUsers.userId, ws.user.id),
 			),
 		);
 
-	if (!chat) {
+	if (!chat.chats || !chat?.chat_users) {
 		throw new Error("Chat not found or access denied");
 	}
 
@@ -52,7 +53,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 
 	for (const client of wss.clients) {
 		if (
-			client.readyState === WebSocket.OPEN &&
+			client.readyState === client.OPEN &&
 			partcipants.some((p) => p.userId === client.user?.id)
 		) {
 			client.send(

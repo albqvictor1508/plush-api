@@ -21,7 +21,8 @@
 	},
 	"type": "module",
 	"scripts": {
-		"dev": "tsx --env-file .env --watch src/server.ts"
+		"dev": "tsx --env-file .env --watch src/server.ts",
+		"websocket": "tsx --env-file .env --watch src/functions/websocket/index.ts"
 	},
 	"devDependencies": {
 		"@neondatabase/serverless": "^0.10.4",

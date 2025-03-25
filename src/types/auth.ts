@@ -18,4 +18,9 @@ export type SendEmailParams = {
 	email: string;
 };
 
+export type JWTDecoded = {
+	id: string;
+	email: string;
+};
+
 export type ValidateUserParams = { email: string; code: string };
