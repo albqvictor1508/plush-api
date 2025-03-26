@@ -1,0 +1,28 @@
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import { z } from "zod";
+
+export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
+	app.post(
+		"/api/chats",
+		{
+			schema: {
+				body: z.object({
+					title: z.string(),
+					type: z.enum(["private", "group"]),
+					userId: z.string(),
+					participantsIds: z.array(z.string()),
+					minimumParticipants: z.number().min(1).max(2),
+				}),
+				response: {
+					201: z.object({
+						success: z.boolean(),
+					}),
+				},
+			},
+		},
+		async (request, reply) => {
+			const { title, type, userId, ...rest } = request.body;
+			return reply.status(201).send({ success: true });
+		},
+	);
+};
