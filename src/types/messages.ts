@@ -8,13 +8,13 @@ export type SendMessageParams = {
 
 export type CreateChatParams = {
 	title: string;
-	type: Type.PRIVATE | Type.GROUP;
+	type?: Type.PRIVATE | Type.GROUP;
 	userId: string;
 	participantsIds: string[];
-	minimumParticipants: 1 | 2;
+	minimumParticipants?: 1 | 2;
 };
 
-enum Type {
+export enum Type {
 	PRIVATE = "private",
 	GROUP = "group",
 }

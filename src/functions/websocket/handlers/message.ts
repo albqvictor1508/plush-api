@@ -1,7 +1,7 @@
 import type WebSocket from "ws";
 import { db } from "../../../drizzle/client";
 import { and, eq } from "drizzle-orm";
-import { chatUsers } from "../../../drizzle/schema/chat-users";
+import { chatParticipants } from "../../../drizzle/schema/chat-participants";
 import { chats } from "../../../drizzle/schema/chats";
 import { messages } from "../../../drizzle/schema/messages";
 import { z } from "zod";
@@ -32,10 +32,10 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 			.select()
 			.from(chats)
 			.innerJoin(
-				chatUsers,
+				chatParticipants,
 				and(
-					eq(chatUsers.chatId, message.chatId),
-					eq(chatUsers.userId, ws.user.id),
+					eq(chatParticipants.chatId, message.chatId),
+					eq(chatParticipants.userId, ws.user.id),
 				),
 			);
 
@@ -58,9 +58,9 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 			.where(eq(chats.id, message.chatId));
 
 		const partcipants = await db
-			.select({ userId: chatUsers.userId })
-			.from(chatUsers)
-			.where(eq(chatUsers.chatId, message.chatId));
+			.select({ userId: chatParticipants.userId })
+			.from(chatParticipants)
+			.where(eq(chatParticipants.chatId, message.chatId));
 
 		for (const client of wss.clients) {
 			if (
