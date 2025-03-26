@@ -9,19 +9,20 @@ import {
 import { chats } from "./chats";
 import { users } from "./users";
 
-const roleEnum = pgEnum("user_role", ["member", "admin"]);
+const participantRoleEnum = pgEnum("user_role", ["member", "admin"]);
 
 export const chatUsers = pgTable(
 	"chat_users",
 	{
 		chatId: serial("chat_id")
 			.notNull()
-			.references(() => chats.id),
+			.references(() => chats.id)
+			.onDelete("cascade"),
 		userId: uuid("user_id")
 			.notNull()
 			.references(() => users.id),
-		role: roleEnum(),
-		joined_at: timestamp().defaultNow(),
+		role: participantRoleEnum("role").notNull().default("member"),
+		joinedAt: timestamp("joined_at").defaultNow().notNull(),
 	},
 	(table) => ({
 		pk: primaryKey({ columns: [table.chatId, table.userId] }),
