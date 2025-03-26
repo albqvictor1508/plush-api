@@ -1,10 +1,11 @@
-//posso criar um array com os id's dos participantes e pegar o ID do user pelo cookie dele
-
+import { db } from "../../../drizzle/client";
+import { chats } from "../../../drizzle/schema/chats";
 import type { CreateChatParams } from "../../../types/messages";
 
-// const participants = Map<string, CreateChatParams>;
-
-export async function handleCreateChat({
-	participantsId,
-	userId,
-}: CreateChatParams) {}
+export async function handleCreateChat({ participantsId }: CreateChatParams) {
+	// pegar as info do user pelo id dele
+	const chat = await db.insert(chats).values({});
+	// salvar no banco
+	// criar o chat no banco
+	//jogar os cara no chat
+}

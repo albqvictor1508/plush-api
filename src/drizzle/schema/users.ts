@@ -1,6 +1,6 @@
 import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-const statusEnum = pgEnum("online", ["offline"]);
+const statusEnum = pgEnum("status", ["online", "offline"]);
 
 export const users = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(), //incremental porque n vai expor na URL

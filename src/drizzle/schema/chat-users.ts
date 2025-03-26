@@ -9,7 +9,7 @@ import {
 import { chats } from "./chats";
 import { users } from "./users";
 
-const roleEnum = pgEnum("member", ["admin"]);
+const roleEnum = pgEnum("user_role", ["member", "admin"]);
 
 export const chatUsers = pgTable(
 	"chat_users",
