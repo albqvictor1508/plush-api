@@ -20,10 +20,10 @@ export const messages = pgTable("messages", {
 	id: serial("id").primaryKey().notNull(),
 	userId: uuid("user_id")
 		.notNull()
-		.references(() => users.id),
+		.references(() => users.id, { onDelete: "set null" }),
 	chatId: serial("chat_id")
 		.notNull()
-		.references(() => chats.id),
+		.references(() => chats.id, { onDelete: "cascade" }),
 	content: text("content").notNull(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at"),
