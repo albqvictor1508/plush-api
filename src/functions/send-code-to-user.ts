@@ -19,7 +19,7 @@ export async function sendCodeToUser({ name, email }: CreateUserParams) {
 	try {
 
 		const emailSubject = 'Seu código de verificação';
-   		const emailText = `Bom dia, ${name}! Seu código de verificação é: ${generatedCode}`;
+   		const emailText = `Olá, ${name}! Seu código de verificação é: ${generatedCode}`;
 		
 		//depois eu analiso se tem possibilidade de rodar isso em paralelo pra ganho de performance
 		await handleSendEmail({ subject: emailSubject,

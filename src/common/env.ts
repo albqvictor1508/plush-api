@@ -10,10 +10,6 @@ export const env = cleanEnv(process.env, {
 	MY_GMAIL: str(),
 	MY_GMAIL_PASSWORD: str(),
 
-	// ????
-	VONAGE_API_KEY: str(),
-	VONAGE_API_SECRET: str(),
-
 	// Configuração do Cloudflare R2
 	R2_ENDPOINT: url(),
 	R2_ACCESS_KEY: str(),
