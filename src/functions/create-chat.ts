@@ -27,4 +27,6 @@ export async function createChat({
 	await db
 		.insert(chatParticipants)
 		.values({ userId: participantId, chatId: chat.id, role: "admin" });
+
+	return chat;
 }

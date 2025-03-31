@@ -9,20 +9,24 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 			schema: {
 				body: z.object({
 					title: z.string(),
-					userId: z.string(),
+					ownerId: z.string(),
 					participantId: z.string(),
 				}),
 				response: {
 					201: z.object({
-						success: z.boolean(),
+						type: z.string(),
+						id: z.number(),
+						createdAt: z.date(),
+						createdBy: z.string().uuid(),
+						lastMessageAt: z.date(),
 					}),
 				},
 			},
 		},
 		async (request, reply) => {
-			const { title, userId, participantId } = request.body;
-			await createChat({ title, userId, participantId });
-			return reply.status(201).send({ success: true });
+			const { title, ownerId, participantId } = request.body;
+			const chat = await createChat({ title, ownerId, participantId });
+			return reply.status(201).send(chat);
 		},
 	);
 };
