@@ -10,7 +10,6 @@ export const sendCodeToUserRoute: FastifyPluginAsyncZod = async (app) => {
 				body: z.object({
 					name: z.string(),
 					email: z.string(),
-					code: z.string().nullable(),
 				}),
 			},
 		},
