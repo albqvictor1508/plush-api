@@ -8,10 +8,8 @@ export type SendMessageParams = {
 
 export type CreateChatParams = {
 	title: string;
-	type?: Type.PRIVATE | Type.GROUP;
-	userId: string;
-	participantsIds: string[];
-	minimumParticipants?: 1 | 2;
+	ownerId: string;
+	participantId: string;
 };
 
 export enum Type {

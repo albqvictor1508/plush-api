@@ -1,13 +1,30 @@
+import { db } from "../drizzle/client";
+import { chatParticipants } from "../drizzle/schema/chat-participants";
+import { chats } from "../drizzle/schema/chats";
 import { Type, type CreateChatParams } from "../types/messages";
 
 export async function createChat({
-	minimumParticipants,
 	title,
-	participantsIds,
-	userId,
-	type,
+	ownerId,
+	participantId,
 }: CreateChatParams) {
-	//se tiver mais de duas pessoas, definir grupo como privado
+	let type: Type;
+	const participants = await db.$count(chatParticipants.userId);
+	if (participants > 2) {
+		type = Type.GROUP;
+		return;
+	}
 	//cria chat
-	//cria participante (tabela chatUsers)
+	const [chat] = await db
+		.insert(chats)
+		.values({ type: "private", title, createdBy: ownerId })
+		.returning();
+
+	await db
+		.insert(chatParticipants)
+		.values({ role: "admin", userId: ownerId, chatId: chat.id });
+
+	await db
+		.insert(chatParticipants)
+		.values({ userId: participantId, chatId: chat.id, role: "admin" });
 }

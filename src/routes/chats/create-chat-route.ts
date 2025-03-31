@@ -1,7 +1,6 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { db } from "../../drizzle/client";
-import { chats } from "../../drizzle/schema/chats";
+import { createChat } from "../../functions/create-chat";
 
 export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post(
@@ -10,10 +9,8 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 			schema: {
 				body: z.object({
 					title: z.string(),
-					type: z.enum(["private", "group"]),
 					userId: z.string(),
-					participantsIds: z.array(z.string()),
-					minimumParticipants: z.number().min(1).max(2),
+					participantId: z.string(),
 				}),
 				response: {
 					201: z.object({
@@ -23,10 +20,8 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 			},
 		},
 		async (request, reply) => {
-			const { title, type, userId, ...rest } = request.body;
-
-			//verificar se o chat entre esses dois existe
-			const chatExists = await db.select().from(chats);
+			const { title, userId, participantId } = request.body;
+			await createChat({ title, userId, participantId });
 			return reply.status(201).send({ success: true });
 		},
 	);
