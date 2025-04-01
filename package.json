@@ -22,11 +22,14 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx --env-file .env --watch src/server.ts",
+		"seed": "tsx --env-file .env --watch src/drizzle/seed",
 		"websocket": "tsx --env-file .env --watch src/functions/websocket/index.ts"
 	},
 	"devDependencies": {
+		"@faker-js/faker": "^9.6.0",
 		"@neondatabase/serverless": "^0.10.4",
 		"@types/node": "^22.13.10",
+		"chalk": "^5.4.1",
 		"ts-node": "^10.9.2",
 		"tsx": "^4.19.3",
 		"typescript": "^5.8.2"

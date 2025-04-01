@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createChat } from "../../functions/create-chat";
 import { parseCookie } from "../../utils/parse-cookie";
 import { db } from "../../drizzle/client";
-import { users } from "../../drizzle/schema/users";
+import { users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
