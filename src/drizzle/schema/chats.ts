@@ -8,12 +8,10 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
-const chatTypeEnum = pgEnum("type", ["private", "group"]);
-
 export const chats = pgTable("chats", {
 	id: serial("id").notNull().primaryKey(),
 	title: text("title"),
-	type: chatTypeEnum("type").notNull(),
+	type: text("type"),
 	createdBy: uuid("created_by")
 		.notNull()
 		.references(() => users.id, {

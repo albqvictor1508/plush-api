@@ -1,15 +1,13 @@
 import {
-	pgEnum,
 	pgTable,
 	primaryKey,
 	serial,
+	text,
 	timestamp,
 	uuid,
 } from "drizzle-orm/pg-core";
 import { chats } from "./chats";
 import { users } from "./users";
-
-const participantRoleEnum = pgEnum("user_role", ["member", "admin"]);
 
 export const chatParticipants = pgTable(
 	"chat_participants",
@@ -20,7 +18,7 @@ export const chatParticipants = pgTable(
 		userId: uuid("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
-		role: participantRoleEnum("role").notNull().default("member"),
+		role: text("role"),
 		joinedAt: timestamp("joined_at").defaultNow().notNull(),
 	},
 	(table) => ({

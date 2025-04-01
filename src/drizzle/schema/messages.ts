@@ -9,12 +9,12 @@ import {
 import { users } from "./users";
 import { chats } from "./chats";
 
-const messageStatusEnum = pgEnum("message_status", [
-	"sent",
-	"delivered",
-	"read",
-	"deleted",
-]);
+// const messageStatusEnum = pgEnum("message_status", [
+// 	"sent",
+// 	"delivered",
+// 	"read",
+// 	"deleted",
+// ]);
 
 export const messages = pgTable("messages", {
 	id: serial("id").primaryKey().notNull(),
@@ -28,5 +28,4 @@ export const messages = pgTable("messages", {
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at"),
 	deletedAt: timestamp("deleted_at"),
-	status: messageStatusEnum("status").default("sent"),
 });

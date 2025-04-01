@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1742568596377,
-      "tag": "0000_flimsy_killmonger",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1742671910767,
-      "tag": "0002_naive_prowler",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1742945324134,
-      "tag": "0003_sturdy_ultragirl",
+      "when": 1743467050722,
+      "tag": "0000_dashing_ravenous",
       "breakpoints": true
     }
   ]
