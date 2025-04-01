@@ -1,37 +1,16 @@
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  "id": "513510f5-23a5-4710-ab92-c9d684eaa7e6",
-=======
-  "id": "f46b46db-129d-427b-aa18-0b1191b67bd2",
->>>>>>> f14857a (chore: changes on schema to make the chats)
-=======
-  "id": "513510f5-23a5-4710-ab92-c9d684eaa7e6",
->>>>>>> origin
+  "id": "c3591128-d335-4602-a416-521598b69e5f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-<<<<<<< HEAD
     "public.chat_participants": {
       "name": "chat_participants",
-=======
-    "public.chat_users": {
-      "name": "chat_users",
->>>>>>> f14857a (chore: changes on schema to make the chats)
       "schema": "",
       "columns": {
         "chat_id": {
           "name": "chat_id",
-<<<<<<< HEAD
-<<<<<<< HEAD
           "type": "integer",
-=======
-          "type": "serial",
->>>>>>> f14857a (chore: changes on schema to make the chats)
-=======
-          "type": "integer",
->>>>>>> origin
           "primaryKey": false,
           "notNull": true
         },
@@ -40,10 +19,6 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin
         },
         "joined_at": {
           "name": "joined_at",
@@ -51,21 +26,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-=======
->>>>>>> f14857a (chore: changes on schema to make the chats)
         }
       },
       "indexes": {},
       "foreignKeys": {
-<<<<<<< HEAD
         "chat_participants_chat_id_chats_id_fk": {
           "name": "chat_participants_chat_id_chats_id_fk",
           "tableFrom": "chat_participants",
-=======
-        "chat_users_chat_id_chats_id_fk": {
-          "name": "chat_users_chat_id_chats_id_fk",
-          "tableFrom": "chat_users",
->>>>>>> f14857a (chore: changes on schema to make the chats)
           "tableTo": "chats",
           "columnsFrom": [
             "chat_id"
@@ -73,21 +40,12 @@
           "columnsTo": [
             "id"
           ],
-<<<<<<< HEAD
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "chat_participants_user_id_users_id_fk": {
           "name": "chat_participants_user_id_users_id_fk",
           "tableFrom": "chat_participants",
-=======
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "chat_users_user_id_users_id_fk": {
-          "name": "chat_users_user_id_users_id_fk",
-          "tableFrom": "chat_users",
->>>>>>> f14857a (chore: changes on schema to make the chats)
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -95,22 +53,73 @@
           "columnsTo": [
             "id"
           ],
-<<<<<<< HEAD
           "onDelete": "cascade",
-=======
-          "onDelete": "no action",
->>>>>>> f14857a (chore: changes on schema to make the chats)
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-<<<<<<< HEAD
         "chat_participants_chat_id_user_id_pk": {
           "name": "chat_participants_chat_id_user_id_pk",
-=======
+          "columns": [
+            "chat_id",
+            "user_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.chat_users": {
+      "name": "chat_users",
+      "schema": "",
+      "columns": {
+        "chat_id": {
+          "name": "chat_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "chat_users_chat_id_chats_id_fk": {
+          "name": "chat_users_chat_id_chats_id_fk",
+          "tableFrom": "chat_users",
+          "tableTo": "chats",
+          "columnsFrom": [
+            "chat_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "chat_users_user_id_users_id_fk": {
+          "name": "chat_users_user_id_users_id_fk",
+          "tableFrom": "chat_users",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
         "chat_users_chat_id_user_id_pk": {
           "name": "chat_users_chat_id_user_id_pk",
->>>>>>> f14857a (chore: changes on schema to make the chats)
           "columns": [
             "chat_id",
             "user_id"
@@ -131,7 +140,6 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
-<<<<<<< HEAD
         },
         "title": {
           "name": "title",
@@ -149,7 +157,7 @@
           "name": "last_message_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         },
         "created_at": {
@@ -173,110 +181,6 @@
             "id"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-=======
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
->>>>>>> f14857a (chore: changes on schema to make the chats)
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.messages": {
-      "name": "messages",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-<<<<<<< HEAD
-        "chat_id": {
-          "name": "chat_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-=======
->>>>>>> f14857a (chore: changes on schema to make the chats)
-        "content": {
-          "name": "content",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-<<<<<<< HEAD
-        "created_at": {
-          "name": "created_at",
-=======
-        "sent_at": {
-          "name": "sent_at",
->>>>>>> f14857a (chore: changes on schema to make the chats)
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-<<<<<<< HEAD
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-=======
->>>>>>> f14857a (chore: changes on schema to make the chats)
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "messages_user_id_users_id_fk": {
-          "name": "messages_user_id_users_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-<<<<<<< HEAD
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "messages_chat_id_chats_id_fk": {
-          "name": "messages_chat_id_chats_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "chats",
-          "columnsFrom": [
-            "chat_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-=======
-          "onDelete": "no action",
->>>>>>> f14857a (chore: changes on schema to make the chats)
           "onUpdate": "no action"
         }
       },
@@ -326,7 +230,7 @@
           "name": "last_active_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},
@@ -341,6 +245,89 @@
           ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.messages": {
+      "name": "messages",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chat_id": {
+          "name": "chat_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "messages_user_id_users_id_fk": {
+          "name": "messages_user_id_users_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "messages_chat_id_chats_id_fk": {
+          "name": "messages_chat_id_chats_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "chats",
+          "columnsFrom": [
+            "chat_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

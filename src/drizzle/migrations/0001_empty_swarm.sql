@@ -1,0 +1,1 @@
+ALTER TABLE "chats" ALTER COLUMN "last_message_at" DROP DEFAULT;

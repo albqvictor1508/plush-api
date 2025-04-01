@@ -1,1 +1,0 @@
-ALTER TABLE "users" ALTER COLUMN "last_active_at" DROP NOT NULL;
