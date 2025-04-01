@@ -1,7 +1,6 @@
 CREATE TABLE "chat_participants" (
-	"chat_id" serial NOT NULL,
+	"chat_id" integer NOT NULL,
 	"user_id" uuid NOT NULL,
-	"role" text,
 	"joined_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "chat_participants_chat_id_user_id_pk" PRIMARY KEY("chat_id","user_id")
 );
@@ -9,7 +8,6 @@ CREATE TABLE "chat_participants" (
 CREATE TABLE "chats" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" text,
-	"type" text,
 	"created_by" uuid NOT NULL,
 	"last_message_at" timestamp DEFAULT now() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL
@@ -18,7 +16,7 @@ CREATE TABLE "chats" (
 CREATE TABLE "messages" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" uuid NOT NULL,
-	"chat_id" serial NOT NULL,
+	"chat_id" integer NOT NULL,
 	"content" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp,
