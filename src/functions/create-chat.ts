@@ -8,12 +8,6 @@ export async function createChat({
 	ownerId,
 	participantId,
 }: CreateChatParams) {
-	let type: Type;
-	const participants = await db.$count(chatParticipants.userId);
-	if (participants > 2) {
-		type = Type.GROUP;
-		return;
-	}
 	//cria chat
 	const [chat] = await db
 		.insert(chats)

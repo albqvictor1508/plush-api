@@ -32,6 +32,15 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 			const { id } = await parseCookie(request.headers.cookie || "");
 			const { title, participantId } = request.body;
 
+			const [userExists] = await db
+				.select({ id: users.id })
+				.from(users)
+				.where(eq(users.id, id));
+
+			if (!userExists?.id) {
+				throw new Error("Invalid participant ID");
+			}
+
 			const [participantExists] = await db
 				.select({ id: users.id })
 				.from(users)

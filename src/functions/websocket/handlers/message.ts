@@ -1,8 +1,7 @@
 import type WebSocket from "ws";
 import { db } from "../../../drizzle/client";
 import { and, eq } from "drizzle-orm";
-import { chatParticipants } from "../../../drizzle/schema/chat-participants";
-import { chats } from "../../../drizzle/schema/chats";
+import { chats, chatParticipants } from "../../../drizzle/schema";
 import { messages } from "../../../drizzle/schema/messages";
 import { z } from "zod";
 import { app } from "../../../server";
@@ -18,15 +17,10 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 		if (!ws.user) throw new Error("User not authenticated");
 
 		const rawData = data.toString();
+		app.log.error("toma no cu mizera");
 		if (rawData.length > 1000) throw new Error("Message too large");
 
 		const message = JSON.parse(rawData);
-		const validate = messageSchema.parse(message);
-
-		//não ta validando o formato, tomar cuidado
-		if (!validate.chatId || !validate.content) {
-			throw new Error("Invalid message format");
-		}
 
 		const [chat] = await db
 			.select()
@@ -39,7 +33,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 				),
 			);
 
-		if (!chat.chats || !chat?.chat_participants) {
+		if (!chat?.chats || !chat?.chat_participants) {
 			throw new Error("Chat not found or access denied");
 		}
 
@@ -76,9 +70,10 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 			}
 		}
 	} catch (e) {
-		app.log.error(`Error on handle message: ${e}`);
-		if (e instanceof SyntaxError) {
-			throw new Error("The valid format is JSON");
-		}
+		ws.send(
+			JSON.stringify(
+				`ERROR ON HANDLE MESSAGE: ${e}, USER INFO: ${ws.user?.email}, DATA: ${data}`,
+			),
+		);
 	}
 }

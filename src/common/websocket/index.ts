@@ -1,7 +1,9 @@
 import { app } from "../../server";
+import type WebSocket from "ws";
 import { WebSocketServer } from "ws";
 import { websocketAuth } from "../../functions/websocket/websocket-auth";
 import { handleMessage } from "../../functions/websocket/handlers/message";
+import { parseCookie } from "../../utils/parse-cookie";
 
 export const wss = new WebSocketServer({
 	server: app.server,
@@ -10,28 +12,31 @@ export const wss = new WebSocketServer({
 			.then((user) => {
 				if (user) {
 					done(true);
-					return;
+				} else {
+					done(false);
 				}
-				done(false);
 			})
 			.catch(() => done(false));
 	},
 });
 
-wss.on("connection", (ws, req) => {
-	const user = app.parseCookie(req.headers.cookie as string);
+wss.on("connection", async (ws: WebSocket, req: IncomingMessage) => {
+	const user = await parseCookie(req.headers.cookie || "");
 	if (!user) {
 		ws.close(1008, "invalid user data");
 		return;
 	}
-
 	ws.user = user;
+
 	ws.on("message", async (data) => {
 		try {
 			await handleMessage(ws, data);
 		} catch (e) {
-			app.log.error(`Message handling error: ${e}`);
-			ws.send(JSON.stringify({ error: `error on send message: ${e}` }));
+			ws.send(
+				JSON.stringify({
+					error: `error on send message: ${e}`,
+				}),
+			);
 		}
 	});
 
