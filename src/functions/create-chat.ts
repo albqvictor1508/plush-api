@@ -1,4 +1,5 @@
 import { db } from "../drizzle/client";
+
 import { chats, chatParticipants } from "../drizzle/schema";
 import { Type, type CreateChatParams } from "../types/messages";
 
