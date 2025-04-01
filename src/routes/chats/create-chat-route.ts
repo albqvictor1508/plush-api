@@ -1,10 +1,13 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { createChat } from "../../functions/create-chat";
-import { app } from "../../server";
+import { parseCookie } from "../../utils/parse-cookie";
+import { db } from "../../drizzle/client";
+import { users } from "../../drizzle/schema/users";
+import { eq } from "drizzle-orm";
 
-export const createChatRoute: FastifyPluginAsyncZod = async (fastify) => {
-	fastify.post(
+export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
+	app.post(
 		"/api/chats",
 		{
 			schema: {
@@ -12,8 +15,8 @@ export const createChatRoute: FastifyPluginAsyncZod = async (fastify) => {
 					cookie: z.string(),
 				}),
 				body: z.object({
-					title: z.string(),
-					participantId: z.string(),
+					title: z.string().min(1).max(50),
+					participantId: z.string().uuid(),
 				}),
 				response: {
 					201: z.object({
@@ -26,11 +29,19 @@ export const createChatRoute: FastifyPluginAsyncZod = async (fastify) => {
 			},
 		},
 		async (request, reply) => {
-			const { userId } = app.parseCookie(request.headers.cookie);
-			console.log(userId);
-
+			const { id } = await parseCookie(request.headers.cookie || "");
 			const { title, participantId } = request.body;
-			const chat = await createChat({ title, ownerId: userId, participantId });
+
+			const [participantExists] = await db
+				.select({ id: users.id })
+				.from(users)
+				.where(eq(users.id, participantId));
+
+			if (!participantExists?.id) {
+				throw new Error("Invalid participant ID");
+			}
+
+			const chat = await createChat({ title, ownerId: id, participantId });
 			return reply.status(201).send(chat);
 		},
 	);

@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(), //incremental porque n vai expor na URL
@@ -7,5 +7,5 @@ export const users = pgTable("users", {
 	email: text("email").notNull().unique(),
 	description: text("description"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
-	lastActiveAt: timestamp("last_active_at").notNull(),
+	lastActiveAt: timestamp("last_active_at"),
 });
