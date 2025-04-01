@@ -9,8 +9,13 @@ export const sendCodeToUserRoute: FastifyPluginAsyncZod = async (app) => {
 			schema: {
 				body: z.object({
 					name: z.string(),
-					email: z.string(),
+					email: z.string().email(),
 				}),
+				response: {
+					200: z.object({
+						success: z.boolean()
+					})
+				}
 			},
 		},
 		async (request, reply) => {

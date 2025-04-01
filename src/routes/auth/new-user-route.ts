@@ -8,7 +8,7 @@ import { handleSendEmail } from "../../utils/send-email";
 export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post(
 		"/api/auth/user",
-		{ schema: { body: z.object({ email: z.string(), code: z.string() }) } },
+		{ schema: { body: z.object({ email: z.string().email(), code: z.string().length(4) }) } },
 		async (request, reply) => {
 			const { email, code } = request.body;
 

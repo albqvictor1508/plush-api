@@ -31,10 +31,11 @@ app.register(createUserRoute);
 app.register(sendCodeToUserRoute);
 app.register(createChatRoute);
 //escolhe a porta que vai ser aberta pra API e abre essa porta (e o console.log pra avisar que subiu)
+
 app
 	.listen({ port: env.PORT })
 	.then(() => {
-		console.log(chalk.greenBright("HTTP/Websocket Server running!"));
+		console.log(chalk.blueBright("HTTP/Websocket Server running!"));
 	})
 	.catch((e) => {
 		console.log(e);

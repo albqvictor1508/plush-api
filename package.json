@@ -22,6 +22,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx --env-file .env --watch src/server.ts",
+		"websocket": "tsx --env-file .env --watch src/functions/websocket/index.ts",
 		"seed": "tsx --env-file .env --watch src/drizzle/seed"
 	},
 	"devDependencies": {

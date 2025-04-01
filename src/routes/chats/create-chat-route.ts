@@ -25,6 +25,9 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 						createdBy: z.string().uuid(),
 						lastMessageAt: z.date().nullable(),
 					}),
+					400: z.object({
+						error: z.string()
+					})
 				},
 			},
 		},
@@ -38,7 +41,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 				.where(eq(users.id, id));
 
 			if (!userExists?.id) {
-				throw new Error("Invalid participant ID");
+				reply.status(400).send({error: "user ID not founded"})
 			}
 
 			const [participantExists] = await db
@@ -47,7 +50,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 				.where(eq(users.id, participantId));
 
 			if (!participantExists?.id) {
-				throw new Error("Invalid participant ID");
+				reply.status(400).send({error: "participant ID not founded"})
 			}
 
 			const chat = await createChat({ title, ownerId: id, participantId });
