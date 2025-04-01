@@ -1,9 +1,13 @@
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   "id": "513510f5-23a5-4710-ab92-c9d684eaa7e6",
 =======
   "id": "f46b46db-129d-427b-aa18-0b1191b67bd2",
 >>>>>>> f14857a (chore: changes on schema to make the chats)
+=======
+  "id": "513510f5-23a5-4710-ab92-c9d684eaa7e6",
+>>>>>>> origin
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -20,10 +24,14 @@
         "chat_id": {
           "name": "chat_id",
 <<<<<<< HEAD
+<<<<<<< HEAD
           "type": "integer",
 =======
           "type": "serial",
 >>>>>>> f14857a (chore: changes on schema to make the chats)
+=======
+          "type": "integer",
+>>>>>>> origin
           "primaryKey": false,
           "notNull": true
         },
@@ -33,6 +41,9 @@
           "primaryKey": false,
           "notNull": true
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin
         },
         "joined_at": {
           "name": "joined_at",

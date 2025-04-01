@@ -10,5 +10,6 @@ export const chats = pgTable("chats", {
 			onDelete: "cascade",
 		}),
 	lastMessageAt: timestamp("last_message_at").defaultNow(),
+	//timestamp("last_message_at").references(() => message.created_at)
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });

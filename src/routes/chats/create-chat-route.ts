@@ -3,7 +3,11 @@ import { z } from "zod";
 import { createChat } from "../../functions/create-chat";
 import { parseCookie } from "../../utils/parse-cookie";
 import { db } from "../../drizzle/client";
+<<<<<<< HEAD
 import { users } from "../../drizzle/schema/users";
+=======
+import { users } from "../../drizzle/schema";
+>>>>>>> origin
 import { eq } from "drizzle-orm";
 
 export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
@@ -32,6 +36,18 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 			const { id } = await parseCookie(request.headers.cookie || "");
 			const { title, participantId } = request.body;
 
+<<<<<<< HEAD
+=======
+			const [userExists] = await db
+				.select({ id: users.id })
+				.from(users)
+				.where(eq(users.id, id));
+
+			if (!userExists?.id) {
+				throw new Error("Invalid participant ID");
+			}
+
+>>>>>>> origin
 			const [participantExists] = await db
 				.select({ id: users.id })
 				.from(users)

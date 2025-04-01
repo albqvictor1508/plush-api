@@ -1,6 +1,6 @@
 import { db } from "../drizzle/client";
-import { chatParticipants } from "../drizzle/schema/chat-participants";
-import { chats } from "../drizzle/schema/chats";
+
+import { chats, chatParticipants } from "../drizzle/schema";
 import { Type, type CreateChatParams } from "../types/messages";
 
 export async function createChat({
@@ -8,12 +8,6 @@ export async function createChat({
 	ownerId,
 	participantId,
 }: CreateChatParams) {
-	let type: Type;
-	const participants = await db.$count(chatParticipants.userId);
-	if (participants > 2) {
-		type = Type.GROUP;
-		return;
-	}
 	//cria chat
 	const [chat] = await db
 		.insert(chats)

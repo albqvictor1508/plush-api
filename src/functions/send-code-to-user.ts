@@ -24,7 +24,6 @@ export async function sendCodeToUser({ name, email }: CreateUserParams) {
 				subject: emailSubject,
 				email,
 				text: emailText,
-				message: emailText,
 			}),
 			// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 			(codes[email] = {

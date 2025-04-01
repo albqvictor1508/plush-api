@@ -11,6 +11,7 @@ import { env } from "./common/env";
 import { createUserRoute } from "./routes/auth/new-user-route";
 import { sendCodeToUserRoute } from "./routes/auth/send-code-route";
 import { createChatRoute } from "./routes/chats/create-chat-route";
+import chalk from "chalk";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors, { credentials: true });
@@ -33,7 +34,7 @@ app.register(createChatRoute);
 app
 	.listen({ port: env.PORT })
 	.then(() => {
-		console.log("HTTP/Websocket Server running!");
+		console.log(chalk.greenBright("HTTP/Websocket Server running!"));
 	})
 	.catch((e) => {
 		console.log(e);
