@@ -1,6 +1,6 @@
 import { db } from "../drizzle/client";
-import { chatParticipants } from "../drizzle/schema/chat-participants";
-import { chats } from "../drizzle/schema/chats";
+
+import { chats, chatParticipants } from "../drizzle/schema";
 import { Type, type CreateChatParams } from "../types/messages";
 
 export async function createChat({
@@ -17,7 +17,7 @@ export async function createChat({
 	//cria chat
 	const [chat] = await db
 		.insert(chats)
-		.values({ type: "private", title, createdBy: ownerId })
+		.values({ createdBy: ownerId, title })
 		.returning();
 
 	await db

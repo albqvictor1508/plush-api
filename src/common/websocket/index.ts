@@ -9,20 +9,17 @@ export const wss = new WebSocketServer({
 		websocketAuth(app, info)
 			.then((user) => {
 				if (user) {
-					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-					(info.req as any).user = user;
 					done(true);
-				} else {
-					done(false);
+					return;
 				}
+				done(false);
 			})
 			.catch(() => done(false));
 	},
 });
 
 wss.on("connection", (ws, req) => {
-	//biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const user = (req as any).user;
+	const user = app.parseCookie(req.headers.cookie as string);
 	if (!user) {
 		ws.close(1008, "invalid user data");
 		return;

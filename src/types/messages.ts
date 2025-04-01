@@ -1,12 +1,10 @@
-import type { WebSocket } from "ws";
-
-export type SendMessageParams = {
-	content: string;
-	userId: string;
-	socket: WebSocket;
-};
-
 export type CreateChatParams = {
-	userId: string;
 	title: string;
+	ownerId: string;
+	participantId: string;
 };
+
+export enum Type {
+	PRIVATE = "private",
+	GROUP = "group",
+}
