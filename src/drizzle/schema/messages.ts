@@ -6,8 +6,8 @@ import {
 	timestamp,
 	integer,
 } from "drizzle-orm/pg-core";
-import { users } from "./users";
 import { chats } from "./chats";
+import { users } from "./users";
 
 export const messages = pgTable("messages", {
 	id: serial("id").primaryKey().notNull(),

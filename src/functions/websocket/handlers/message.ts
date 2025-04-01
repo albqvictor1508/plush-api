@@ -5,7 +5,7 @@ import { chats, chatParticipants } from "../../../drizzle/schema";
 import { messages } from "../../../drizzle/schema/messages";
 import { z } from "zod";
 import { app } from "../../../server";
-import { wss } from "../../../common/websocket";
+import { wss } from "..";
 
 const messageSchema = z.object({
 	chatId: z.number(),

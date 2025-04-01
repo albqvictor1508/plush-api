@@ -1,16 +1,37 @@
 {
+<<<<<<< HEAD
+<<<<<<< HEAD
   "id": "513510f5-23a5-4710-ab92-c9d684eaa7e6",
+=======
+  "id": "f46b46db-129d-427b-aa18-0b1191b67bd2",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
+=======
+  "id": "513510f5-23a5-4710-ab92-c9d684eaa7e6",
+>>>>>>> origin
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+<<<<<<< HEAD
     "public.chat_participants": {
       "name": "chat_participants",
+=======
+    "public.chat_users": {
+      "name": "chat_users",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
       "schema": "",
       "columns": {
         "chat_id": {
           "name": "chat_id",
+<<<<<<< HEAD
+<<<<<<< HEAD
           "type": "integer",
+=======
+          "type": "serial",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
+=======
+          "type": "integer",
+>>>>>>> origin
           "primaryKey": false,
           "notNull": true
         },
@@ -19,6 +40,10 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin
         },
         "joined_at": {
           "name": "joined_at",
@@ -26,13 +51,21 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+=======
+>>>>>>> f14857a (chore: changes on schema to make the chats)
         }
       },
       "indexes": {},
       "foreignKeys": {
+<<<<<<< HEAD
         "chat_participants_chat_id_chats_id_fk": {
           "name": "chat_participants_chat_id_chats_id_fk",
           "tableFrom": "chat_participants",
+=======
+        "chat_users_chat_id_chats_id_fk": {
+          "name": "chat_users_chat_id_chats_id_fk",
+          "tableFrom": "chat_users",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
           "tableTo": "chats",
           "columnsFrom": [
             "chat_id"
@@ -40,12 +73,21 @@
           "columnsTo": [
             "id"
           ],
+<<<<<<< HEAD
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "chat_participants_user_id_users_id_fk": {
           "name": "chat_participants_user_id_users_id_fk",
           "tableFrom": "chat_participants",
+=======
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "chat_users_user_id_users_id_fk": {
+          "name": "chat_users_user_id_users_id_fk",
+          "tableFrom": "chat_users",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -53,13 +95,22 @@
           "columnsTo": [
             "id"
           ],
+<<<<<<< HEAD
           "onDelete": "cascade",
+=======
+          "onDelete": "no action",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
+<<<<<<< HEAD
         "chat_participants_chat_id_user_id_pk": {
           "name": "chat_participants_chat_id_user_id_pk",
+=======
+        "chat_users_chat_id_user_id_pk": {
+          "name": "chat_users_chat_id_user_id_pk",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
           "columns": [
             "chat_id",
             "user_id"
@@ -80,6 +131,7 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
+<<<<<<< HEAD
         },
         "title": {
           "name": "title",
@@ -124,6 +176,12 @@
           "onUpdate": "no action"
         }
       },
+=======
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+>>>>>>> f14857a (chore: changes on schema to make the chats)
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -146,24 +204,33 @@
           "primaryKey": false,
           "notNull": true
         },
+<<<<<<< HEAD
         "chat_id": {
           "name": "chat_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
+=======
+>>>>>>> f14857a (chore: changes on schema to make the chats)
         "content": {
           "name": "content",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
+<<<<<<< HEAD
         "created_at": {
           "name": "created_at",
+=======
+        "sent_at": {
+          "name": "sent_at",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+<<<<<<< HEAD
         },
         "updated_at": {
           "name": "updated_at",
@@ -176,6 +243,8 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+=======
+>>>>>>> f14857a (chore: changes on schema to make the chats)
         }
       },
       "indexes": {},
@@ -190,6 +259,7 @@
           "columnsTo": [
             "id"
           ],
+<<<<<<< HEAD
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -204,6 +274,9 @@
             "id"
           ],
           "onDelete": "cascade",
+=======
+          "onDelete": "no action",
+>>>>>>> f14857a (chore: changes on schema to make the chats)
           "onUpdate": "no action"
         }
       },

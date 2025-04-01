@@ -9,7 +9,7 @@ export const chats = pgTable("chats", {
 		.references(() => users.id, {
 			onDelete: "cascade",
 		}),
+	lastMessageAt: timestamp("last_message_at").defaultNow(),
 	//timestamp("last_message_at").references(() => message.created_at)
-	lastMessageAt: timestamp("last_message_at").defaultNow().notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
