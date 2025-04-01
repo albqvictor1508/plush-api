@@ -39,7 +39,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 				),
 			);
 
-		if (!chat.chats || !chat?.chat_users) {
+		if (!chat.chats || !chat?.chat_participants) {
 			throw new Error("Chat not found or access denied");
 		}
 

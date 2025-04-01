@@ -7,8 +7,13 @@ export type SendMessageParams = {
 };
 
 export type CreateChatParams = {
+<<<<<<< Updated upstream
 	title: string;
 	ownerId: string;
+=======
+	ownerId: string;
+	title: string;
+>>>>>>> Stashed changes
 	participantId: string;
 };
 

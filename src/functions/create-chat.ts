@@ -15,10 +15,7 @@ export async function createChat({
 		return;
 	}
 	//cria chat
-	const [chat] = await db
-		.insert(chats)
-		.values({ type: "private", title, createdBy: ownerId })
-		.returning();
+	const [chat] = await db.insert(chats).values({}).returning();
 
 	await db
 		.insert(chatParticipants)
