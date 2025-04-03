@@ -7,4 +7,6 @@ export async function listChatsByUser(userId: string) {
 		.select()
 		.from(chats)
 		.where(eq(users.id, userId));
+
+	return { chats: listedChats };
 }

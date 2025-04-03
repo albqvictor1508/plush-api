@@ -57,7 +57,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 			.set({ lastMessageAt: new Date() })
 			.where(eq(chats.id, message.chatId));
 
-		const partcipants = await db
+		const participants = await db
 			.select({ userId: chatParticipants.userId })
 			.from(chatParticipants)
 			.where(eq(chatParticipants.chatId, message.chatId));
@@ -65,7 +65,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 		for (const client of wss.clients) {
 			if (
 				client.readyState === client.OPEN &&
-				partcipants.some((p) => p.userId === client.user?.id)
+				participants.some((p) => p.userId === client.user?.id)
 			) {
 				client.send(
 					JSON.stringify({

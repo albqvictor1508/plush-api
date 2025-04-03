@@ -1,5 +1,5 @@
 {
-  "id": "c3591128-d335-4602-a416-521598b69e5f",
+  "id": "58479bb8-1765-4e34-89db-9444e698ddaa",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -71,66 +71,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.chat_users": {
-      "name": "chat_users",
-      "schema": "",
-      "columns": {
-        "chat_id": {
-          "name": "chat_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "chat_users_chat_id_chats_id_fk": {
-          "name": "chat_users_chat_id_chats_id_fk",
-          "tableFrom": "chat_users",
-          "tableTo": "chats",
-          "columnsFrom": [
-            "chat_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "chat_users_user_id_users_id_fk": {
-          "name": "chat_users_user_id_users_id_fk",
-          "tableFrom": "chat_users",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "chat_users_chat_id_user_id_pk": {
-          "name": "chat_users_chat_id_user_id_pk",
-          "columns": [
-            "chat_id",
-            "user_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.chats": {
       "name": "chats",
       "schema": "",
@@ -157,8 +97,7 @@
           "name": "last_message_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -263,7 +202,7 @@
           "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "chat_id": {
           "name": "chat_id",
