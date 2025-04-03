@@ -26,7 +26,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 		if (rawData.length > 1000) throw new Error("Message too large");
 
 		const message = JSON.parse(rawData);
-		const messageValidated = createMessageParams.parse(message);
+		createMessageParams.parse(message);
 
 		const [chat] = await db
 			.select()
@@ -34,7 +34,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 			.innerJoin(
 				chatParticipants,
 				and(
-					eq(chatParticipants.chatId, messageValidated.chatId),
+					eq(chatParticipants.chatId, message.chatId),
 					eq(chatParticipants.userId, ws.user.id),
 				),
 			);
