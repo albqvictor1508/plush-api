@@ -3,6 +3,7 @@ import { parseCookie } from "../../utils/parse-cookie";
 
 export const listChatsByUserRoute: FastifyPluginAsyncZod = async (app) => {
 	app.get("/api/chats", {}, async (request, reply) => {
-		const user = await parseCookie(request.headers.cookie || "");
+		const { id } = await parseCookie(request.headers.cookie || "");
+		const { chats } = listChatsByUser(id);
 	});
 };
