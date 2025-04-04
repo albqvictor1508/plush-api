@@ -3,8 +3,9 @@ import { z } from "zod";
 import { createChat } from "../../functions/create-chat";
 import { parseCookie } from "../../utils/parse-cookie";
 import { db } from "../../drizzle/client";
-import { chatParticipants, users } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { chatParticipants, chats, users } from "../../drizzle/schema";
+import { and, eq } from "drizzle-orm";
+
 
 export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post(
@@ -40,8 +41,8 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 
 			const [chatExists] = await db
 				.select({ chatId: chatParticipants.chatId })
-				.from(chatParticipants)
-				.where(eq(chatParticipants.userId, id));
+				.from(chats)
+        .innerJoin(chatParticipants, and(eq(chatParticipants.userId, id), eq(chatParticipants.userId, participantId)))
 
 			if (chatExists) {
 				return reply.status(401).send({ error: "This chat already exists" });

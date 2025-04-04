@@ -1,7 +1,6 @@
 import { app } from "../../server";
 import type WebSocket from "ws";
 import { WebSocketServer } from "ws";
-import { websocketAuth } from "./websocket-auth";
 import { handleMessage } from "./handlers/message";
 import type { IncomingMessage } from "node:http";
 import { parseCookie } from "../../utils/parse-cookie";

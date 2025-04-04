@@ -7,11 +7,6 @@ import { z } from "zod";
 import { app } from "../../../server";
 import { wss } from "..";
 
-const messageSchema = z.object({
-	chatId: z.number(),
-	content: z.string().max(1000),
-});
-
 const createMessageParams = z.object({
 	chatId: z.number(),
 	content: z.string(),

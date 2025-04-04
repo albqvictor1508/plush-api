@@ -6,5 +6,5 @@ export const env = cleanEnv(process.env, {
 	COOKIE_SECRET: str(),
 	PORT: num(),
 	MY_GMAIL: str(),
-	MY_GMAIL_PASSWORD: str()
+	MY_GMAIL_PASSWORD: str(),
 });
