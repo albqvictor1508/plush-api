@@ -12,6 +12,7 @@ import { createUserRoute } from "./routes/auth/new-user-route";
 import { sendCodeToUserRoute } from "./routes/auth/send-code-route";
 import { createChatRoute } from "./routes/chats/create-chat-route";
 import chalk from "chalk";
+import { listChatsByUserRoute } from "./routes/chats/list-chats-by-user-route";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors, { credentials: true });
@@ -30,6 +31,7 @@ app.setValidatorCompiler(validatorCompiler);
 app.register(createUserRoute);
 app.register(sendCodeToUserRoute);
 app.register(createChatRoute);
+app.register(listChatsByUserRoute);
 //escolhe a porta que vai ser aberta pra API e abre essa porta (e o console.log pra avisar que subiu)
 
 app

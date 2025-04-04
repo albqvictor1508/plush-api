@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { db } from "../drizzle/client";
 
 import { chats, chatParticipants } from "../drizzle/schema";
