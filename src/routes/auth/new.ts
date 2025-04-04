@@ -6,22 +6,41 @@ import { createUser } from "../../functions/create-user";
 export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post(
 		"/api/auth/user",
-		{ schema: { body: z.object({ phone: z.string(), code: z.string() }) } },
+		{
+			schema: {
+				body: z.object({
+					email: z.string().email(),
+					code: z.string().length(4),
+				}),
+				response: {
+					400: z.object({
+						error: z.string(),
+					}),
+					201: z.object({
+						id: z.string().uuid(),
+						email: z.string().email(),
+						name: z.string(),
+						description: z.string().nullable(),
+						createdAt: z.date(),
+						lastActiveAt: z.date().nullable(),
+					}),
+				},
+			},
+		},
 		async (request, reply) => {
-			const { phone, code } = request.body;
+			const { email, code } = request.body;
 
-			const storedCode = codes[phone];
+			const storedCode = codes[email];
 			if (!storedCode || storedCode.code !== code) {
 				return reply.status(400).send({ error: "invalid or expired code" });
 			}
 
-			const user = await createUser({ phone });
+			const user = await createUser({ email });
 			const token = app.jwt.sign({
-				id: user.id,
 				name: user.name,
-				phone: user.phone,
+				email: user.email,
 			});
-			return reply.setCookie("plush_auth", token).status(201).send(user);
+			return reply.setCookie("jwt", token).status(201).send(user);
 		},
 	);
 };

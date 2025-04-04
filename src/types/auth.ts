@@ -14,8 +14,12 @@ export type SendEmailParams = {
 	subject?: string;
 	html?: string;
 	text: string;
-	message: string;
 	email: string;
 };
 
-export type ValidateUserParams = { phone: string; code: string };
+export type JWTDecoded = {
+	id: string;
+	email: string;
+};
+
+export type ValidateUserParams = { email: string; code: string };

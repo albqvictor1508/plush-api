@@ -1,5 +1,6 @@
 import { createTransport } from "nodemailer";
 import type { SendEmailParams } from "../types/auth";
+import { env } from '../common/env';
 
 export const handleSendEmail = async ({
 	subject,

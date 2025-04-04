@@ -1,16 +1,16 @@
 {
-  "id": "f46b46db-129d-427b-aa18-0b1191b67bd2",
+  "id": "58479bb8-1765-4e34-89db-9444e698ddaa",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.chat_users": {
-      "name": "chat_users",
+    "public.chat_participants": {
+      "name": "chat_participants",
       "schema": "",
       "columns": {
         "chat_id": {
           "name": "chat_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -19,13 +19,20 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "joined_at": {
+          "name": "joined_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "chat_users_chat_id_chats_id_fk": {
-          "name": "chat_users_chat_id_chats_id_fk",
-          "tableFrom": "chat_users",
+        "chat_participants_chat_id_chats_id_fk": {
+          "name": "chat_participants_chat_id_chats_id_fk",
+          "tableFrom": "chat_participants",
           "tableTo": "chats",
           "columnsFrom": [
             "chat_id"
@@ -33,12 +40,12 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "chat_users_user_id_users_id_fk": {
-          "name": "chat_users_user_id_users_id_fk",
-          "tableFrom": "chat_users",
+        "chat_participants_user_id_users_id_fk": {
+          "name": "chat_participants_user_id_users_id_fk",
+          "tableFrom": "chat_participants",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -46,13 +53,13 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-        "chat_users_chat_id_user_id_pk": {
-          "name": "chat_users_chat_id_user_id_pk",
+        "chat_participants_chat_id_user_id_pk": {
+          "name": "chat_participants_chat_id_user_id_pk",
           "columns": [
             "chat_id",
             "user_id"
@@ -73,40 +80,27 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.messages": {
-      "name": "messages",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by": {
+          "name": "created_by",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "content": {
-          "name": "content",
-          "type": "text",
+        "last_message_at": {
+          "name": "last_message_at",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "sent_at": {
-          "name": "sent_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -115,17 +109,17 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_user_id_users_id_fk": {
-          "name": "messages_user_id_users_id_fk",
-          "tableFrom": "messages",
+        "chats_created_by_users_id_fk": {
+          "name": "chats_created_by_users_id_fk",
+          "tableFrom": "chats",
           "tableTo": "users",
           "columnsFrom": [
-            "user_id"
+            "created_by"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -152,8 +146,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "phone": {
-          "name": "phone",
+        "email": {
+          "name": "email",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -170,20 +164,109 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "last_active_at": {
+          "name": "last_active_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_phone_unique": {
-          "name": "users_phone_unique",
+        "users_email_unique": {
+          "name": "users_email_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "phone"
+            "email"
           ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.messages": {
+      "name": "messages",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chat_id": {
+          "name": "chat_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "messages_user_id_users_id_fk": {
+          "name": "messages_user_id_users_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "messages_chat_id_chats_id_fk": {
+          "name": "messages_chat_id_chats_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "chats",
+          "columnsFrom": [
+            "chat_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

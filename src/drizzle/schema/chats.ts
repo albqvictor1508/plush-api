@@ -1,17 +1,14 @@
-import {
-	pgTable,
-	serial,
-	text,
-	boolean,
-	uuid,
-	timestamp,
-} from "drizzle-orm/pg-core";
-import { users } from "./users";
+import { pgTable, serial, text, uuid, timestamp } from "drizzle-orm/pg-core";
+import { users, messages } from "./index";
 
 export const chats = pgTable("chats", {
 	id: serial("id").notNull().primaryKey(),
 	title: text("title"),
-	isGroup: boolean("is_group").default(false).notNull(),
-	createdAt: uuid("created_by").references(() => users.id),
+	createdBy: uuid("created_by")
+		.notNull()
+		.references(() => users.id, {
+			onDelete: "cascade",
+		}),
 	lastMessageAt: timestamp("last_message_at"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
