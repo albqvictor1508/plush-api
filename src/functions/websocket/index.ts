@@ -8,17 +8,6 @@ import { parseCookie } from "../../utils/parse-cookie";
 
 export const wss = new WebSocketServer({
 	server: app.server,
-	verifyClient: (info, done) => {
-		websocketAuth(app, info)
-			.then((user) => {
-				if (user) {
-					done(true);
-				} else {
-					done(false);
-				}
-			})
-			.catch(() => done(false));
-	},
 });
 
 wss.on("connection", async (ws: WebSocket, req: IncomingMessage) => {

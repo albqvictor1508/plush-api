@@ -1,5 +1,5 @@
 import { pgTable, serial, text, uuid, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./users";
+import { users, messages } from "./index";
 
 export const chats = pgTable("chats", {
 	id: serial("id").notNull().primaryKey(),
@@ -10,6 +10,5 @@ export const chats = pgTable("chats", {
 			onDelete: "cascade",
 		}),
 	lastMessageAt: timestamp("last_message_at"),
-	//timestamp("last_message_at").references(() => message.created_at)
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });

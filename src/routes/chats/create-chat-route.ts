@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createChat } from "../../functions/create-chat";
 import { parseCookie } from "../../utils/parse-cookie";
 import { db } from "../../drizzle/client";
-import { users } from "../../drizzle/schema";
+import { chatParticipants, users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
@@ -26,8 +26,11 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 						lastMessageAt: z.date().nullable(),
 					}),
 					400: z.object({
-						error: z.string()
-					})
+						error: z.string(),
+					}),
+					401: z.object({
+						error: z.string(),
+					}),
 				},
 			},
 		},
@@ -35,13 +38,22 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 			const { id } = await parseCookie(request.headers.cookie || "");
 			const { title, participantId } = request.body;
 
+			const [chatExists] = await db
+				.select({ chatId: chatParticipants.chatId })
+				.from(chatParticipants)
+				.where(eq(chatParticipants.userId, id));
+
+			if (chatExists) {
+				return reply.status(401).send({ error: "This chat already exists" });
+			}
+
 			const [userExists] = await db
 				.select({ id: users.id })
 				.from(users)
 				.where(eq(users.id, id));
 
 			if (!userExists?.id) {
-				reply.status(400).send({error: "user ID not founded"})
+				return reply.status(400).send({ error: "user ID not founded" });
 			}
 
 			const [participantExists] = await db
@@ -50,7 +62,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 				.where(eq(users.id, participantId));
 
 			if (!participantExists?.id) {
-				reply.status(400).send({error: "participant ID not founded"})
+				return reply.status(400).send({ error: "participant ID not founded" });
 			}
 
 			const chat = await createChat({ title, ownerId: id, participantId });

@@ -12,6 +12,11 @@ const messageSchema = z.object({
 	content: z.string().max(1000),
 });
 
+const createMessageParams = z.object({
+	chatId: z.number(),
+	content: z.string(),
+});
+
 export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 	try {
 		if (!ws.user) throw new Error("User not authenticated");
@@ -21,6 +26,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 		if (rawData.length > 1000) throw new Error("Message too large");
 
 		const message = JSON.parse(rawData);
+		createMessageParams.parse(message);
 
 		const [chat] = await db
 			.select()
@@ -51,7 +57,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 			.set({ lastMessageAt: new Date() })
 			.where(eq(chats.id, message.chatId));
 
-		const partcipants = await db
+		const participants = await db
 			.select({ userId: chatParticipants.userId })
 			.from(chatParticipants)
 			.where(eq(chatParticipants.chatId, message.chatId));
@@ -59,7 +65,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 		for (const client of wss.clients) {
 			if (
 				client.readyState === client.OPEN &&
-				partcipants.some((p) => p.userId === client.user?.id)
+				participants.some((p) => p.userId === client.user?.id)
 			) {
 				client.send(
 					JSON.stringify({
