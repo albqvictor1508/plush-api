@@ -1,11 +1,8 @@
 import { s3 } from "../common/storage/r2-config";
 import { env } from "../common/env";
+import type { UploadParams } from "../types/images";
 
 // Interface para os parâmetros de upload
-interface UploadParams {
-	fileName: string;
-	fileContent: Buffer | string;
-}
 
 // Função para upload de arquivo
 export const uploadFile = async ({
@@ -30,5 +27,5 @@ export const uploadFile = async ({
 
 // Função para gerar URL do arquivo armazenado
 export const getFileUrl = (fileName: string): string => {
-	return `https://${BUCKET_NAME}.${env.R2_ENDPOINT}/${fileName}`;
+	return `https://${env.R2_BUCKET_NAME}.${env.R2_ENDPOINT}/${fileName}`;
 };
