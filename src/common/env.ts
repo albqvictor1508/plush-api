@@ -1,3 +1,4 @@
+
 import { cleanEnv, num, str, url } from "envalid";
 
 export const env = cleanEnv(process.env, {
@@ -5,6 +6,7 @@ export const env = cleanEnv(process.env, {
 	DATABASE_URL: url(),
 	JWT_SECRET: str(),
 	PORT: num(),
+  COOKIE_SECRET: str(),
 
 	// Configuração de E-mail
 	MY_GMAIL: str(),
@@ -16,3 +18,4 @@ export const env = cleanEnv(process.env, {
 	R2_SECRET_KEY: str(),
 	R2_BUCKET_NAME: str(),
 });
+

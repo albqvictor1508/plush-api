@@ -2,42 +2,47 @@ import fastify from "fastify";
 import jwt from "@fastify/jwt";
 import { fastifyCookie } from "@fastify/cookie";
 import { fastifyCors } from "@fastify/cors";
-import fastifyMultipart from "@fastify/multipart";
 import {
 	type ZodTypeProvider,
 	validatorCompiler,
 	serializerCompiler,
 } from "fastify-type-provider-zod";
 import { env } from "./common/env";
-import { createUserRoute } from "./routes/auth/new";
-import { sendCodeToUserRoute } from "./routes/auth/send";
-import { uploadFileRoute } from "./routes/storage/uploadImages";
+import { createUserRoute } from "./routes/auth/new-user-route";
+import { sendCodeToUserRoute } from "./routes/auth/send-code-route";
+import { createChatRoute } from "./routes/chats/create-chat-route";
+import chalk from "chalk";
+import { listChatsByUserRoute } from "./routes/chats/list-chats-by-user-route";
 
-const app = fastify().withTypeProvider<ZodTypeProvider>();
-
-// registrar plugins (registrar antes das rotas)
-app.register(fastifyCors);
-app.register(jwt, { secret: env.JWT_SECRET });
-app.register(fastifyCookie);
+export const app = fastify().withTypeProvider<ZodTypeProvider>();
+app.register(fastifyCors, { credentials: true });
+app.register(jwt, {
+	secret: env.JWT_SECRET,
+	cookie: {
+		cookieName: "plush_auth",
+		signed: false,
+	},
+});
+app.register(fastifyCookie, { secret: env.COOKIE_SECRET });
 app.register(fastifyMultipart, {
-	limits: { fileSize: 10 * 1024 * 1024 }, // limite de 10MB por arquivo
+	limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-// configurar validação e serialização com Zod
 app.setSerializerCompiler(serializerCompiler);
 app.setValidatorCompiler(validatorCompiler);
 
-// registrar Rotas
 app.register(createUserRoute);
 app.register(sendCodeToUserRoute);
+app.register(createChatRoute);
+app.register(listChatsByUserRoute);
 app.register(uploadFileRoute);
 
-// iniciar servidor
 app
 	.listen({ port: env.PORT })
 	.then(() => {
-		console.log(`🚀 HTTP Server running on port ${env.PORT}`);
+		console.log(chalk.blueBright("HTTP/Websocket Server running!"));
 	})
 	.catch((e) => {
-		console.error("Erro ao iniciar o servidor:", e);
+		console.log(e);
 	});
+

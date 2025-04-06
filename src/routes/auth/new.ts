@@ -1,7 +1,4 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import 'fastify';
-import fastifyCookie from 'fastify-cookie';
-import fastifyJwt from 'fastify-jwt';
 import { z } from "zod";
 import { codes } from "../../functions/send-code-to-user";
 import { createUser } from "../../functions/create-user";
@@ -9,7 +6,27 @@ import { createUser } from "../../functions/create-user";
 export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post(
 		"/api/auth/user",
-		{ schema: { body: z.object({ email: z.string(), code: z.string() }) } },
+		{
+			schema: {
+				body: z.object({
+					email: z.string().email(),
+					code: z.string().length(4),
+				}),
+				response: {
+					400: z.object({
+						error: z.string(),
+					}),
+					201: z.object({
+						id: z.string().uuid(),
+						email: z.string().email(),
+						name: z.string(),
+						description: z.string().nullable(),
+						createdAt: z.date(),
+						lastActiveAt: z.date().nullable(),
+					}),
+				},
+			},
+		},
 		async (request, reply) => {
 			const { email, code } = request.body;
 
