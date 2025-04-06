@@ -24,6 +24,9 @@ app.register(jwt, {
 	},
 });
 app.register(fastifyCookie, { secret: env.COOKIE_SECRET });
+app.register(fastifyMultipart, {
+	limits: { fileSize: 10 * 1024 * 1024 },
+});
 
 app.setSerializerCompiler(serializerCompiler);
 app.setValidatorCompiler(validatorCompiler);
@@ -32,7 +35,7 @@ app.register(createUserRoute);
 app.register(sendCodeToUserRoute);
 app.register(createChatRoute);
 app.register(listChatsByUserRoute);
-//escolhe a porta que vai ser aberta pra API e abre essa porta (e o console.log pra avisar que subiu)
+app.register(uploadFileRoute);
 
 app
 	.listen({ port: env.PORT })
@@ -42,3 +45,4 @@ app
 	.catch((e) => {
 		console.log(e);
 	});
+

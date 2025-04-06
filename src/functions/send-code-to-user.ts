@@ -17,13 +17,11 @@ setInterval(() => {
 export async function sendCodeToUser({ name, email }: CreateUserParams) {
 	const generatedCode = Math.random().toString().slice(2, 6);
 	try {
-		const emailSubject = "Seu código de verificação";
-		const emailText = `Bom dia, ${name}! Seu código de verificação é: ${generatedCode}`;
 		await Promise.all([
 			await handleSendEmail({
-				subject: emailSubject,
+				subject: "Seu código de verificação",
 				email,
-				text: emailText,
+				text: `Bom dia, ${name}! Seu código de verificação é: ${generatedCode}`,
 			}),
 			// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 			(codes[email] = {
@@ -39,3 +37,4 @@ export async function sendCodeToUser({ name, email }: CreateUserParams) {
 		console.log(e);
 	}
 }
+
