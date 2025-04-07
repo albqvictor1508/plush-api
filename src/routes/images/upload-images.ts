@@ -1,8 +1,8 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { env } from "../../common/env";
-import { s3 } from "../../functions/r2-service";
+import { s3 } from "../../common/storage/r2-config";
 
-export const uploadFileRoutee: FastifyPluginAsyncZod = async (app) => {
+export const uploadFileRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post("/api/images", async (request, reply) => {
 		if (!request.isMultipart()) {
 			if (!request.isMultipart()) {
@@ -24,7 +24,6 @@ export const uploadFileRoutee: FastifyPluginAsyncZod = async (app) => {
 			if (!data) {
 				return reply.status(400).send({ error: "Nenhum arquivo enviado" });
 			}
-
 			// criando um buffer do arquivo
 			const fileBuffer = await data.toBuffer();
 
@@ -51,10 +50,3 @@ export const uploadFileRoutee: FastifyPluginAsyncZod = async (app) => {
 		}
 	});
 };
-
-export async function uploadFileRoute(app: FastifyInstance) {
-	app.post("/upload", async (request, reply) => {
-		// "https://localhost:3333/upload" para fazer a requisição
-		// verifica se a requisição contém multipart/form-data
-	});
-}
