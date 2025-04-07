@@ -26,7 +26,7 @@ app.register(jwt, {
 });
 app.register(fastifyCookie, { secret: env.COOKIE_SECRET });
 app.register(fastifyMultipart, {
-	limits: { fileSize: 10 * 1024 * 1024 },
+	limits: { fileSize: 10 * 1024 * 1024 }, //10 MB
 });
 
 app.setSerializerCompiler(serializerCompiler);
