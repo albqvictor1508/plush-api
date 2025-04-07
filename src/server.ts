@@ -13,6 +13,7 @@ import { sendCodeToUserRoute } from "./routes/auth/send-code-route";
 import { createChatRoute } from "./routes/chats/create-chat-route";
 import chalk from "chalk";
 import { listChatsByUserRoute } from "./routes/chats/list-chats-by-user-route";
+import fastifyMultipart from "@fastify/multipart";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors, { credentials: true });
@@ -45,4 +46,3 @@ app
 	.catch((e) => {
 		console.log(e);
 	});
-
