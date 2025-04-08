@@ -3,11 +3,11 @@ O banco ta sendo rodado pela Neon Database, eles sobem em uma instância da AWS,
 
 ORM é o ```Mapeamento Objeto-Relacional```, é como a gente vai escrever consulta pro banco sem escrever SQL puro, vou criar uma rota básica pra tu vê como vai ser inscrito
 
-### Seed
+## Seed
     npm run seed
 Apagando os dados que já estão no banco e adicionando novos dados pra teste, porém recomendo criar um usuário em um API Client como ```Postman```, já que 90% das rotas utilizam de *cookie-sections*(cookies de sessão), com seu *JWT*
 
-### Env
+## Env
 
 Existe um arquivo chamado ```env.ts```, que informa quais são as *variáveis de ambiente* necessárias para executar a API 
 
@@ -17,6 +17,14 @@ Existe um arquivo chamado ```env.ts```, que informa quais são as *variáveis de
       
 Executa a API e o Websocket
 
-### Routes
+## Routes
+
+### Send Code To User Route
+
+Envia email com código pro usuário
+
+    Body: {"name": "name", "email": "email@email.com"}
+
+    Response: {"success": true}
 
 {...}
