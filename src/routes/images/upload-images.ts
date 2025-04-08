@@ -1,6 +1,5 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { env } from "../../common/env";
-import { s3 } from "../../common/storage/r2-config";
+import { uploadFile } from "../../functions/images/upload-file";
 
 export const uploadFileRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post("/api/images", async (request, reply) => {
@@ -12,7 +11,7 @@ export const uploadFileRoute: FastifyPluginAsyncZod = async (app) => {
 			}
 
 			const parts = request.parts(); // captura os arquivos da requisição multipart
-			let data;
+			let data: unknown;
 
 			for await (const part of parts) {
 				if (part.type === "file") {
@@ -27,26 +26,12 @@ export const uploadFileRoute: FastifyPluginAsyncZod = async (app) => {
 			// criando um buffer do arquivo
 			const fileBuffer = await data.toBuffer();
 
-			// upload para Cloudflare R2
-			const uploadParams = {
-				Bucket: env.R2_BUCKET_NAME,
-				Key: data.filename,
-				Body: fileBuffer,
-				ContentType: data.mimetype,
-			};
-
-			try {
-				// corrigido para utilizar promise() do SDK do AWS
-				await s3.upload(uploadParams).promise(); // utilizando promise() para aguardar o upload/ sem ele a rota não funciona
-				return reply
-					.status(200)
-					.send({ message: "Upload concluído!", file: data.filename });
-			} catch (error) {
-				console.error("Erro ao enviar arquivo:", error);
-				return reply
-					.status(500)
-					.send({ error: "Erro ao enviar arquivo", details: error });
-			}
+			const fileUrl = await uploadFile({
+				userId,
+				fileContent,
+				fileName,
+				photoType,
+			});
 		}
 	});
 };

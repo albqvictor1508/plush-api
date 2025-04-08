@@ -14,6 +14,7 @@ import { createChatRoute } from "./routes/chats/create-chat-route";
 import chalk from "chalk";
 import { listChatsByUserRoute } from "./routes/chats/list-chats-by-user-route";
 import fastifyMultipart from "@fastify/multipart";
+import { uploadFileRoute } from "./routes/images/upload-images";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors, { credentials: true });

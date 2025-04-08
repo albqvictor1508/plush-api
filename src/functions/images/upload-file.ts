@@ -24,8 +24,7 @@ export const uploadFile = async ({
 	fileName,
 	fileContent,
 }: UploadParams): Promise<string> => {
-	const uniqueFileName = `${Date.now()}-${fileName}`;
-	const fullPath = getFileUrl({ fileName: uniqueFileName, userId, photoType });
+	const fullPath = getFileUrl({ fileName, userId, photoType });
 
 	try {
 		const params = {
