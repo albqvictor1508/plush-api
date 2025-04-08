@@ -6,6 +6,8 @@ import { uploadFile } from "../functions/images/upload-file";
 import { eq } from "drizzle-orm";
 import chalk from "chalk";
 import { z } from "zod";
+import { PhotoType } from "../types/images";
+import { getFileUrl } from "../functions/images/file-url";
 
 const updateUserSchema = z.object({
 	name: z.string(),
@@ -17,32 +19,43 @@ export const updateUserRoute: FastifyPluginAsyncZod = async (app) => {
 		const { id: userId } = await parseCookie(request.headers.cookie || "");
 		const data = await request.file();
 		const { profileData } = data?.fields;
-		let parsedData: { name: string; email: string };
+		const parsedData: { name: string; email: string } = JSON.parse(
+			profileData.value,
+		);
+		updateUserSchema.parse(parsedData);
+		const { name, email } = parsedData;
+		const user = await db
+			.update(users)
+			.set({ name, email })
+			.where(eq(users.id, userId))
+			.returning({ name: users.name, email: users.email });
 
 		if (!data) {
-			const parsedData: { name: string; email: string } = JSON.parse(
-				profileData.value,
-			);
-			updateUserSchema.parse(parsedData);
-			const { name, email } = parsedData;
-
-			await db; //update no user
-
 			return reply.status(200).send(user);
 		}
 
 		try {
-			const salve = "salve";
+			const fileBuffer = await data?.toBuffer();
+			await uploadFile({
+				userId,
+				fileName: "profile-photo",
+				fileContent: fileBuffer,
+				photoType: PhotoType.PROFILE,
+			});
 		} catch (error) {
-			throw new Error(chalk.bgCyanBright(`ERROR: ${error}`));
+			throw new Error(chalk.bgCyanBright(`ERROR ON BUFFER IMAGE: ${error}`));
 		}
+		let fileUrl: string | null;
+		try {
+			fileUrl = await getFileUrl({
+				fileName: "profile-photo",
+				photoType: PhotoType.PROFILE,
+				userId,
+			});
 
-		const fileBuffer = await data?.toBuffer();
-		await uploadFile({
-			userId,
-			fileName: "profile-photo",
-			fileContent: fileBuffer,
-			photoType: PhotoType.PROFILE,
-		});
+			return reply.status(200).send({ user, fileUrl });
+		} catch (error) {
+			throw new Error(`ERROR ON GENERATE SIGNED URL: ${error}`);
+		}
 	});
 };

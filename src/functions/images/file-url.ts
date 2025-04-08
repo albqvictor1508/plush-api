@@ -10,7 +10,9 @@ export const getFileUrl = async ({
 }): Promise<string | null> => {
 	const fullPath = `${userId}/${photoType}/${fileName}`;
 	try {
-		await checkFileExists(fullPath);
+		const file = await checkFileExists(fullPath);
+		if (!file) return null;
+
 		const signedUrl = s3.getSignedUrl("getObject", {
 			Bucket: env.R2_BUCKET_NAME,
 			Key: fullPath,
