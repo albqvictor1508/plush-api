@@ -9,7 +9,9 @@ Apagando os dados que já estão no banco e adicionando novos dados pra teste, p
 
 ### Env
 
-Existe um arquivo chamado ```env.ts```, que informa quais são as *variáveis de ambiente* necessárias para executar a API *(você só conseguirá executar com esses envs)*
+Existe um arquivo chamado ```env.ts```, que informa quais são as *variáveis de ambiente* necessárias para executar a API 
+
+*(você só conseguirá executar com esses envs)*
     
       npm run dev
       
