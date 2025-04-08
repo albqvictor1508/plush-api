@@ -1,8 +1,22 @@
+import chalk from "chalk";
 import { checkFileExists } from "./upload-file";
+import { s3 } from "../../common/storage/r2-config";
+import { env } from "../../common/env";
 
-export const getFileUrl = ({ fileName, photoType, userId }): string | null => {
+export const getFileUrl = async ({
+	fileName,
+	photoType,
+	userId,
+}): Promise<string | null> => {
 	const fullPath = `${userId}/${photoType}/${fileName}`;
-	if (!checkFileExists(fullPath))
-		throw new Error("This file not exists or not finded on bucket");
-	return fullPath;
+	try {
+		await checkFileExists(fullPath);
+		const signedUrl = s3.getSignedUrl("getObject", {
+			Bucket: env.R2_BUCKET_NAME,
+			Key: fullPath,
+		});
+		return signedUrl;
+	} catch (error) {
+		throw new Error(chalk.gray(`ERROR ON GENERATE URL: ${error}`));
+	}
 };
