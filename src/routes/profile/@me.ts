@@ -6,6 +6,7 @@ import chalk from "chalk";
 import { db } from "../../drizzle/client";
 import { users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { getFileUrl } from "../../functions/images/file-url";
 
 export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
 	app.put("/api/@me", async (request, reply) => {
@@ -36,12 +37,19 @@ export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
 
 		try {
 			const fileBuffer = await data?.toBuffer();
+			const fileName = data.filename || "profile-photo";
 
-			const fileUrl = await uploadFile({
+			await uploadFile({
 				userId,
-				fileName: data.filename || "profile-photo",
+				fileName,
 				fileContent: fileBuffer,
 				photoType: PhotoType.PROFILE,
+			});
+
+			const fileUrl = await getFileUrl({
+				userId,
+				photoType: PhotoType.PROFILE,
+				fileName,
 			});
 
 			return reply.status(200).send({ user, fileUrl });
