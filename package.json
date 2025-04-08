@@ -31,9 +31,11 @@
 	},
 	"type": "module",
 	"scripts": {
-		"dev": "tsx --env-file .env --watch src/functions/websocket/index.ts"
+		"dev": "tsx --env-file .env --watch src/functions/websocket/index.ts",
+		"seed": "tsx --env-file .env --watch src/drizzle/seed.ts"
 	},
 	"devDependencies": {
+		"@faker-js/faker": "^9.6.0",
 		"@neondatabase/serverless": "^0.10.4",
 		"@types/aws-sdk": "^0.0.42",
 		"@types/express": "^5.0.1",

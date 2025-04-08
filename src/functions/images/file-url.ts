@@ -1,9 +1,8 @@
-import { env } from "../../common/env";
 import { checkFileExists } from "./upload-file";
 
 export const getFileUrl = ({ fileName, photoType, userId }): string | null => {
-	const fullPath = `https://${env.R2_BUCKET_NAME}.${env.R2_ENDPOINT}/${userId}/${photoType}/${fileName}`;
-	if (!checkFileExists(fileName))
+	const fullPath = `${userId}/${photoType}/${fileName}`;
+	if (!checkFileExists(fullPath))
 		throw new Error("This file not exists or not finded on bucket");
 	return fullPath;
 };

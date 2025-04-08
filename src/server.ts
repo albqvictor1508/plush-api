@@ -38,7 +38,6 @@ app.register(createUserRoute);
 app.register(sendCodeToUserRoute);
 app.register(createChatRoute);
 app.register(listChatsByUserRoute);
-app.register(uploadFileRoute);
 app.register(getProfileRoute);
 
 app
