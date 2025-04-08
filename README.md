@@ -1,4 +1,4 @@
-## Como rodar a API
+# Plush API
 O banco ta sendo rodado pela Neon Database, eles sobem em uma instância da AWS, então não precisa se preocupar com ligar o banco, ele vai tá o tempo todo ligado lá, só vai precisar conectar o ORM ao banco
 
 ORM é o ```Mapeamento Objeto-Relacional```, é como a gente vai escrever consulta pro banco sem escrever SQL puro, vou criar uma rota básica pra tu vê como vai ser inscrito
