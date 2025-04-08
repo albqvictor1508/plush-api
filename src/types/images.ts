@@ -1,7 +1,5 @@
-import type { UUID } from "node:crypto";
-
 export type UploadParams = {
-	userId: UUID;
+	userId: string;
 	photoType: PhotoType;
 	fileName: string;
 	fileContent: Buffer | string;

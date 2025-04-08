@@ -7,7 +7,6 @@ export async function parseCookie(cookieHeader: string) {
 		throw new Error("Missing auth cookie");
 	}
 	const token = decodeURIComponent(cookies.plush_auth); //tira os caracteres especiais
-	console.log(`TOKEN: ${token}`);
 
 	const decoded = app.jwt.verify<JWTDecoded>(token); //verifica o jwt
 
