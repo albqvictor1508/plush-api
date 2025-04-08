@@ -3,9 +3,18 @@ O banco ta sendo rodado pela Neon Database, eles sobem em uma instância da AWS,
 
 ORM é o ```Mapeamento Objeto-Relacional```, é como a gente vai escrever consulta pro banco sem escrever SQL puro, vou criar uma rota básica pra tu vê como vai ser inscrito
 
-### Drizzle Kit
-    npx drizzle-kit generate
-Vai gerar o SQL das tabelas e criar um arquivo de migration pra caso tu queira ver o SQL que foi gerado
+### Seed
+    npm run seed
+Apagando os dados que já estão no banco e adicionando novos dados pra teste, porém recomendo criar um usuário em um API Client como ```Postman```, já que 90% das rotas utilizam de *cookie-sections*(cookies de sessão), com seu *JWT*
 
-      npx drizzle-kit migrate
-Vai executar esse SQL lá no banco, pegando a ```DATABASE URL```, que vai tá no teu arquivo ```.env``` como variável de ambiente pra não ser exposto
+### Env
+
+Existe um arquivo chamado ```env.ts```, que informa quais são as *variáveis de ambiente* necessárias para executar a API *(você só conseguirá executar com esses envs)*
+    
+      npm run dev
+      
+Executa a API e o Websocket
+
+### Routes
+
+{...}
