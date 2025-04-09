@@ -27,4 +27,31 @@ Envia email com código pro usuário
 
     Response: {"success": true}
 
-{...}
+### Create New User Route
+Recebe o código, valida se condiz com o que foi gerado e se sim, cria o user no banco
+
+    Body: {"email": "mybetteremail@gmail.com", "code": "0000"}
+
+    Response: {"success": true}
+
+{*essas duas responses vão ser retiradas no caso, coloquei só pra teste*}
+
+### Create Chat Route
+Cria o chat, colocando o próprio user, que é autenticado via cookie assim que loga no app, e um array de uuid's, que pode ser tanto 1 só, quanto vários id's
+
+    Body: {"title": "my-title", participantsId: ["uuid", "uuid", "uuid"]}
+
+
+    Response: {"title": "", "id": 1, createdAt, createdBy: "id do user que criou", lastMessageAt: timestamp da ultima mensagem, chatType: "private" | "group"}
+
+### List Chats By User Route
+Lista todos os chats daquele user, ordenados pelo ```lastMessageAt```
+
+    Response: 
+    
+    const listedChats: {
+        title: string | null;
+        id: number;
+        lastMessage: string;
+        lastMessageAt: Date | null;
+    }[]

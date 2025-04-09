@@ -1,7 +1,6 @@
 import { env } from "../../common/env";
 import { s3 } from "../../common/storage/r2-config";
 import type { UploadParams } from "../../types/images";
-import { getFileUrl } from "./file-url";
 
 export const checkFileExists = async (fullPath: string): Promise<boolean> => {
 	try {
