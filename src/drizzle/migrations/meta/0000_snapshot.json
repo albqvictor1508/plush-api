@@ -1,5 +1,5 @@
 {
-  "id": "58479bb8-1765-4e34-89db-9444e698ddaa",
+  "id": "d4273a8d-8e12-48ef-add5-a9c7a7362368",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -84,6 +84,13 @@
         "title": {
           "name": "title",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chatType": {
+          "name": "chatType",
+          "type": "chat_type",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },

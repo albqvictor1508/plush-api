@@ -9,7 +9,7 @@ import {
 import { chats } from "./chats";
 import { users } from "./users";
 
-// const roleEnum = pgEnum("role", ["admin", "member"]);
+const roleEnum = pgEnum("user_role", ["admin", "member"]);
 
 export const chatParticipants = pgTable(
 	"chat_participants",
@@ -20,6 +20,7 @@ export const chatParticipants = pgTable(
 		userId: uuid("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
+		role: roleEnum(),
 		joined_at: timestamp().notNull().defaultNow(),
 	},
 	(table) => ({
