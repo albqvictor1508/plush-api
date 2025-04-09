@@ -20,12 +20,12 @@ export async function createChat({
 
 		await db
 			.insert(chatParticipants)
-			.values({ userId: ownerId, chatId: chat.id });
+			.values({ userId: ownerId, chatId: chat.id, role: "admin" });
 
 		for (const participantId of participantsId) {
 			await db
 				.insert(chatParticipants)
-				.values({ userId: participantId, chatId: chat.id });
+				.values({ userId: participantId, chatId: chat.id, role: "member" });
 		}
 		return chat;
 	} catch (e) {
