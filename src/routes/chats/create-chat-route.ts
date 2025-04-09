@@ -6,7 +6,6 @@ import { db } from "../../drizzle/client";
 import { chatParticipants, chats, users } from "../../drizzle/schema";
 import { and, eq } from "drizzle-orm";
 
-
 export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post(
 		"/api/chats",
@@ -17,7 +16,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 				}),
 				body: z.object({
 					title: z.string().min(1).max(50),
-					participantId: z.string().uuid(),
+					participantsId: z.array(z.string().uuid()),
 				}),
 				response: {
 					201: z.object({
@@ -37,16 +36,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 		},
 		async (request, reply) => {
 			const { id } = await parseCookie(request.headers.cookie || "");
-			const { title, participantId } = request.body;
-
-			const [chatExists] = await db
-				.select({ chatId: chatParticipants.chatId })
-				.from(chats)
-        .innerJoin(chatParticipants, and(eq(chatParticipants.userId, id), eq(chatParticipants.userId, participantId)))
-
-			if (chatExists) {
-				return reply.status(401).send({ error: "This chat already exists" });
-			}
+			const { title, participantsId } = request.body;
 
 			const [userExists] = await db
 				.select({ id: users.id })
@@ -57,16 +47,34 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 				return reply.status(400).send({ error: "user ID not founded" });
 			}
 
-			const [participantExists] = await db
-				.select({ id: users.id })
-				.from(users)
-				.where(eq(users.id, participantId));
+			for (const participantId of participantsId) {
+				const [chatExists] = await db
+					.select({ chatId: chatParticipants.chatId })
+					.from(chats)
+					.innerJoin(
+						chatParticipants,
+						and(
+							eq(chatParticipants.userId, id),
+							eq(chatParticipants.userId, participantId),
+						),
+					);
+				if (chatExists) {
+					return reply.status(401).send({ error: "This chat already exists" });
+				}
 
-			if (!participantExists?.id) {
-				return reply.status(400).send({ error: "participant ID not founded" });
+				const [participantExists] = await db
+					.select({ id: users.id })
+					.from(users)
+					.where(eq(users.id, participantId));
+
+				if (!participantExists?.id) {
+					return reply
+						.status(400)
+						.send({ error: "participant ID not founded" });
+				}
 			}
 
-			const chat = await createChat({ title, ownerId: id, participantId });
+			const chat = await createChat({ title, ownerId: id, participantsId });
 			return reply.status(201).send(chat);
 		},
 	);

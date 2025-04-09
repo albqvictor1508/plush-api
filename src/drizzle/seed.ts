@@ -26,4 +26,5 @@ await db.insert(users).values([
 		email: faker.internet.email(),
 	},
 ]);
+
 console.log(chalk.yellow("Database seeded successfully."));

@@ -6,7 +6,14 @@ import { z } from "zod";
 export const toggleUserRoleRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post(
 		"/api/admin",
-		{ schema: { body: z.object({ participantId: z.string().uuid() }) } },
+		{
+			schema: {
+				body: z.object({
+					participantId: z.string().uuid(),
+					chatId: z.number().positive(),
+				}),
+			},
+		},
 		async (request, reply) => {
 			const { id: userId } = await parseCookie(request.headers.cookie || "");
 			const { participantId } = request.body;

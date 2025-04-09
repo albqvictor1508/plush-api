@@ -33,7 +33,10 @@ export async function toggleUserRole({
 
 	const newRole = participant.role === "admin" ? "member" : "admin";
 
-	await db.update(chatParticipants).set({ role: newRole });
+	await db
+		.update(chatParticipants)
+		.set({ role: newRole })
+		.where(eq(chatParticipants.userId, participantId));
 
 	return participant;
 }
