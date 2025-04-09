@@ -24,7 +24,7 @@ export const updateUserRoute: FastifyPluginAsyncZod = async (app) => {
 		);
 		updateUserSchema.parse(parsedData);
 		const { name, email } = parsedData;
-		const user = await db
+		const [user] = await db
 			.update(users)
 			.set({ name, email })
 			.where(eq(users.id, userId))
@@ -53,7 +53,7 @@ export const updateUserRoute: FastifyPluginAsyncZod = async (app) => {
 				userId,
 			});
 
-			return reply.status(200).send({ user, fileUrl });
+			return reply.status(200).send({ ...user, fileUrl });
 		} catch (error) {
 			throw new Error(`ERROR ON GENERATE SIGNED URL: ${error}`);
 		}

@@ -66,3 +66,23 @@ Pega as informações do usuário e sua foto, se não tem foto, retorna null, a�
         email: string;
         fileUrl: "url da imagem" | null
     }
+
+### Update User Route
+
+    Response:
+
+    {
+        name: string;
+        email: string;
+        fileUrl: "url da imagem" | null
+    }
+
+### Toggle User Role Route
+
+    Response: 
+
+    {
+        participantId: z.string().uuid(),
+		chatId: z.number().positive(),
+    }
+
