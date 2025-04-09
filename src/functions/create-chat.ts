@@ -10,9 +10,12 @@ export async function createChat({
 }: CreateChatParams) {
 	try {
 		let chatType: "private" | "group" = "private";
+		if (participantsId.length > 1) {
+			chatType = "group";
+		}
 		const [chat] = await db
 			.insert(chats)
-			.values({ createdBy: ownerId, title })
+			.values({ createdBy: ownerId, title, chatType })
 			.returning();
 
 		await db
@@ -20,14 +23,10 @@ export async function createChat({
 			.values({ userId: ownerId, chatId: chat.id });
 
 		for (const participantId of participantsId) {
-			if (participantsId.length > 1) {
-				chatType = "group";
-			}
 			await db
 				.insert(chatParticipants)
 				.values({ userId: participantId, chatId: chat.id });
 		}
-
 		return chat;
 	} catch (e) {
 		throw new Error(`ERROR TO CREATE CHAT: ${e}`);
