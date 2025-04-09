@@ -8,6 +8,13 @@
       "when": 1743706162349,
       "tag": "0000_shallow_sentinel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1744205095866,
+      "tag": "0001_mixed_jack_power",
+      "breakpoints": true
     }
   ]
 }

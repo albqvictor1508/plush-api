@@ -1,5 +1,6 @@
 import {
 	integer,
+	pgEnum,
 	pgTable,
 	primaryKey,
 	timestamp,
@@ -7,6 +8,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { chats } from "./chats";
 import { users } from "./users";
+
+// const roleEnum = pgEnum("role", ["admin", "member"]);
 
 export const chatParticipants = pgTable(
 	"chat_participants",
