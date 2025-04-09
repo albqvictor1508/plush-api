@@ -13,7 +13,7 @@ CREATE TYPE chat_type AS ENUM ('private', 'group');
 CREATE TABLE "chats" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" text,
-	"chatType" chat_type,
+	"chat_type" chat_type,
 	"created_by" uuid NOT NULL,
 	"last_message_at" timestamp,
 	"created_at" timestamp DEFAULT now() NOT NULL
@@ -29,7 +29,7 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TYPE status AS ENUM('sent', 'delivered', 'viewed');
+CREATE TYPE status AS ENUM('sent', 'delivered', 'viewed')
 
 CREATE TABLE "messages" (
 	"id" serial PRIMARY KEY NOT NULL,
@@ -47,3 +47,4 @@ ALTER TABLE "chat_participants" ADD CONSTRAINT "chat_participants_user_id_users_
 ALTER TABLE "chats" ADD CONSTRAINT "chats_created_by_users_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "messages" ADD CONSTRAINT "messages_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "messages" ADD CONSTRAINT "messages_chat_id_chats_id_fk" FOREIGN KEY ("chat_id") REFERENCES "public"."chats"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "chats"
