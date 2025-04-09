@@ -20,7 +20,7 @@ export const chatParticipants = pgTable(
 		userId: uuid("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
-		role: roleEnum(),
+		role: roleEnum("user_role").notNull().default("member"),
 		joined_at: timestamp().notNull().defaultNow(),
 	},
 	(table) => ({

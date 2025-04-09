@@ -13,7 +13,7 @@ const chatTypeEnum = pgEnum("chat_type", ["private", "group"]);
 export const chats = pgTable("chats", {
 	id: serial("id").notNull().primaryKey(),
 	title: text("title"),
-	chatType: chatTypeEnum(),
+	chatType: chatTypeEnum("chat_type").notNull().default("private"),
 	createdBy: uuid("created_by")
 		.notNull()
 		.references(() => users.id, {
