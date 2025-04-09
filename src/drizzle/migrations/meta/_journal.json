@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1742296742483,
-      "tag": "0000_lush_hawkeye",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1742339902389,
-      "tag": "0001_dusty_miss_america",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1742671910767,
-      "tag": "0002_naive_prowler",
+      "when": 1743706162349,
+      "tag": "0000_shallow_sentinel",
       "breakpoints": true
     }
   ]

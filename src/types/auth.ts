@@ -14,7 +14,11 @@ export type SendEmailParams = {
 	subject?: string;
 	html?: string;
 	text: string;
-	message: string;
+	email: string;
+};
+
+export type JWTDecoded = {
+	id: string;
 	email: string;
 };
 
