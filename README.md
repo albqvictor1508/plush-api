@@ -48,10 +48,21 @@ Cria o chat, colocando o próprio user, que é autenticado via cookie assim que 
 Lista todos os chats daquele user, ordenados pelo ```lastMessageAt```
 
     Response: 
-    
+
     const listedChats: {
         title: string | null;
         id: number;
         lastMessage: string;
         lastMessageAt: Date | null;
     }[]
+
+### Get Profile Route
+Pega as informações do usuário e sua foto, se não tem foto, retorna null, aí vocês coloca uma foto ai pra ficar no lugar
+
+    Response: 
+
+    {
+        name: string;
+        email: string;
+        fileUrl: "url da imagem" | null
+    }

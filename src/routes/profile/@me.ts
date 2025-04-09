@@ -24,7 +24,7 @@ export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
 				fileName: "profile-photo",
 			});
 
-			return reply.status(200).send({ user, fileUrl });
+			return reply.status(200).send({ ...user, fileUrl });
 		} catch (error) {
 			throw new Error(chalk.bgCyan(`ERROR TO ADD IMAGE ON STORAGE: ${error}`));
 		}
