@@ -5,6 +5,12 @@ export type UploadParams = {
 	fileContent: Buffer | string;
 };
 
+export type GetFileUrlParams = {
+	fileName: string;
+	photoType: string;
+	userId: string;
+};
+
 export enum PhotoType {
 	STORY = "story",
 	PROFILE = "profile",

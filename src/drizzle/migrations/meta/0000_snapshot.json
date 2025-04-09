@@ -1,5 +1,5 @@
 {
-  "id": "d4273a8d-8e12-48ef-add5-a9c7a7362368",
+  "id": "305b2ddb-3bb6-4e20-aed8-e46193f17d64",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -19,6 +19,14 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "user_role": {
+          "name": "user_role",
+          "type": "user_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'member'"
         },
         "joined_at": {
           "name": "joined_at",
@@ -87,12 +95,13 @@
           "primaryKey": false,
           "notNull": false
         },
-        "chatType": {
-          "name": "chatType",
-          "type": "chat_type",
+        "chat_type": {
+          "name": "chat_type",
+          "type": "type",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'private'"
         },
         "created_by": {
           "name": "created_by",
@@ -216,6 +225,14 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "message_status": {
+          "name": "message_status",
+          "type": "message_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'sent'"
         },
         "content": {
           "name": "content",

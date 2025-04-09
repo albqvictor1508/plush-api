@@ -44,6 +44,7 @@ export async function handleMessage(ws: WebSocket, data: WebSocket.RawData) {
 				content: message.content,
 				chatId: message.chatId,
 				userId: ws.user.id,
+				status: "sent", //pensar como vou realizar essa troca de status
 			})
 			.returning();
 
