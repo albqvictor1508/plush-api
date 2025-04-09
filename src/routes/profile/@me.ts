@@ -18,11 +18,12 @@ export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
 		let fileUrl: string | null;
 
 		try {
-			fileUrl = await getFileUrl({
-				fileName: "profile-photo",
-				photoType: PhotoType.PROFILE,
+			const fileUrl = await getFileUrl({
 				userId,
+				photoType: PhotoType.PROFILE,
+				fileName: "profile-photo",
 			});
+
 			return reply.status(200).send({ user, fileUrl });
 		} catch (error) {
 			throw new Error(chalk.bgCyan(`ERROR TO ADD IMAGE ON STORAGE: ${error}`));

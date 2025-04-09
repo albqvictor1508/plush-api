@@ -20,5 +20,6 @@ export const getFileUrl = async ({
 		return signedUrl;
 	} catch (error) {
 		throw new Error(chalk.gray(`ERROR ON GENERATE URL: ${error}`));
+
 	}
 };
