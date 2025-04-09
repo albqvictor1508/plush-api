@@ -10,16 +10,16 @@ export const getFileUrl = async ({
 }): Promise<string | null> => {
 	const fullPath = `${userId}/${photoType}/${fileName}`;
 	try {
-		await checkFileExists(fullPath);
+		const file = await checkFileExists(fullPath);
+		if (!file) return null;
 
-		const signedUrl = await s3.getSignedUrlPromise("getObject", {
+		const signedUrl = s3.getSignedUrl("getObject", {
 			Bucket: env.R2_BUCKET_NAME,
 			Key: fullPath,
-			Expires: 3600, //pensar nisso depois
 		});
-
 		return signedUrl;
 	} catch (error) {
-		throw new Error(chalk.bgGray(`ERROR TO GENERATE A SIGNED URL: ${error}`));
+		throw new Error(chalk.gray(`ERROR ON GENERATE URL: ${error}`));
+
 	}
 };

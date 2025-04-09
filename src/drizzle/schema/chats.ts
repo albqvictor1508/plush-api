@@ -1,9 +1,19 @@
-import { pgTable, serial, text, uuid, timestamp } from "drizzle-orm/pg-core";
-import { users, messages } from "./index";
+import {
+	pgTable,
+	serial,
+	text,
+	uuid,
+	timestamp,
+	pgEnum,
+} from "drizzle-orm/pg-core";
+import { users } from "./index";
+
+const chatTypeEnum = pgEnum("chat_type", ["private", "group"]);
 
 export const chats = pgTable("chats", {
 	id: serial("id").notNull().primaryKey(),
 	title: text("title"),
+	chatType: chatTypeEnum(),
 	createdBy: uuid("created_by")
 		.notNull()
 		.references(() => users.id, {

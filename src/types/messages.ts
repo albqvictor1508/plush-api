@@ -1,7 +1,7 @@
 export type CreateChatParams = {
 	title: string;
 	ownerId: string;
-	participantId: string;
+	participantsId: string[];
 };
 
 export enum Type {
