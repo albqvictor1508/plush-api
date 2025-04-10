@@ -68,6 +68,7 @@ Pega as informações do usuário e sua foto, se não tem foto, retorna null, a�
     }
 
 ### Update User Route
+Atualiza info do user, (coloca ela junto da de profile tlgd)
 
     Response:
 
@@ -78,6 +79,7 @@ Pega as informações do usuário e sua foto, se não tem foto, retorna null, a�
     }
 
 ### Toggle User Role Route
+altera o participante do chat de membro pra admin, e valida se é um admin que tá realizando a requisição, (*essa dá pra testar mas ainda vou mexer nela*)
 
     Response: 
 
