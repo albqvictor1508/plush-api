@@ -4,11 +4,20 @@ import { parseCookie } from "../utils/parse-cookie";
 import { PhotoType } from "../types/images";
 import { z } from "zod";
 import { getFileUrl } from "../functions/images/file-url";
+import { db } from "../drizzle/client";
+import { messages } from "../drizzle/schema";
 
 export const uploadImage: FastifyPluginAsyncZod = async (app) => {
 	app.post(
 		"/api/images",
-		{ schema: { body: z.object({ description: z.nullable(z.string()) }) } },
+		{
+			schema: {
+				body: z.object({
+					description: z.nullable(z.string()),
+					chatId: z.number(),
+				}),
+			},
+		},
 		async (request, reply) => {
 			const { id: userId } = await parseCookie(request.headers.cookie || "");
 			const parts = request.parts();
@@ -27,6 +36,8 @@ export const uploadImage: FastifyPluginAsyncZod = async (app) => {
 							fileContent: fileBuffered,
 						});
 					}
+
+					await db.insert(messages).values();
 				}
 			} catch (error) {
 				return reply.send(400).send(`ERROR TO UPLOAD FILE: ${error}`);
