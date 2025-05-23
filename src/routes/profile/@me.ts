@@ -15,7 +15,6 @@ export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
 			.select({ name: users.name, email: users.email })
 			.from(users)
 			.where(eq(users.id, userId));
-		let fileUrl: string | null;
 
 		try {
 			const fileUrl = await getFileUrl({
