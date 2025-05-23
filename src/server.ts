@@ -17,6 +17,8 @@ import fastifyMultipart from "@fastify/multipart";
 import { getProfileRoute } from "./routes/profile/@me";
 import { updateUserRoute } from "./routes/update-user";
 import { toggleUserRoleRoute } from "./routes/chats/toggle-user-role-route";
+import { deleteMessageRoute } from "./routes/messages/delete-message";
+import { updateMessageRoute } from "./routes/messages/update-message";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors, { credentials: true });
@@ -41,6 +43,8 @@ app.register(createChatRoute);
 app.register(listChatsByUserRoute);
 app.register(getProfileRoute);
 app.register(updateUserRoute);
+app.register(deleteMessageRoute);
+app.register(updateMessageRoute);
 app.register(toggleUserRoleRoute);
 
 app
