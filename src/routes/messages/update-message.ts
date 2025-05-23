@@ -20,7 +20,7 @@ export const updateMessageRoute: FastifyPluginAsyncZod = async (app) => {
 			if (!id) return reply.status(400).send("missing or invalid userId");
 			if (!messageId)
 				return reply.status(400).send("missing or invalid messageId");
-			if (!content) return reply.status(400).send("missing content");
+			if (!content) return reply.status(404).send("missing content");
 			const updatedMessage = await updateMessage(id, messageId, content);
 			return reply.status(200).send(updatedMessage);
 		},
