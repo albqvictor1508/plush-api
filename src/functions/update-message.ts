@@ -1,5 +1,5 @@
 import { db } from "../drizzle/client";
-import { messages, users } from "../drizzle/schema";
+import { messages } from "../drizzle/schema";
 import { and, eq } from "drizzle-orm";
 import type { MessageSchema } from "../types/messages";
 

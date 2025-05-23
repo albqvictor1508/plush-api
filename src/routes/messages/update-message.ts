@@ -1,10 +1,8 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { parseCookie } from "../../utils/parse-cookie";
-import { db } from "../../drizzle/client";
-import { messages } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
 import { updateMessage } from "../../functions/update-message";
+import type { MessageSchema } from "../../types/messages";
 
 export const updateMessageRoute: FastifyPluginAsyncZod = async (app) => {
 	app.put(
@@ -21,7 +19,11 @@ export const updateMessageRoute: FastifyPluginAsyncZod = async (app) => {
 			if (!messageId)
 				return reply.status(400).send("missing or invalid messageId");
 			if (!content) return reply.status(404).send("missing content");
-			const updatedMessage = await updateMessage(id, messageId, content);
+			const updatedMessage: MessageSchema = await updateMessage(
+				id,
+				messageId,
+				content,
+			);
 			return reply.status(200).send(updatedMessage);
 		},
 	);
