@@ -1,6 +1,7 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { uploadFile } from "../functions/images/upload-file";
 import { parseCookie } from "../utils/parse-cookie";
+import { PhotoType } from "../types/images";
 
 export const uploadImage: FastifyPluginAsyncZod = async (app) => {
 	app.post("/api/images", async (request, reply) => {
@@ -8,7 +9,12 @@ export const uploadImage: FastifyPluginAsyncZod = async (app) => {
 		const files = request.files();
 		for await (const file of files) {
 			const fileBuffered = await file.toBuffer();
-			await uploadFile(id);
+			await uploadFile({
+				userId: id,
+				photoType: PhotoType.IMAGE,
+				fileName: file.filename,
+				fileContent: fileBuffered,
+			});
 		}
 	});
 };
