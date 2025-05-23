@@ -3,11 +3,10 @@ import { messages } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function deleteMessage(
-	userId: string,
 	chatId: number,
 	messageId: number,
-) {
+): Promise<void> {
 	await db
 		.delete(messages)
-		.where(and(eq(messages.userId, userId), eq(messages.chatId, chatId)));
+		.where(and(eq(messages.chatId, chatId), eq(messages.id, messageId)));
 }

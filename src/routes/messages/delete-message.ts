@@ -44,7 +44,13 @@ export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
 					.status(400)
 					.send("the message has to be yours or you have to be an admin");
 
-			const success = await deleteMessage(user.id, message.id, chat.id);
+			try {
+				await deleteMessage(message.id, chat.id);
+			} catch (error) {
+				reply.status(400).send(`ERROR DELETING MESSAGE ${error}`);
+			}
+
+			return reply.status(200);
 		},
 	);
 };
