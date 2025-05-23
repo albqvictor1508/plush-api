@@ -2,7 +2,7 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { parseCookie } from "../../utils/parse-cookie";
 import { db } from "../../drizzle/client";
-import { chatParticipants, users } from "../../drizzle/schema";
+import { chatParticipants, chats, messages, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 
 export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
@@ -20,6 +20,11 @@ export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
 		async (request, reply) => {
 			const { userId, chatId, messageId } = request.body;
 
+			const [chat] = await db.select().from(chats).where(eq(chats.id, chatId));
+			const [message] = await db
+				.select()
+				.from(messages)
+				.where(eq(messages.id, messageId));
 			const [user] = await db
 				.select({ id: users.id, role: chatParticipants.role })
 				.from(chatParticipants)
@@ -35,6 +40,9 @@ export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
 				return reply
 					.status(400)
 					.send("the message has to be yours or you have to be an admin");
+			await db
+				.delete(messages)
+				.where(and(eq(messages.userId, user.id), eq(messages.chatId, chat.id)));
 		},
 	);
 };
