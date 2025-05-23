@@ -35,6 +35,9 @@ export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
 					),
 				);
 			if (!user) return reply.status(404).send("user not founded");
+			if (!chat) return reply.status(404).send("chat not founded");
+			if (!message) return reply.status(404).send("message not founded");
+
 			const { id } = await parseCookie(request.headers.cookie || "");
 			if (user.id !== id || user.role !== "admin")
 				return reply
