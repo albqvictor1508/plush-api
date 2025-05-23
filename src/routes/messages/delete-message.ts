@@ -4,6 +4,7 @@ import { parseCookie } from "../../utils/parse-cookie";
 import { db } from "../../drizzle/client";
 import { chatParticipants, chats, messages, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
+import { deleteMessage } from "../../functions/delete-message";
 
 export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
 	app.delete(
@@ -19,6 +20,7 @@ export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
 		},
 		async (request, reply) => {
 			const { userId, chatId, messageId } = request.body;
+			const { id } = await parseCookie(request.headers.cookie || "");
 
 			const [chat] = await db.select().from(chats).where(eq(chats.id, chatId));
 			const [message] = await db
@@ -37,15 +39,12 @@ export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
 			if (!user) return reply.status(404).send("user not founded");
 			if (!chat) return reply.status(404).send("chat not founded");
 			if (!message) return reply.status(404).send("message not founded");
-
-			const { id } = await parseCookie(request.headers.cookie || "");
 			if (user.id !== id || user.role !== "admin")
 				return reply
 					.status(400)
 					.send("the message has to be yours or you have to be an admin");
-			await db
-				.delete(messages)
-				.where(and(eq(messages.userId, user.id), eq(messages.chatId, chat.id)));
+
+			const success = await deleteMessage(user.id, message.id, chat.id);
 		},
 	);
 };
