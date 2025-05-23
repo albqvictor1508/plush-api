@@ -15,6 +15,6 @@ export const updateMessageRoute: FastifyPluginAsyncZod = async(app) => {
         if(!userId) return reply.status(400).send();
         const {messageId, content} = request.body;
         const updatedMessage = await db.update(messages).set({content, updatedAt: new Date()}).where(eq(messages.id, messageId)).returning();
-
+        return reply.status(200).send(updatedMessage);
     })
 }
