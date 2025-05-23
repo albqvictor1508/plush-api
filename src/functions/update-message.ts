@@ -12,8 +12,23 @@ export async function updateMessage(
 			messageId: messages.id,
 			messageUserId: messages.userId,
 			userId: users.id,
+			updatedAt: messages.updatedAt,
 		})
 		.from(messages)
-		.innerJoin(users, eq(users.id, userIdParam))
+		.innerJoin(users, eq(users.id, messages.userId))
 		.as("message_user");
+
+	const updatedMessage = await db
+		.with(allData)
+		.update(messages)
+		.set({ content: contentParam, updatedAt: new Date() })
+		.where(
+			and(
+				eq(allData.userId, userIdParam),
+				eq(allData.messageId, messageIdParam),
+			),
+		)
+		.returning();
+
+	return updatedMessage;
 }
