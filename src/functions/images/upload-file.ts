@@ -22,7 +22,7 @@ export const uploadFile = async ({
 	photoType,
 	fileName,
 	fileContent,
-}: UploadParams): Promise<string> => {
+}: UploadParams): Promise<void> => {
 	const fullPath = `${userId}/${photoType}/${fileName}`;
 
 	try {
@@ -33,8 +33,7 @@ export const uploadFile = async ({
 			ACL: "private",
 		};
 
-		const result = await s3.upload(params).promise();
-		return result.Location; // Retorna a URL do arquivo armazenado
+		await s3.upload(params).promise();
 	} catch (error) {
 		console.error("Erro no upload do arquivo:", error);
 		throw new Error("Falha ao fazer upload do arquivo.");
