@@ -1,7 +1,9 @@
-import {FastifyTypeProviderZod} from "fastify-type-provider-zod"
+import {FastifyPluginAsyncZod} from "fastify-type-provider-zod"
 import {z} from "zod";
+import {parseCookie} from "../../utils/parse-cookie"
+import { DeleteContact } from "../../functions/contacts/delete-contact";
 
-export const DeleteContactRoute: FastifyTypeProviderZod async (app) => {
+export const DeleteContactRoute: FastifyPluginAsyncZod = async (app) => {
   app.delete("api/contacts", {
     schema: {
       body: z.object({
@@ -11,7 +13,8 @@ export const DeleteContactRoute: FastifyTypeProviderZod async (app) => {
   }, async (request, reply) => {
     const {id: userId} = await parseCookie(request.headers.cookie || "");
     const {email} = request.body;
-
+    
+    if(!await DeleteContact(email)) return reply.status(400).send("");
     return reply.status(200);
   }) 
 }
