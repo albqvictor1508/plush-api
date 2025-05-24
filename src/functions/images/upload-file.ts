@@ -33,8 +33,8 @@ export const uploadFile = async ({
 			ACL: "private",
 		};
 
-		const result = await s3.upload(params).promise();
-		return result.Location; // Retorna a URL do arquivo armazenado
+		await s3.upload(params).promise();
+		return fullPath;
 	} catch (error) {
 		console.error("Erro no upload do arquivo:", error);
 		throw new Error("Falha ao fazer upload do arquivo.");
