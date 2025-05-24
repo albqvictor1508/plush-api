@@ -14,7 +14,7 @@ export const DeleteContactRoute: FastifyPluginAsyncZod = async (app) => {
     const {id: userId} = await parseCookie(request.headers.cookie || "");
     const {email} = request.body;
     
-    if(!await DeleteContact(email)) return reply.status(400).send("");
+    if(!await DeleteContact(email)) return reply.status(400).send("this contact not exists");
     return reply.status(200);
   }) 
 }
