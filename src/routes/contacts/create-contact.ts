@@ -6,7 +6,23 @@ export const CreateContactRoute: FastifyPluginAsyncZod = async (app) => {
 		"/api/contacts",
 		{
 			schema: {
-				body: z.object({}),
+				body: z.object({
+					name: z.string(),
+					email: z.string().email(),
+					userId: z.string().uuid(),
+					photoUrl: z.optional(z.string().url()),
+				}),
+				response: {
+					201: z.object({
+						id: z.number(),
+						name: z.string(),
+						email: z.string().email(),
+						userId: z.string().uuid(),
+						photoUrl: z.optional(z.string().url()),
+						createdAt: z.date(),
+						updatedAt: z.date(),
+					}),
+				},
 			},
 		},
 		async (request, response) => {},
