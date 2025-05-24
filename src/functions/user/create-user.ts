@@ -1,7 +1,7 @@
 import { db } from "../../drizzle/client";
 import { users } from "../../drizzle/schema";
 import type { NewAccountTemporaryData } from "../../types/auth";
-import { codes } from "../send-code-to-user";
+import { codes } from "../user/send-code-to-user";
 
 export async function createUser({ email }: { email: string }) {
 	const setting: NewAccountTemporaryData = codes[email]; //vai puxar as informações do usuário que eu salvei na outra função

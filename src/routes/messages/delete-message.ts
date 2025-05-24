@@ -4,7 +4,7 @@ import { parseCookie } from "../../utils/parse-cookie";
 import { db } from "../../drizzle/client";
 import { chatParticipants, chats, messages, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import { deleteMessage } from "../../functions/delete-message";
+import { deleteMessage } from "../../functions/messages/delete-message";
 
 export const deleteMessageRoute: FastifyPluginAsyncZod = async (app) => {
 	app.delete(
