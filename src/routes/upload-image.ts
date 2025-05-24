@@ -13,20 +13,18 @@ export const uploadImage: FastifyPluginAsyncZod = async (app) => {
 		const { id: userId } = await parseCookie(request.headers.cookie || "");
 		const parts = request.parts();
 		let fileName: string | undefined;
-		let fileBuffered: Buffer<ArrayBufferLike> | undefined;
 		let chatId: number | unknown;
 		let content: string | unknown;
 
 		try {
 			for await (const part of parts) {
 				if (part.type === "file") {
-					fileBuffered = await part.toBuffer();
-					fileName = part.filename;
+					const fileBuffered = await part.toBuffer();
 					files.push(part);
-					await uploadFile({
+					fileName = await uploadFile({
 						userId,
 						photoType: PhotoType.IMAGE,
-						fileName: fileName,
+						fileName: `plush_photo - ${new Date()}`,
 						fileContent: fileBuffered,
 					});
 				}
@@ -39,29 +37,33 @@ export const uploadImage: FastifyPluginAsyncZod = async (app) => {
 						content = part.value;
 					}
 				}
-				if (!chatId) {
-					return reply.status(400).send("Missing chatId");
-				}
+			}
+			if (!chatId) {
+				return reply.status(400).send("Missing chatId");
+			}
 
-				// await db.insert(messages).values({ userId, chatId });
+			if (files.length > 0) {
+				for (const file of files) {
+					const fileUrl = await getFileUrl({
+						photoType: PhotoType.IMAGE,
+						userId,
+						fileName: fileName as string,
+					});
+					const message = await db
+						.insert(messages)
+						.values({
+							userId: userId as string,
+							chatId: chatId as number,
+							content: (content as string) || "",
+							status: "sent",
+							fileUrl,
+						})
+						.returning();
+					return reply.status(201).send(message);
+				}
 			}
 		} catch (error) {
-			return reply.send(400).send(`ERROR TO UPLOAD FILE: ${error}`);
-		}
-		//resolver isso aq, pq dps essa rota provavelmente vai virar rota padrão pra criar mensagem
-		if (fileName || fileBuffered) {
-			const fileUrl = await getFileUrl({
-				fileName: fileName as string,
-				photoType: PhotoType.IMAGE,
-				userId,
-			});
-
-			const message = await db.insert(messages).values({
-				userId: userId as string,
-				status: "sent",
-				chatId: chatId as number,
-				content: content as string,
-			});
+			return reply.send(500).send(`ERROR TO UPLOAD FILE: ${error}`);
 		}
 	});
 };

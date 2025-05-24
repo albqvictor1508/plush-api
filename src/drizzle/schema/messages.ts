@@ -19,6 +19,7 @@ export const messages = pgTable("messages", {
 		.references(() => chats.id, { onDelete: "cascade" }),
 	status: statusEnum("message_status").notNull().default("sent"),
 	content: text("content").notNull(),
+	fileUrl: text("file_url"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at"),
 	deletedAt: timestamp("deleted_at"),
