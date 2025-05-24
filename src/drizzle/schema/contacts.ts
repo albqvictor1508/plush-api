@@ -13,6 +13,7 @@ export const contacts = pgTable("contacts", {
 	userId: uuid("user_id")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade" }),
+	photoUrl: text("photo_url"),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	isFixed: boolean("is_fixed").$default(() => false),
