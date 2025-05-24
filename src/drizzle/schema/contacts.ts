@@ -1,14 +1,18 @@
 import {
 	boolean,
-	integer,
 	pgTable,
 	serial,
 	text,
 	timestamp,
+	uuid,
 } from "drizzle-orm/pg-core";
+import { users } from "./users";
 
 export const contacts = pgTable("contacts", {
 	id: serial("id").primaryKey().notNull(),
+	userId: uuid("user_id")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade" }),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	isFixed: boolean("is_fixed").$default(() => false),
