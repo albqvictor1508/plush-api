@@ -19,6 +19,10 @@ import { updateUserRoute } from "./routes/update-user";
 import { toggleUserRoleRoute } from "./routes/chats/toggle-user-role-route";
 import { deleteMessageRoute } from "./routes/messages/delete-message";
 import { updateMessageRoute } from "./routes/messages/update-message";
+import {CreateContactRoute} from "./routes/contacts/create-contact"
+import {DeleteContactRoute} from "./routes/contacts/delete-contact"
+import {SearchContactByNameRoute} from "./routes/contacts/search-by-name"
+import {UpdateContactRoute} from "./routes/contacts/update-contact"
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors, { credentials: true });
@@ -46,6 +50,10 @@ app.register(updateUserRoute);
 app.register(deleteMessageRoute);
 app.register(updateMessageRoute);
 app.register(toggleUserRoleRoute);
+app.register(CreateContactRoute);
+app.register(DeleteContactRoute);
+app.register(SearchContactByNameRoute);
+app.register(UpdateContactRoute);
 
 app
 	.listen({ port: env.PORT })
