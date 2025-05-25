@@ -19,5 +19,6 @@ export const UpdateContactRoute: FastifyPluginAsyncZod = async(app) => {
         const {name,email,isFixed,photoUrl} = request.body;
         const {contactId} = request.params;
         const updatedContact = await updateContact(contactId, {name, email, photoUrl, isFixed});
+        return reply.status(200).send(updatedContact);
     })
 }
