@@ -23,7 +23,7 @@ export const DeleteGroupRoute: FastifyPluginAsyncZod = async(app) => {
 
         if(!chatExists) return reply.status(400).send("this chat not exist");
 
-        await db.delete(chats).where(eq(chats.id, chatId));
         await db.delete(chatParticipants).where(eq(chatParticipants.chatId, chatId));
+        await db.delete(chats).where(eq(chats.id, chatId));
     })
 }
