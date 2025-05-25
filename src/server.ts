@@ -19,6 +19,8 @@ import { updateUserRoute } from "./routes/update-user";
 import { toggleUserRoleRoute } from "./routes/chats/toggle-user-role-route";
 import { deleteMessageRoute } from "./routes/messages/delete-message";
 import { updateMessageRoute } from "./routes/messages/update-message";
+import { CreateGroupRoute } from "./routes/chats/create-group";
+import { LeaveGroupRoute } from "./routes/chats/leave-group";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors, { credentials: true });
@@ -46,6 +48,9 @@ app.register(updateUserRoute);
 app.register(deleteMessageRoute);
 app.register(updateMessageRoute);
 app.register(toggleUserRoleRoute);
+app.register(CreateGroupRoute);
+app.register(LeaveGroupRoute);
+
 
 app
 	.listen({ port: env.PORT })
