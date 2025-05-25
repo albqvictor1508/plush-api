@@ -1,3 +1,5 @@
+import { contacts } from "../drizzle/schema";
+
 export type ContactSchema = {
 	name: string;
 	email: string;
@@ -5,3 +7,5 @@ export type ContactSchema = {
 	isFixed: boolean;
 	photoUrl?: string;
 };
+
+export type PartialContact = Partial<ContactSchema>;
