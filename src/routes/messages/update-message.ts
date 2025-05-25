@@ -1,7 +1,7 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { parseCookie } from "../../utils/parse-cookie";
-import { updateMessage } from "../../functions/update-message";
+import { updateMessage } from "../../functions/messages/update-message";
 import type { MessageSchema } from "../../types/messages";
 
 export const updateMessageRoute: FastifyPluginAsyncZod = async (app) => {
