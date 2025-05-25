@@ -73,7 +73,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 						.send({ error: "participant ID not founded" });
 				}
 
-			const chat = await createChat({ title, ownerId: id, participantId });
+			const chat = await createChat({ title, ownerId: id, participantsId: [participantId] });
 			return reply.status(201).send(chat);
 		},
 	);
