@@ -74,7 +74,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 				}
 
 			const chat = await createChat({ title, ownerId: id, participantsId: [participantId] });
-			return reply.status(201).send(chat);
+			return reply.status(201).send(chat);z
 		},
 	);
 };
