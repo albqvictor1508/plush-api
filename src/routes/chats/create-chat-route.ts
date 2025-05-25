@@ -16,7 +16,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 				}),
 				body: z.object({
 					title: z.string().min(1).max(50),
-					participantsId: z.array(z.string().uuid()),
+					participantId: z.string().uuid(),
 				}),
 				response: {
 					201: z.object({
@@ -36,7 +36,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 		},
 		async (request, reply) => {
 			const { id } = await parseCookie(request.headers.cookie || "");
-			const { title, participantsId } = request.body;
+			const { title, participantId } = request.body;
 
 			const [userExists] = await db
 				.select({ id: users.id })
@@ -47,7 +47,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 				return reply.status(400).send({ error: "user ID not founded" });
 			}
 
-			for (const participantId of participantsId) {
+			
 				const [chatExists] = await db
 					.select({ chatId: chatParticipants.chatId })
 					.from(chats)
@@ -72,10 +72,9 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
 						.status(400)
 						.send({ error: "participant ID not founded" });
 				}
-			}
 
-			const chat = await createChat({ title, ownerId: id, participantsId });
-			return reply.status(201).send(chat);
+			const chat = await createChat({ title, ownerId: id, participantsId: [participantId] });
+			return reply.status(201).send(chat);z
 		},
 	);
 };
