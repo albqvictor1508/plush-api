@@ -21,5 +21,9 @@ export const LeaveGroupRoute: FastifyPluginAsyncZod = async(app) => {
         .where(and(eq(chatParticipants.chatId, chatId), eq(chatParticipants.userId, participantId), eq(chats.chatType, "group")));
 
         if(!groupExists) return reply.status(404).send("This group not exists");
+
+        await db.delete(chatParticipants).where(and(eq(chatParticipants.chatId, chatId),eq(chatParticipants.userId, participantId)));
+
+        return reply.status(200);
     })
 }
