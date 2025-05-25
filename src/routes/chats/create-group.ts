@@ -10,21 +10,22 @@ export const CreateGroupRoute: FastifyPluginAsyncZod = async(app) => {
         schema: {
             body: z.object({
                 title: z.string(),
-                createdBy: z.string().uuid(),
+                ownerId: z.string().uuid(),
                 participantsId: z.array(z.string().uuid()),
                 photoUrl: z.string().url().optional()
             })
         }
     },async (request, reply) => {
-        const {title,createdBy,participantsId,photoUrl} = request.body;
+        const {title,ownerId,participantsId,photoUrl} = request.body;
         for(const participantId of participantsId) {
             const [participantExists] = await db
             .select({exists: exists(users)})
             .from(users)
             .where(eq(users.id, participantId));
 
-            if(!participantExists) return reply.status(400).send(`the user with id: ${participantId} not exists`);
+            if(!participantExists.exists) return reply.status(400).send(`the user with id: ${participantId} not exists`);
         }
-        const group = createChat({title, participantsId, ownerId: createdBy});
+        const group = await createChat({title, participantsId, ownerId});
+        return reply.status(201).send(group);
     })
 }
