@@ -1,7 +1,7 @@
 export type CreateChatParams = {
 	title: string;
 	ownerId: string;
-	participantsId: string[];
+	participantId: string;
 };
 
 export type MessageSchema = {
