@@ -25,6 +25,7 @@
 		"nodemailer": "^6.10.0",
 		"postgres": "^3.4.5",
 		"sdk": "^0.1.1",
+		"tsup": "^8.5.0",
 		"ws": "^8.18.1",
 		"wscat": "^6.0.1",
 		"zod": "^3.24.2"
@@ -32,18 +33,17 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx --env-file .env --watch src/functions/websocket/index.ts",
-		"seed": "tsx --env-file .env --watch src/drizzle/seed.ts"
+		"seed": "tsx --env-file .env --watch src/drizzle/seed.ts",
+		"build": "tsup src"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^9.6.0",
 		"@neondatabase/serverless": "^0.10.4",
 		"@types/aws-sdk": "^0.0.42",
-		"@types/express": "^5.0.1",
 		"@types/multer": "^1.4.12",
 		"@types/node": "^22.13.13",
 		"aws-sdk-js-codemod": "^2.4.5",
 		"chalk": "^5.4.1",
-		"ts-node": "^10.9.2",
 		"tsx": "^4.19.3",
 		"typescript": "^5.8.2"
 	}

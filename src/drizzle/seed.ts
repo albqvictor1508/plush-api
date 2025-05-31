@@ -3,10 +3,12 @@ import { db } from "./client";
 import { faker } from "@faker-js/faker";
 import chalk from "chalk";
 
-await db.delete(users);
-await db.delete(chats);
-await db.delete(messages);
-await db.delete(chatParticipants);
+const clearDatabase = async () => {
+	await db.delete(users);
+	await db.delete(chats);
+	await db.delete(messages);
+	await db.delete(chatParticipants);
+};
 
 await db.insert(users).values([
 	{
