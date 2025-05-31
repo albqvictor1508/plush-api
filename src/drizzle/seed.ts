@@ -9,6 +9,7 @@ const clearDatabase = async () => {
 	await db.delete(messages);
 	await db.delete(chatParticipants);
 };
+clearDatabase();
 
 await db.insert(users).values([
 	{
