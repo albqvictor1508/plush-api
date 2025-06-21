@@ -1,14 +1,21 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import "fastify";
 import { z } from "zod";
-import { codes } from "../../functions/send-code-to-user";
-import { createUser } from "../../functions/create-user";
+import { codes } from "../../functions/user/send-code-to-user";
+import { createUser } from "../../functions/user/create-user";
 import { handleSendEmail } from "../../utils/send-email";
 
 export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
 	app.post(
 		"/api/auth/user",
-		{ schema: { body: z.object({ email: z.string().email(), code: z.string().length(4) }) } },
+		{
+			schema: {
+				body: z.object({
+					email: z.string().email(),
+					code: z.string().length(4),
+				}),
+			},
+		},
 		async (request, reply) => {
 			const { email, code } = request.body;
 
