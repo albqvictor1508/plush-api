@@ -9,6 +9,8 @@ export const wss = new WebSocketServer({
   server: app.server,
 });
 
+//TODO: REFATORAR ISSO TUDO AQUI PQ ESSA LIB TA ESTRANHA
+
 wss.on("connection", async (ws: WebSocket, req: IncomingMessage) => {
   const user: JWTDecoded = await parseCookie(req.headers.cookie || "");
   if (!user) {
