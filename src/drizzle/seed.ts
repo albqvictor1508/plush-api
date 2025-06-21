@@ -10,24 +10,26 @@ const clearDatabase = async () => {
 	await db.delete(chatParticipants);
 };
 clearDatabase();
-
-await db.insert(users).values([
-	{
-		name: faker.person.fullName(),
-		email: faker.internet.email(),
-	},
-	{
-		name: faker.person.fullName(),
-		email: faker.internet.email(),
-	},
-	{
-		name: faker.person.fullName(),
-		email: faker.internet.email(),
-	},
-	{
-		name: faker.person.fullName(),
-		email: faker.internet.email(),
-	},
-]);
+const insertDatabase = async () => {
+	await db.insert(users).values([
+		{
+			name: faker.person.fullName(),
+			email: faker.internet.email(),
+		},
+		{
+			name: faker.person.fullName(),
+			email: faker.internet.email(),
+		},
+		{
+			name: faker.person.fullName(),
+			email: faker.internet.email(),
+		},
+		{
+			name: faker.person.fullName(),
+			email: faker.internet.email(),
+		},
+	]);
+};
+insertDatabase();
 
 console.log(chalk.yellow("Database seeded successfully."));
