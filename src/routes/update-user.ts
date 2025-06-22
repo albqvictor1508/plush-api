@@ -10,52 +10,52 @@ import { PhotoType } from "../types/images";
 import { getFileUrl } from "../functions/images/file-url";
 
 const updateUserSchema = z.object({
-	name: z.string(),
-	email: z.string().email(),
+  name: z.string(),
+  email: z.string().email(),
 });
 
+//TODO: AJEITAR ESSA ROTA QUE TÁ ZUADA
 export const updateUserRoute: FastifyPluginAsyncZod = async (app) => {
-	app.put("/api/user", async (request, reply) => {
-		const { id: userId } = await parseCookie(request.headers.cookie || "");
-		const data = await request.file();
-		const { profileData } = data?.fields;
-		const parsedData: { name: string; email: string } = JSON.parse(
-			profileData.value,
-		);
-		updateUserSchema.parse(parsedData);
-		const { name, email } = parsedData;
-		const [user] = await db
-			.update(users)
-			.set({ name, email })
-			.where(eq(users.id, userId))
-			.returning({ name: users.name, email: users.email });
+  app.put("/api/user", async (request, reply) => {
+    const { id: userId } = await parseCookie(request.headers.cookie || "");
+    const data = await request.file();
 
-		if (!data) {
-			return reply.status(200).send(user);
-		}
+    if (!data) return reply.status(200).send({ error: "tenho que resolver essa fita" });
 
-		try {
-			const fileBuffer = await data?.toBuffer();
-			await uploadFile({
-				userId,
-				fileName: "profile-photo",
-				fileContent: fileBuffer,
-				photoType: PhotoType.PROFILE,
-			});
-		} catch (error) {
-			throw new Error(chalk.bgCyanBright(`ERROR ON BUFFER IMAGE: ${error}`));
-		}
-		let fileUrl: string | null;
-		try {
-			fileUrl = await getFileUrl({
-				fileName: "profile-photo",
-				photoType: PhotoType.PROFILE,
-				userId,
-			});
+    const { profileData } = data?.fields;
+    const parsedData: { name: string; email: string } = JSON.parse(
+      profileData.value,
+    );
+    updateUserSchema.parse(parsedData);
+    const { name, email } = parsedData;
+    const [user] = await db
+      .update(users)
+      .set({ name, email })
+      .where(eq(users.id, userId))
+      .returning({ name: users.name, email: users.email });
 
-			return reply.status(200).send({ ...user, fileUrl });
-		} catch (error) {
-			throw new Error(`ERROR ON GENERATE SIGNED URL: ${error}`);
-		}
-	});
+    try {
+      const fileBuffer = await data.toBuffer();
+      await uploadFile({
+        userId,
+        fileName: "profile-photo",
+        fileContent: fileBuffer,
+        photoType: PhotoType.PROFILE,
+      });
+    } catch (error) {
+      throw new Error(chalk.bgCyanBright(`ERROR ON BUFFER IMAGE: ${error}`));
+    }
+    let fileUrl: string | null;
+    try {
+      fileUrl = await getFileUrl({
+        fileName: "profile-photo",
+        photoType: PhotoType.PROFILE,
+        userId,
+      });
+
+      return reply.status(200).send({ ...user, fileUrl });
+    } catch (error) {
+      throw new Error(`ERROR ON GENERATE SIGNED URL: ${error}`);
+    }
+  });
 };
