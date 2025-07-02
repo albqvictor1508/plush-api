@@ -1,3 +1,4 @@
+/*
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { codes } from "../../functions/user/send-code-to-user.ts";
@@ -44,3 +45,4 @@ export const createUserRoute: FastifyPluginAsyncZod = async (app) => {
     },
   );
 };
+*/

@@ -47,19 +47,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
         return reply.status(400).send({ error: "user ID not founded" });
       }
 
-      const [chatExists] = await db
-        .select({ chatId: chatParticipants.chatId })
-        .from(chats)
-        .innerJoin(
-          chatParticipants,
-          and(
-            eq(chatParticipants.userId, id),
-            eq(chatParticipants.userId, participantId),
-          ),
-        );
-      if (chatExists) {
-        return reply.status(401).send({ error: "This chat already exists" });
-      }
+      
 
       const [participantExists] = await db
         .select({ id: users.id })
@@ -73,7 +61,7 @@ export const createChatRoute: FastifyPluginAsyncZod = async (app) => {
       }
 
       const chat = await createChat({ title, ownerId: id, participantsId: [participantId] });
-      return reply.status(201).send(chat); z
+      return reply.status(201).send(chat);
     },
   );
 };

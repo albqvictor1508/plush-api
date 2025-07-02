@@ -1,32 +1,33 @@
-import fastify from "fastify";
-import jwt from "@fastify/jwt";
 import { fastifyCookie } from "@fastify/cookie";
 import { fastifyCors } from "@fastify/cors";
+import jwt from "@fastify/jwt";
+import fastifyMultipart from "@fastify/multipart";
+import chalk from "chalk";
+import fastify from "fastify";
 import {
   type ZodTypeProvider,
-  validatorCompiler,
   serializerCompiler,
+  validatorCompiler,
 } from "fastify-type-provider-zod";
 import { env } from "./common/env";
+import { seed } from "./drizzle/seed.ts";
 import { createUserRoute } from "./routes/auth/new-user-route";
 import { sendCodeToUserRoute } from "./routes/auth/send-code-route";
 import { createChatRoute } from "./routes/chats/create-chat-route";
-import { seed } from "./drizzle/seed.ts"
-import chalk from "chalk";
-import { listChatsByUserRoute } from "./routes/chats/list-chats-by-user-route";
-import fastifyMultipart from "@fastify/multipart";
-import { getProfileRoute } from "./routes/profile/@me";
-import { updateUserRoute } from "./routes/update-user";
-import { toggleUserRoleRoute } from "./routes/chats/toggle-user-role-route";
-import { deleteMessageRoute } from "./routes/messages/delete-message";
-import { updateMessageRoute } from "./routes/messages/update-message";
 import { CreateGroupRoute } from "./routes/chats/create-group";
 import { LeaveGroupRoute } from "./routes/chats/leave-group";
+import { listChatsByUserRoute } from "./routes/chats/list-chats-by-user-route";
+import { toggleUserRoleRoute } from "./routes/chats/toggle-user-role-route";
+import { CreateContactRoute } from "./routes/contacts/create-contact";
+import { DeleteContactRoute } from "./routes/contacts/delete-contact";
+import { SearchContactByNameRoute } from "./routes/contacts/search-by-name";
+import { UpdateContactRoute } from "./routes/contacts/update-contact";
+import { deleteMessageRoute } from "./routes/messages/delete-message";
 import { SearchByContentRoute } from "./routes/messages/search-by-content";
-import { CreateContactRoute } from "./routes/contacts/create-contact"
-import { DeleteContactRoute } from "./routes/contacts/delete-contact"
-import { SearchContactByNameRoute } from "./routes/contacts/search-by-name"
-import { UpdateContactRoute } from "./routes/contacts/update-contact"
+import { updateMessageRoute } from "./routes/messages/update-message";
+import { getProfileRoute } from "./routes/profile/@me";
+import { updateUserRoute } from "./routes/update-user";
+import { sendMessageRoute } from "./routes/messages/send-message.ts";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.register(fastifyCors, { credentials: true });
@@ -53,6 +54,7 @@ app.register(getProfileRoute);
 app.register(updateUserRoute);
 app.register(deleteMessageRoute);
 app.register(updateMessageRoute);
+app.register(sendMessageRoute);
 app.register(toggleUserRoleRoute);
 app.register(CreateGroupRoute);
 app.register(LeaveGroupRoute);
@@ -67,8 +69,8 @@ await seed();
 app
   .listen({ port: env.PORT })
   .then(() => {
-    console.log(chalk.blueBright("HTTP/Websocket Server running!"));
+    console.log(chalk.blueBright(`"HTTP/Websocket Server running on ${env.PORT}!"`));
   })
   .catch((e) => {
-    console.log(e);
+    console.error(e);
   });
