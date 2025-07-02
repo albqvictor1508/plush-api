@@ -4,7 +4,6 @@ import { and, eq } from "drizzle-orm";
 import { chats, chatParticipants } from "../../../drizzle/schema";
 import { messages } from "../../../drizzle/schema/messages";
 import { z } from "zod";
-import { app } from "../../../server";
 import { wss } from "..";
 import { JWTDecoded } from "../../../types/auth";
 
@@ -18,7 +17,6 @@ export async function handleMessage(ws: WebSocket, user: JWTDecoded, data: WebSo
     if (!user) throw new Error("User not authenticated");
 
     const rawData = data.toString();
-    app.log.error("toma no cu mizera");
     if (rawData.length > 1000) throw new Error("Message too large");
 
     const message = JSON.parse(rawData);
@@ -62,7 +60,7 @@ export async function handleMessage(ws: WebSocket, user: JWTDecoded, data: WebSo
     for (const client of wss.clients) {
       if (
         client.readyState === client.OPEN &&
-        participants.some((p) => p.userId === client.user?.id)
+        participants.some((p) => p.userId === user.id)
       ) {
         client.send(
           JSON.stringify({

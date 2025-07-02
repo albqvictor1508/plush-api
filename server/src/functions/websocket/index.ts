@@ -1,5 +1,5 @@
 import { app } from "../../server";
-import { WebSocketServer } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 import { handleMessage } from "./handlers/message";
 import type { IncomingMessage } from "node:http";
 import { parseCookie } from "../../utils/parse-cookie";
@@ -8,8 +8,6 @@ import { JWTDecoded } from "../../types/auth";
 export const wss = new WebSocketServer({
   server: app.server,
 });
-
-//TODO: REFATORAR ISSO TUDO AQUI PQ ESSA LIB TA ESTRANHA
 
 wss.on("connection", async (ws: WebSocket, req: IncomingMessage) => {
   const user: JWTDecoded = await parseCookie(req.headers.cookie || "");
@@ -31,6 +29,6 @@ wss.on("connection", async (ws: WebSocket, req: IncomingMessage) => {
   });
 
   ws.on("close", () => {
-    app.log.info(`Client disconnected: ${ws.user?.email}`);
+    app.log.info(`Client disconnected: ${user.email}`);
   });
 });
