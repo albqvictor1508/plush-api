@@ -1,5 +1,5 @@
 import { fastify } from "fastify"
-import { ZodTypeProvider, validatorCompiler, serializerCompiler } from "fastify-type-provider-zod"
+import { type ZodTypeProvider, validatorCompiler, serializerCompiler } from "fastify-type-provider-zod"
 
 async function createApp() {
   const app = fastify()
