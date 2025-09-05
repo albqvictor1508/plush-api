@@ -6,4 +6,5 @@ export const env = e.cleanEnv(process.env, {
   REDIS_HOST: e.str(),
   REDIS_PORT: e.port(),
   PORT: e.port(),
+  APP_NAME: e.str(),
 })
