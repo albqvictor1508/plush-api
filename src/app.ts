@@ -1,10 +1,13 @@
 import { env } from "./common/env";
+import { routify } from "./common/routify";
 import { createApp } from "./core";
 
-export const app = await createApp();
+const app = await createApp();
 const { APP_NAME, PORT } = env
 
-app.listen({ port: PORT }, (err, port) => {
+await routify(app)
+
+app.listen({ port: PORT }, (err) => {
   if (err) return err
-  console.log(`${APP_NAME} server running on :${port}`)
+  console.log(`${APP_NAME} server running on :${PORT}`)
 })
