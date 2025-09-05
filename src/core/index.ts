@@ -34,13 +34,16 @@ export async function createApp() {
   })
 
   app.addHook("onRequest", async (request, reply) => {
-    let auth = { id: "", email: "" }
+    const { jwt } = app
+    const { plush } = request.cookies;
     const { url } = request;
 
-    if (NON_AUTH_ROUTES.includes(url)) return auth
+    if (NON_AUTH_ROUTES.includes(url)) return { id: "", email: "" }
 
+    const user = jwt.verify(plush!)
+    if (!user) return "Unauthorized" //WARN: tratar erro
+    app.decorateRequest("auth", { user })
   })
-  //TODO: 'middleware' de auth pra validar jwt e cookie e retornar o user
 
   return app;
 }
