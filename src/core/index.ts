@@ -3,6 +3,9 @@ import fastifyCookie from "@fastify/cookie";
 import { fastify } from "fastify"
 import { type ZodTypeProvider, validatorCompiler, serializerCompiler } from "fastify-type-provider-zod"
 import { env } from "src/common/env";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import { ErrorMessages } from "src/common/error/messages";
 
 export async function createApp() {
   const app = fastify()
@@ -11,11 +14,11 @@ export async function createApp() {
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
 
-  app.register(fastifyJwt, {
+  await app.register(fastifyJwt, {
     secret: env.JWT_SECRET
   })
 
-  app.register(fastifyCookie, {
+  await app.register(fastifyCookie, {
     secret: env.JWT_SECRET,
     parseOptions: {
       httpOnly: true,
@@ -24,8 +27,21 @@ export async function createApp() {
     }
   })
 
+  await app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: `${env.APP_NAME} API`,
+        description: `${env.APP_NAME} API documentation`,
+        version: "1.0.0"
+      }
+    }
+  })
+
+  await app.register(fastifySwaggerUi, {
+    routePrefix: "/docs"
+  })
+
   const ALLOWED_HEADERS: string[] = ["authorization", "user-agent", "content-type"];
-  const NON_AUTH_ROUTES: string[] = ["/health"]
 
   app.addHook("onRequest", async (request, reply) => {
     for await (const header of Object.keys(request.headers)) {
@@ -34,14 +50,17 @@ export async function createApp() {
   })
 
   app.addHook("onRequest", async (request, reply) => {
+    const NON_AUTH_ROUTES: string[] = []
+
     const { jwt } = app
     const { plush } = request.cookies;
     const { url } = request;
 
-    if (NON_AUTH_ROUTES.includes(url)) return { id: "", email: "" }
+    if (url === "/health" || url.startsWith("/docs")) return
+    if (NON_AUTH_ROUTES.includes(url)) return
 
     const user = jwt.verify(plush!)
-    if (!user) return "Unauthorized" //WARN: tratar erro
+    if (!user) return reply.code(401).send({ error: ErrorMessages[2001] }) //WARN: tratar erro
     app.decorateRequest("auth", { user })
   })
 

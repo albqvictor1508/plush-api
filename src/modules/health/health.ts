@@ -4,6 +4,8 @@ import z from "zod";
 export const route: FastifyPluginAsyncZod = async (app) => {
   app.get("/health", {
     schema: {
+      summary: "Health check route",
+      tags: ["health"],
       response: {
         200: z.string()
       }
