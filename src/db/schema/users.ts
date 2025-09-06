@@ -1,10 +1,10 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { bigint, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 //TODO: ver uma forma de um usuário conseguir atribuir um apelido a outro
 
 export const users = pgTable("users", {
-  id: text().primaryKey(),
-  username: text(),
+  id: bigint("id", { mode: "bigint" }).primaryKey(),
+  email: text().unique().notNull(),
   authId: text(),
   avatar: text(),
   password: text(),
