@@ -23,7 +23,7 @@ async function waitNextMillis(lastTimestamp: bigint): Promise<bigint> {
   return ts;
 }
 
-export const snowflake = async () => {
+export const snowflake = async (): Promise<bigint> => {
   let ts = BigInt(Date.now())
 
   if (ts === lastTimestamp) {
