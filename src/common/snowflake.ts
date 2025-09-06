@@ -33,6 +33,10 @@ export const snowflake = async () => {
     }
   }
 
+  if (ts !== lastTimestamp) {
+    sequence = 0n;
+  }
+
   lastTimestamp = ts
   return ((ts - EPOCH) << (workerBits + sequenceBits) | (workerId << sequenceBits) | sequence)
 }
