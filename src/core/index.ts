@@ -27,6 +27,8 @@ export async function createApp() {
     }
   })
 
+  //TODO: criar as sessions, adicionar healthcheck do redis na rota health
+
   await app.register(fastifySwagger, {
     openapi: {
       info: {
