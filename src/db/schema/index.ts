@@ -1,1 +1,3 @@
-export const schema = [];
+import { users } from "./users.ts";
+
+export const schema = { users };

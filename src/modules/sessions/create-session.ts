@@ -1,13 +1,17 @@
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { env } from "src/common/env";
+import { redis } from "src/common/cache";
 import { Snowflake } from "src/common/snowflake";
 import { db } from "src/db/client";
 import { users } from "src/db/schema/users";
+import type { JWTPayload } from "src/types";
 import z from "zod";
 
-const { APP_NAME } = env;
+//const { APP_NAME } = env;
+const FIFTEEN_MIN = "15m";
+const FIFTEEN_DAYS = "15d";
+const TWO_MIN_IN_SECS = "120";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
 	app.post(
@@ -61,21 +65,22 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 			const hashedPassword = await bcrypt.hash(password, 10);
 
 			const id = await new Snowflake().create();
-			const user = await db
+			const [user] = await db
 				.insert(users)
 				.values({
 					id,
 					email,
 					name,
-					avatar: "", //url do arquivo no bucket
 					password: hashedPassword,
 				})
 				.returning({ id: users.id, email: users.email });
+			redis.setex(`users:${email}`, TWO_MIN_IN_SECS, JSON.stringify(user));
 
-			const token = jwt.sign(user);
+			const access = jwt.sign(user as JWTPayload, { expiresIn: FIFTEEN_MIN });
+			const refresh = jwt.sign(user as JWTPayload, { expiresIn: FIFTEEN_DAYS });
 
-			reply.setCookie("refresh", token);
-			reply.setCookie("access", token);
+			reply.setCookie("refresh", refresh);
+			reply.setCookie("access", access);
 		},
 	);
 };

@@ -1,16 +1,15 @@
-import fastifyJwt from "@fastify/jwt";
 import fastifyCookie from "@fastify/cookie";
-import { fastify } from "fastify";
-import {
-	type ZodTypeProvider,
-	validatorCompiler,
-	serializerCompiler,
-} from "fastify-type-provider-zod";
-import { env } from "src/common/env";
+import fastifyJwt from "@fastify/jwt";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
+import { fastify } from "fastify";
+import {
+	serializerCompiler,
+	validatorCompiler,
+	type ZodTypeProvider,
+} from "fastify-type-provider-zod";
+import { env } from "src/common/env";
 import { ErrorMessages } from "src/common/error/messages";
-import { s3 } from "src/common/bucket";
 
 export async function createApp() {
 	const app = fastify();
@@ -32,7 +31,8 @@ export async function createApp() {
 		},
 	});
 
-	//TODO: criar as sessions, adicionar healthcheck do redis na rota health
+	//TODO: criar as sessions,
+	//adicionar healthcheck do redis na rota health
 
 	await app.register(fastifySwagger, {
 		openapi: {
