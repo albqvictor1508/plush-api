@@ -1,42 +1,60 @@
-import { hostname } from "os"
+import { hostname } from "node:os";
 
-const workerBits = 10n;
-const sequenceBits = 12n;
-const EPOCH = 1735771200000n;
+export class Snowflake {
+	private workerBits: bigint = 10n;
+	private sequenceBits: bigint = 12n;
+	private EPOCH: bigint = 10n;
+	private maxSequence: bigint = (1n << this.sequenceBits) - 1n;
+	private workerId: bigint = BigInt(
+		hostname()
+			.split("")
+			.reduce((acc, c) => acc + c.charCodeAt(0), 0 + process.pid) & 0x3ff,
+	);
+	private lastTimestamp: bigint = 0n;
+	private sequence: bigint = 0n;
 
-const maxSequence = (1n << sequenceBits) - 1n;
+	public async create(): Promise<bigint> {
+		let ts = BigInt(Date.now());
 
-const workerId = BigInt(
-  hostname()
-    .split("")
-    .reduce((acc, c) => acc + c.charCodeAt(0), 0 + process.pid) & 0x3ff
-)
+		if (ts === this.lastTimestamp) {
+			this.sequence = (this.sequence + 1n) & this.maxSequence;
+			if (this.sequence === 0n) {
+				ts = this.wait(this.lastTimestamp);
+			}
+		}
 
-let lastTimestamp = 0n;
-let sequence = 0n;
+		if (ts !== this.lastTimestamp) {
+			this.sequence = 0n;
+		}
 
-async function waitNextMillis(lastTimestamp: bigint): Promise<bigint> {
-  let ts = BigInt(Date.now())
-  while (ts <= lastTimestamp) {
-    ts = BigInt(Date.now())
-  }
-  return ts;
-}
+		this.lastTimestamp = ts;
+		return (
+			((ts - this.EPOCH) << (this.workerBits + this.sequenceBits)) |
+			(this.workerId << this.sequenceBits) |
+			this.sequence
+		);
+	}
 
-export const snowflake = async (): Promise<bigint> => {
-  let ts = BigInt(Date.now())
+	private wait(lastTimestamp: bigint): bigint {
+		let ts = BigInt(Date.now());
+		while (ts <= lastTimestamp) {
+			ts = BigInt(Date.now());
+		}
+		return ts;
+	}
 
-  if (ts === lastTimestamp) {
-    sequence = (sequence + 1n) & maxSequence
-    if (sequence === 0n) {
-      ts = await waitNextMillis(lastTimestamp)
-    }
-  }
+	public decode(id: bigint) {
+		const sequenceMask = (1n << 12n) - 1n;
+		const workerMask = ((1n << 10n) - 1n) << 12n;
 
-  if (ts !== lastTimestamp) {
-    sequence = 0n;
-  }
+		const sequence = id & sequenceMask;
+		const workerId = (id & workerMask) >> 12n;
+		const ts = (id >> (10n + 12n)) + this.EPOCH;
 
-  lastTimestamp = ts
-  return ((ts - EPOCH) << (workerBits + sequenceBits) | (workerId << sequenceBits) | sequence)
+		return {
+			timestamp: Number(ts),
+			workerId: Number(workerId),
+			sequence: Number(sequence),
+		};
+	}
 }

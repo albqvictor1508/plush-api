@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev": "bun run --env-file .env --watch src/app.ts",
-    "seed": "bun run --env-file .env src/db/seed.ts"
+    "seed": "bun run --env-file .env src/db/seed.ts",
+    "format": "biome format"
   },
   "peerDependencies": {
     "typescript": "^5"
