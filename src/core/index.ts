@@ -56,7 +56,7 @@ export async function createApp() {
     "content-type",
   ];
 
-  app.addHook("onRequest", async (request, reply) => {
+  app.addHook("onRequest", async (request, _) => {
     for await (const header of Object.keys(request.headers)) {
       if (!ALLOWED_HEADERS.includes(header.toLowerCase()))
         return `header ${header} is not allowed`;
