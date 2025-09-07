@@ -8,8 +8,11 @@ export const refresh = async (token: string | null) => {
 
   const hash = hashRefreshToken(token);
 
-  const [session] = await db.select({ userId: sessions.userId, expiresAt: sessions.expiresAt }).from(sessions).where(eq(sessions.hash, hash))
+  const [session] = await db.select({ userId: sessions.userId, expiresAt: sessions.expiresAt, hash: sessions.hash }).from(sessions).where(eq(sessions.hash, hash))
   if (!session || session.expiresAt > new Date()) {
-    const salve = "salve"
+    if (session) {
+      await db.delete(sessions).where(eq(sessions.hash, session.hash))
+      return;
+    }
   }
 };
