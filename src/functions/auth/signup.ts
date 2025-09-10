@@ -1,7 +1,9 @@
 import { eq } from "drizzle-orm";
+import { generateAccessToken, generateRefreshToken } from "src/common/auth";
 import { redis } from "src/common/cache";
 import { Snowflake } from "src/common/snowflake";
 import { db } from "src/db/client";
+import { sessions } from "src/db/schema/sessions";
 import { users } from "src/db/schema/users";
 import type { UserMetadata } from "src/types";
 
@@ -56,4 +58,19 @@ export const signup = async ({
 		TWO_MIN_IN_SECS,
 		JSON.stringify(user),
 	]);
+
+	const access = await generateAccessToken(user);
+	const { hash, token } = generateRefreshToken();
+
+	const FIFTEEN_MIN_IN_MS = 900000;
+	const FIFTEEN_DAYS_IN_MS = 1.296e9;
+
+	await db.insert(sessions).values({
+		hash,
+		expiresAt: FIFTEEN_DAYS_IN_MS,
+		userId: user.id,
+		browser,
+		ip,
+		os,
+	});
 };
