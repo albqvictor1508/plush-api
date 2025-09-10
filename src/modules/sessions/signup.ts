@@ -6,6 +6,7 @@ import { Snowflake } from "src/common/snowflake";
 import { TWO_MIN_IN_SECS } from "src/core";
 import { db } from "src/db/client";
 import { schema } from "src/db/schema";
+import { signup } from "src/functions/auth/signup";
 import { parse as getAgent } from "useragent";
 import z from "zod";
 
@@ -17,6 +18,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 		{
 			schema: {
 				body: z.object({
+					authId: z.optional(z.string()),
 					email: z.email({ error: "Invalid email." }),
 					avatar: z.optional(z.string()),
 					password: z
@@ -47,50 +49,23 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 			const agent = getAgent(request.headers["user-agent"]);
 			if (agent.family === "Other") return reply.code(400).send("dps"); //TODO: mudar erro
 
-			const { users, sessions } = schema;
-			const { email, password, avatar, name } = request.body;
+			const { email, password, avatar, name, authId } = request.body;
 			//salvar avatar no bucket (multipart/data)
 			//validar sessão do usuário
 
-			const isEmailUsed = await db
-				.select({ email: users.email })
-				.from(users)
-				.where(eq(users.email, email));
-			if (isEmailUsed) return reply.code(400).send("dps eu crio o erro"); //WARN: tratar erro
-
-			const isUsernameUsed = await db
-				.select({ name: users.name })
-				.from(users)
-				.where(eq(users.name, email));
-
-			if (isUsernameUsed) return reply.code(400).send("dps eu crio o erro"); //WARN: tratar erro
-
-			const hashedPassword = await Bun.password.hash(password);
-
-			const id = (await new Snowflake().create()).toString();
-			const [user] = await db
-				.insert(users)
-				.values({
-					id,
+			const {} = await signup({
+				meta: {
+					browser: agent.family,
+					ip: request.ip,
+					os: agent.os.family,
+				},
+				user: {
 					email,
 					name,
-					password: hashedPassword,
-				})
-				.returning({ id: users.id, email: users.email });
-			if (!user) return reply.status(500).send("dps eu crio");
-
-			redis.setex(`users:${user?.id}`, TWO_MIN_IN_SECS, JSON.stringify(user));
-
-			const access = await generateAccessToken(user);
-			const { hash, token } = generateRefreshToken();
-
-			await db.insert(sessions).values({
-				expiresAt: FIFTEEN_DAYS_LATER,
-				hash,
-				userId: user.id,
-				browser: agent.family,
-				os: agent.os.family,
-				ip: request.ip,
+					avatar: avatar ?? "",
+					authId: authId ?? "",
+					password,
+				},
 			});
 
 			await reply.setCookie("refresh", token);
