@@ -49,7 +49,7 @@ export const signup = async ({
       authId,
       avatar,
     })
-    .returning({ id: users.id, email: users.email });
+    .returning();
   if (!user) throw new Error("tratar erro"); //WARN: tratar erro
 
   await redis.send("SETEX", [
@@ -59,7 +59,6 @@ export const signup = async ({
   ]);
 
   const { hash, token } = generateRefreshToken();
-  const access = await generateAccessToken(user);
 
   const FIFTEEN_DAYS_LATER = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000);
 
@@ -73,11 +72,7 @@ export const signup = async ({
   });
 
   return {
-    token,
-    access,
-    user: {
-      id: user.id,
-      email: user.email,
-    },
+    refresh: token,
+    access: await generateAccessToken(user),
   };
 };

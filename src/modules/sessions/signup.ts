@@ -1,11 +1,4 @@
-import { eq } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { generateAccessToken, generateRefreshToken } from "src/common/auth";
-import { redis } from "src/common/cache";
-import { Snowflake } from "src/common/snowflake";
-import { TWO_MIN_IN_SECS } from "src/core";
-import { db } from "src/db/client";
-import { schema } from "src/db/schema";
 import { signup } from "src/functions/auth/signup";
 import { parse as getAgent } from "useragent";
 import z from "zod";
@@ -48,25 +41,21 @@ export const route: FastifyPluginAsyncZod = async (app) => {
       if (agent.family === "Other") return reply.code(400).send("dps"); //TODO: mudar erro
 
       const { email, password, avatar, name, authId } = request.body;
-      //salvar avatar no bucket (multipart/data)
-      //validar sessão do usuário
 
-      const { } = await signup({
+      const { access, refresh } = await signup({
         meta: {
           browser: agent.family,
           ip: request.ip,
           os: agent.os.family,
         },
-        user: {
-          email,
-          name,
-          avatar: avatar ?? "",
-          authId: authId ?? "",
-          password,
-        },
+        email,
+        name,
+        avatar: avatar ?? "",
+        authId: authId ?? "",
+        password,
       });
 
-      await reply.setCookie("refresh", token);
+      await reply.setCookie("refresh", refresh);
       await reply.setCookie("access", access);
 
       return await reply.code(201);
