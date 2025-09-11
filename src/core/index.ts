@@ -12,6 +12,7 @@ import { env } from "src/common/env";
 import { ErrorMessages } from "src/common/error/messages";
 
 export const TWO_MIN_IN_SECS = "120";
+export const isProd = env.NODE_ENV === "prod";
 
 export async function createApp() {
 	const app = fastify();
@@ -29,7 +30,7 @@ export async function createApp() {
 		parseOptions: {
 			httpOnly: true,
 			sameSite: "strict",
-			secure: env.NODE_ENV === "prod",
+			secure: isProd,
 		},
 	});
 
@@ -64,16 +65,17 @@ export async function createApp() {
 	});
 
 	app.addHook("onRequest", async (request, reply) => {
+		if (!isProd) return; //ve se faz sentido isso
 		const NON_AUTH_ROUTES: string[] = [];
 
 		const { jwt } = app;
-		const { plush } = request.cookies;
+		const { access } = request.cookies;
 		const { url } = request;
 
 		if (url === "/health" || url.startsWith("/docs")) return;
 		if (NON_AUTH_ROUTES.includes(url)) return;
 
-		const user = jwt.verify(plush as string);
+		const user = jwt.verify(access as string);
 		if (!user) return reply.code(401).send({ error: ErrorMessages[2001] }); //WARN: tratar erro
 
 		app.decorateRequest("auth", { user });

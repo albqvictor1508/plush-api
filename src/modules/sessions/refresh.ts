@@ -2,7 +2,7 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { refresh } from "src/functions/auth/refresh";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
-  app.post("/refresh", async (request, reply) => {
+  app.post("/sessions/refresh", async (request, reply) => {
     const { access, refreshed, user } = await refresh(request.cookies.refresh);
 
     const FIFTEEN_MIN_IN_MS = 900000;
