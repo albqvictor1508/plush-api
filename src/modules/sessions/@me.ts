@@ -7,7 +7,7 @@ import { sessions } from "src/db/schema/sessions";
 export const route: FastifyPluginAsyncZod = async (app) => {
   app.delete("/sessions/@me", async (request, reply) => {
     const { refresh } = request.cookies;
-    if (!refresh) return reply.code(400).send("Bad Credentials"); //WARN: TRATAR
+    if (!refresh) return reply.code(400).send("Bad Credentials"); //WARN: TRATAR ERRO
 
     await db
       .delete(sessions)
