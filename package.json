@@ -9,6 +9,7 @@
     "envalid": "^8.1.0"
   },
   "scripts": {
+    "test": "bun run --env-file .env --watch src/test/index.test.ts",
     "dev": "bun run --env-file .env --watch src/app.ts",
     "seed": "bun run --env-file .env src/db/seed.ts",
     "format": "biome format"
