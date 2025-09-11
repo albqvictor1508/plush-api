@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { hashRefreshToken } from "src/common/auth";
+import { hashRefreshToken } from "src/config/auth";
 import { db } from "src/db/client";
 import { sessions } from "src/db/schema/sessions";
 

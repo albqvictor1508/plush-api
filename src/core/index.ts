@@ -9,7 +9,6 @@ import {
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { env } from "src/common/env";
-import { ErrorMessages } from "src/common/error/messages";
 
 export const TWO_MIN_IN_SECS = "120";
 export const isProd = env.NODE_ENV === "prod";
@@ -49,36 +48,6 @@ export async function createApp() {
 
   await app.register(fastifySwaggerUi, {
     routePrefix: "/docs",
-  });
-
-  const ALLOWED_HEADERS: string[] = [
-    "authorization",
-    "user-agent",
-    "content-type",
-  ];
-
-  app.addHook("onRequest", async (request, _) => {
-    for await (const header of Object.keys(request.headers)) {
-      if (!ALLOWED_HEADERS.includes(header.toLowerCase()))
-        return `header ${header} is not allowed`;
-    }
-  });
-
-  app.addHook("preHandler", async (request, reply) => {
-    if (!isProd) return; //ve se faz sentido isso
-    const NON_AUTH_ROUTES: string[] = [];
-
-    const { jwt } = app;
-    const { access } = request.cookies;
-    const { url } = request;
-
-    if (url === "/health" || url.startsWith("/docs")) return;
-    if (NON_AUTH_ROUTES.includes(url)) return;
-
-    const user = jwt.verify(access as string);
-    if (!user) return reply.code(401).send({ error: ErrorMessages[2001] }); //WARN: tratar erro
-
-    app.decorateRequest("auth", { user });
   });
 
   return app;

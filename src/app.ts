@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { env } from "./common/env";
 import { routify } from "./common/routify";
-import { createApp } from "./core";
+import { createApp } from "./core/index.ts";
 
 export const app = await createApp();
 const { APP_NAME, PORT } = env;
