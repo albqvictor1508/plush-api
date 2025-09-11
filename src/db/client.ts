@@ -11,4 +11,5 @@ export const sql = postgres(DATABASE_URL);
 export const db = drizzle(sql, {
   schema,
   casing: "snake_case",
+  logger: true, //posso criar um logger manualmente: https://orm.drizzle.team/docs/goodies#logging
 });

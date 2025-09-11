@@ -8,7 +8,10 @@ const { APP_NAME, PORT } = env;
 
 await routify(app);
 
-app.listen({ port: PORT }, (err) => {
+app.listen({ port: PORT }, async (err) => {
   if (err) return err;
+
+  (app as any).readyAt = new Date();
+
   console.log(chalk.yellow(`${APP_NAME} server running on :${PORT}`));
 });
