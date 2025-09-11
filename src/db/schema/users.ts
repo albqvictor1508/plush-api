@@ -1,4 +1,4 @@
-import { bigint, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 //TODO: ver uma forma de um usuário conseguir atribuir um apelido a outro
 
