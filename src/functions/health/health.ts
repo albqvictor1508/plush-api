@@ -3,32 +3,44 @@ import { redis } from "src/common/cache";
 import { db } from "src/db/client";
 
 export const check = async () => {
-  //@ts-expect-error
-  const { readyAt } = app;
-  const [healhCache, healthDatabase] = await Promise.allSettled([
-    timestamp<string>(() => redis.ping()),
-    timestamp(() => db.execute(`SELECT 'salve'`)),
-  ]);
-
-  return {
-    readyAt,
-    cache:
-      healhCache.status === "rejected"
-        ? { ok: false }
-        : { ok: true, reply: healhCache.value.reply },
-    db:
-      healthDatabase.status === "rejected"
-        ? { ok: false }
-        : { ok: true, reply: healthDatabase.value.reply },
-  };
+	//@ts-expect-error
+	const { readyAt } = app;
+	const [healthCache, healthDatabase] = await Promise.allSettled([
+		timestamp(() => redis.ping()),
+		timestamp(() => db.execute(`SELECT 'salve'`)),
+	]);
+	if (
+		healthDatabase.status === "rejected" ||
+		healthCache.status === "rejected"
+	) {
+		//@ts-expect-error
+		console.log(healthDatabase.reason);
+		//@ts-expect-error
+		console.log(healthCache.reason);
+	}
+	return {
+		readyAt,
+		cache:
+			healthCache.status === "rejected"
+				? { ok: false }
+				: { ok: true, reply: healthCache.value.reply },
+		db:
+			healthDatabase.status === "rejected"
+				? { ok: false }
+				: { ok: true, reply: healthDatabase.value.reply },
+		uptime: Date.now() - readyAt,
+		ok:
+			healthCache.status === "fulfilled" &&
+			healthDatabase.status === "fulfilled",
+	};
 };
 
 export const timestamp = async <T>(func: () => Promise<T>) => {
-  const start = performance.now();
+	const start = performance.now();
 
-  await func();
+	await func();
 
-  return {
-    reply: performance.now() - start,
-  };
+	return {
+		reply: performance.now() - start,
+	};
 };

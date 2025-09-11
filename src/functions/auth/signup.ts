@@ -1,11 +1,11 @@
 import { eq } from "drizzle-orm";
-import { generateAccessToken, generateRefreshToken } from "src/common/auth";
+import type { UserMetadata } from "src/@types";
 import { redis } from "src/common/cache";
 import { Snowflake } from "src/common/snowflake";
+import { generateAccessToken, generateRefreshToken } from "src/config/auth";
 import { db } from "src/db/client";
 import { sessions } from "src/db/schema/sessions";
 import { users } from "src/db/schema/users";
-import type { UserMetadata } from "src/types";
 
 interface SignupOptions {
   authId: string;

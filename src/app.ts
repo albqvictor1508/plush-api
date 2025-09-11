@@ -8,7 +8,7 @@ const { APP_NAME, PORT } = env;
 
 await routify(app);
 
-app.listen({ port: PORT }, async (err) => {
+app.listen({ port: PORT }, (err) => {
   if (err) return err;
 
   (app as any).readyAt = new Date();

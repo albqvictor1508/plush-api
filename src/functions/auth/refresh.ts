@@ -3,11 +3,10 @@ import {
   generateAccessToken,
   generateRefreshToken,
   hashRefreshToken,
-} from "src/common/auth";
+} from "src/config/auth";
 import { db } from "src/db/client";
 import { sessions } from "src/db/schema/sessions";
 import { users } from "src/db/schema/users";
-import { th } from "zod/locales";
 
 export const refresh = async (token?: string) => {
   if (!token) throw new Error("tratar erro"); //validar erro
