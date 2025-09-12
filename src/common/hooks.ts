@@ -1,37 +1,34 @@
 import type { FastifyPluginAsync } from "fastify";
-import { isProd } from "src/core";
-import { ErrorMessages } from "./error/messages";
 
 export const authHook: FastifyPluginAsync = async (app) => {
-	app.addHook("preHandler", async (request, reply) => {
-		if (!isProd) return; //ve se faz sentido isso
-		const NON_AUTH_ROUTES: string[] = [];
+  app.addHook("preHandler", async (request, _) => {
+    const { url: path } = request;
+    const { jwt } = app;
+    const NON_AUTH_ROUTES = [
+      "/health",
+      "/sessions",
+      "/sessions/signup",
+      "/sessions/@me",
+      "/sessions/:id",
+    ];
 
-		const { jwt } = app;
-		const { access } = request.cookies;
-		const { url } = request;
+    if (NON_AUTH_ROUTES.includes(path) || path.startsWith("/docs")) return;
+    try {
+      const { access } = request.cookies;
+      //@ts-expect-error
+      const user: { id: string; email: string } = jwt.verify(access);
+      if (!user) throw new Error("Bad Credentials"); //WARN: tratar erro
 
-		if (url === "/health" || url.startsWith("/docs")) return;
-		if (NON_AUTH_ROUTES.includes(url)) return;
-
-		try {
-			const user = jwt.verify(access as string);
-			if (!user) return reply.code(401).send({ error: ErrorMessages[2001] }); //WARN: tratar erro
-			(request as any).auth = user;
-		} catch (error) {
-			console.log(error);
-			throw error; //WARN: tratar erro
-		}
-	});
+      (request as any).user = user;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  });
 };
 
 export const headersHook: FastifyPluginAsync = async (app) => {
-	app.addHook("onRequest", async (request, _) => {
-		const ALLOWED_HEADERS = ["authorization", "user-agent", "content-type"];
-
-		for await (const header of Object.keys(request.headers)) {
-			if (!ALLOWED_HEADERS.includes(header.toLowerCase()))
-				return `header ${header} is not allowed`;
-		}
-	});
+  app.addHook("preHandler", async (request, reply) => {
+    const salve = "salve";
+  });
 };
