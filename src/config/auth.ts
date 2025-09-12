@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
+import * as client from "openid-client";
 import { app } from "src/app";
 
 interface GenerateAuthOptions {
@@ -22,4 +23,8 @@ export const generateRefreshToken = () => {
 
 export const hashRefreshToken = (token: string) => {
 	return createHash("sha256").update(token).digest("hex");
+};
+
+export const salveOpenID = async () => {
+	const openid = await client.discovery(server, clientId);
 };

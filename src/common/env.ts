@@ -5,7 +5,6 @@ export const env = e.cleanEnv(process.env, {
   NODE_ENV: e.str({ default: "dev" }),
 
   DATABASE_URL: e.url(),
-  DATABASE_PUBLIC_URL: e.url(),
 
   REDIS_URL: e.str(),
   PORT: e.port(),

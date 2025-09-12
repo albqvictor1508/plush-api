@@ -9,9 +9,13 @@ const { APP_NAME, PORT } = env;
 await routify(app);
 
 app.listen({ port: PORT }, (err) => {
-  if (err) return err;
+	if (err) return err;
 
-  (app as any).readyAt = new Date();
+	const name = APP_NAME.replace(
+		APP_NAME.charAt(0),
+		APP_NAME.charAt(0).toUpperCase(),
+	);
 
-  console.log(chalk.yellow(`${APP_NAME} server running on :${PORT}`));
+	(app as any).readyAt = new Date();
+	console.log(chalk.yellow(`${name} server running on :${PORT}`));
 });
