@@ -13,12 +13,12 @@ CREATE TABLE "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"auth_id" text,
 	"avatar" text,
-	"username" varchar(16) NOT NULL,
+	"name" varchar(15) NOT NULL,
 	"email" text NOT NULL,
 	"password" text,
 	"deleted_at" timestamp,
 	"updated_at" timestamp DEFAULT now(),
-	CONSTRAINT "users_username_unique" UNIQUE("username"),
+	CONSTRAINT "users_name_unique" UNIQUE("name"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

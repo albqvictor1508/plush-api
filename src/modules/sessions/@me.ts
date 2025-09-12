@@ -5,12 +5,12 @@ import { db } from "src/db/client";
 import { sessions } from "src/db/schema/sessions";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
-  app.delete("/sessions/@me", async (request, reply) => {
-    const { refresh } = request.cookies;
-    if (!refresh) return reply.code(400).send("Bad Credentials"); //WARN: TRATAR ERRO
+	app.delete("/sessions/@me", async (request, reply) => {
+		const { refresh } = request.cookies;
+		if (!refresh) return reply.code(400).send("Bad Credentials"); //WARN: TRATAR ERRO
 
-    await db
-      .delete(sessions)
-      .where(eq(sessions.hash, hashRefreshToken(refresh)));
-  });
+		await db
+			.delete(sessions)
+			.where(eq(sessions.hash, hashRefreshToken(refresh)));
+	});
 };

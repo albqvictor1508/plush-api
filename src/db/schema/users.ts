@@ -6,7 +6,7 @@ export const users = pgTable("users", {
   id: text().primaryKey(),
   authId: text("auth_id"),
   avatar: text("avatar"),
-  name: varchar("username", { length: 16 }).notNull().unique(),
+  name: varchar("name", { length: 15 }).notNull().unique(),
   email: text("email").unique().notNull(),
   password: text("password"),
   deletedAt: timestamp("deleted_at"),
