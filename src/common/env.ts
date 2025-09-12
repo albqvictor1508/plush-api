@@ -13,7 +13,8 @@ export const env = e.cleanEnv(process.env, {
   //BUCKET_ACCESS_KEY_ID: e.str(),
   //BUCKET_SECRET_ACCESS_KEY: e.str(),
 
-  GOOGLE_CLIENT_ID: e.str(),
-  AUTH_SECRET: e.str(),
-  GOOGLE_CLIENT_SECRET: e.str(),
+  AUTH0_DOMAIN: e.str(),
+  AUTH0_CALLBACK_URL: e.str(),
+  AUTH0_CLIENT_ID: e.str(),
+  AUTH0_CLIENT_SECRET: e.str(),
 });

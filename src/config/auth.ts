@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import * as client from "openid-client";
+import * as openid from "openid-client";
 import { app } from "src/app";
 import { env } from "src/common/env";
 //import { env } from "src/common/env";
@@ -10,7 +10,12 @@ interface GenerateAuthOptions {
 }
 
 const { jwt } = app;
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = env;
+const {
+  AUTH0_CALLBACK_URL,
+  AUTH0_CLIENT_ID,
+  AUTH0_CLIENT_SECRET,
+  AUTH0_DOMAIN,
+} = env;
 
 export async function generateAccessToken(data: GenerateAuthOptions) {
   return jwt.sign(data, { expiresIn: "15m" });
@@ -28,29 +33,26 @@ export const hashRefreshToken = (token: string) => {
   return createHash("sha256").update(token).digest("hex");
 };
 
-export const setupOpenID = async () => {
-  let state = "";
-  let scope = "";
+export const getAuthorizationData = async (provider?: string) => {
+  const codeVerifier = openid.randomPKCECodeVerifier();
+  const codeChallenge = await openid.calculatePKCECodeChallenge(codeVerifier);
 
-  const codeVerifier = client.randomPKCECodeVerifier();
-  const codeChallenge = await client.calculatePKCECodeChallenge(codeVerifier);
-  const config: client.Configuration = await client.discovery(
-    new URL(""),
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
+  const config: openid.Configuration = await openid.discovery(
+    new URL(`https://${AUTH0_DOMAIN}`),
+    AUTH0_CLIENT_ID,
+    AUTH0_CLIENT_SECRET,
   );
 
   const params: Record<string, string> = {
-    redirectUri: "",
-    scope,
+    redirectUri: env.AUTH0_CALLBACK_URL,
+    scope: "openid profile email",
     codeChallenge,
+    state: openid.randomState(),
     codeChallengeMethod: "S256",
   };
 
-  if (!config.serverMetadata().supportsPKCE()) {
-    state = client.randomState();
-    params.state = state;
-  }
+  if (provider) params.connection = provider;
 
-  const redirectTo = client.buildAuthorizationUrl(config, params);
+  const redirectTo = openid.buildAuthorizationUrl(config, params);
+  return { redirectTo: redirectTo.toString(), codeVerifier, codeChallenge };
 };
