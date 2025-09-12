@@ -29,6 +29,11 @@ export const authHook: FastifyPluginAsync = async (app) => {
 
 export const headersHook: FastifyPluginAsync = async (app) => {
   app.addHook("preHandler", async (request, reply) => {
-    const salve = "salve";
+    const PERMITTED_HEADERS = ["user-agent", "authorization", "content-type"];
+    const { headers } = request;
+    for (const header of Object.keys(headers)) {
+      if (!PERMITTED_HEADERS.includes(header.toLowerCase()))
+        throw new Error("tratar erro"); //WARN: tratar erro
+    }
   });
 };

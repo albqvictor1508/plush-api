@@ -1,5 +1,6 @@
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from "@fastify/jwt";
+import fastifyOauth2 from "@fastify/oauth2";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import { fastify } from "fastify";
@@ -9,6 +10,7 @@ import {
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { env } from "src/common/env";
+import { authHook, headersHook } from "src/common/hooks";
 
 export const TWO_MIN_IN_SECS = "120";
 export const isProd = env.NODE_ENV === "prod";
@@ -46,6 +48,9 @@ export async function createApp() {
   await app.register(fastifySwaggerUi, {
     routePrefix: "/docs",
   });
+
+  await app.register(authHook);
+  await app.register(headersHook);
 
   return app;
 }
