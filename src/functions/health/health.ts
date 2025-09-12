@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { app } from "src/app";
 import { redis } from "src/common/cache";
 import { db } from "src/db/client";
@@ -7,7 +8,7 @@ export const check = async () => {
 	const { readyAt } = app;
 	const [healthCache, healthDatabase] = await Promise.allSettled([
 		timestamp(() => redis.ping()),
-		timestamp(() => db.execute(`SELECT 'salve'`)),
+		timestamp(() => db.execute(sql`SELECT 'salve'`)),
 	]);
 	if (
 		healthDatabase.status === "rejected" ||
