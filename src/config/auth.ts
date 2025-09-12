@@ -1,6 +1,7 @@
+import { betterAuth } from "better-auth";
 import { createHash, randomBytes } from "node:crypto";
-import * as client from "openid-client";
 import { app } from "src/app";
+import { env } from "src/common/env";
 
 interface GenerateAuthOptions {
 	id: string;
@@ -25,6 +26,15 @@ export const hashRefreshToken = (token: string) => {
 	return createHash("sha256").update(token).digest("hex");
 };
 
-export const salveOpenID = async () => {
-	const openid = await client.discovery(server, clientId);
+export const setupBetterAuth = async () => {
+	return betterAuth({
+		socialProviders: {
+			google: {
+				accessType: "offline",
+				prompt: "select_account consent",
+				clientId: env.GOOGLE_CLIENT_ID,
+				clientSecret: env.GOOGLE_CLIENT_SECRET,
+			},
+		},
+	});
 };
