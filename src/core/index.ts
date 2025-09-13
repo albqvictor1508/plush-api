@@ -1,6 +1,5 @@
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from "@fastify/jwt";
-import fastifyOauth2 from "@fastify/oauth2";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import { fastify } from "fastify";

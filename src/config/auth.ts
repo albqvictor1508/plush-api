@@ -33,6 +33,7 @@ export const hashRefreshToken = (token: string) => {
   return createHash("sha256").update(token).digest("hex");
 };
 
+//TODO: """talvez""" eu mude pra betterauth no futuro
 export const getAuthorizationData = async (provider?: string) => {
   const codeVerifier = openid.randomPKCECodeVerifier();
   const codeChallenge = await openid.calculatePKCECodeChallenge(codeVerifier);
