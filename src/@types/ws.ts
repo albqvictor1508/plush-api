@@ -1,8 +1,9 @@
 export enum EventType {
-	MESSAGE_CREATED = 1001,
-	MESSAGE_UPDATED = 1002,
-	MESSAGE_DELETED = 1003,
+	MESSAGE_CREATED = "message:created",
+	MESSAGE_UPDATED = "message:updated",
+	MESSAGE_DELETED = "message:deleted",
 
-	JOIN_CHAT = 2001,
-	OUT_CHAT = 2002,
+	JOIN_CHAT = "chat:join",
+	OUT_CHAT = "chat:out",
+	UPDATE_CHAT = "chat:update",
 }
