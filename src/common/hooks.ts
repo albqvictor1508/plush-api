@@ -4,6 +4,7 @@ export const authHook: FastifyPluginAsync = async (app) => {
 	app.addHook("preHandler", async (request, _) => {
 		const { url: path } = request;
 		const { jwt } = app;
+
 		const NON_AUTH_ROUTES = [
 			"/health",
 			"/sessions",
