@@ -17,6 +17,7 @@ export const authHook: FastifyPluginAsync = async (app) => {
 		if (NON_AUTH_ROUTES.includes(path) || path.startsWith("/docs")) return;
 		try {
 			const { access } = request.cookies;
+
 			//@ts-expect-error
 			const user: { id: string; email: string } = jwt.verify(access);
 			if (!user) throw new Error("Bad Credentials"); //WARN: tratar erro

@@ -1,11 +1,6 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { EventType } from "src/@types/ws";
 
-interface DataSchema {
-	type: EventType;
-	body: {}; //esse body tem que mudar para cada evento
-}
-
 export const route: FastifyPluginAsyncZod = async (app) => {
 	app.get("/ws", { websocket: true }, async (ws, req) => {
 		ws.on("message", (msg) => {
@@ -19,6 +14,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 				}
 
 				case EventType.MESSAGE_DELETED: {
+					return;
 				}
 			}
 		});

@@ -7,3 +7,8 @@ export enum EventType {
 	OUT_CHAT = "chat:out",
 	UPDATE_CHAT = "chat:update",
 }
+
+export interface DataSchema {
+	type: EventType;
+	body: {}; //esse body tem que mudar para cada evento
+}
