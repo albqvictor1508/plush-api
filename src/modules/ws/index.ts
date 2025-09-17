@@ -1,8 +1,10 @@
 import c from "chalk";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import type { EventType } from "src/@types/ws";
 
 interface DataSchema {
   type: EventType
+  data: {} //esse data tem que mudar para cada evento
 }
 
 export const route: FastifyPluginAsyncZod = async (app) => {
