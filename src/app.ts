@@ -9,7 +9,10 @@ const { APP_NAME, PORT } = env;
 await routify(app);
 
 app.listen({ port: PORT }, (err) => {
-	if (err) return err;
+	if (err) {
+		app.log.error(err);
+		process.exit(1);
+	}
 
 	const name = APP_NAME.replace(
 		APP_NAME.charAt(0),

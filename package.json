@@ -6,7 +6,8 @@
   "devDependencies": {
     "@types/bun": "latest",
     "chalk": "^5.6.0",
-    "envalid": "^8.1.0"
+    "envalid": "^8.1.0",
+    "wscat": "^6.1.0"
   },
   "scripts": {
     "test": "bun run --env-file .env --watch src/test/index.test.ts",
@@ -23,7 +24,9 @@
     "@fastify/jwt": "^10.0.0",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
+    "@fastify/websocket": "^11.2.0",
     "@types/useragent": "^2.3.4",
+    "@types/ws": "^8.18.1",
     "bcryptjs": "^3.0.2",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.5",
