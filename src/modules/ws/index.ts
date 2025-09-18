@@ -3,16 +3,20 @@ import type { WSIncomingEvent } from "src/@types/ws";
 import { handlers } from "src/common/ws";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
-  app.get("/ws", { websocket: true }, async (ws, req) => {
-    ws.on("message", async (msg) => {
-      //@ts-expect-error
-      const data: WSIncomingEvent = JSON.parse(msg);
-      const handler = handlers[data.type];
+	app.get("/ws", { websocket: true }, async (ws, req) => {
+		ws.on("message", async (msg) => {
+			//@ts-expect-error
+			const data: WSIncomingEvent = JSON.parse(msg);
+			const handler = handlers[data.type];
 
-      //@ts-expect-error
-      await handler(data.body);
+			//@ts-expect-error
+			await handler(data.body);
 
-      ws.send("hello from fastify ws!");
-    });
-  });
+			ws.send("hello from fastify ws!");
+		});
+
+		ws.on("close", async (code) => {
+			console.log(`conexão fechou: ${code}`);
+		});
+	});
 };

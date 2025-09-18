@@ -1,9 +1,9 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, serial } from "drizzle-orm/pg-core";
 import { chats } from "./chats";
 import { users } from "./users";
 
 export const chatParticipants = pgTable("chat_participants", {
-	chatId: text("chat_id")
+	chatId: serial("chat_id")
 		.primaryKey()
 		.notNull()
 		.references(() => chats.id),

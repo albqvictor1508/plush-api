@@ -35,7 +35,7 @@ O servidor será iniciado na porta especificada no seu arquivo `.env`.
 
 ## Documentação da API
 
-Para informações detalhadas sobre os endpoints da API, corpos de requisição e respostas, consulte nossa documentação Swagger, que é gerada automaticamente e está disponível em:
+Para informações detalhadas sobre os endpoints da API, corpos de requisição e respostas, consulte nossa documentação `Swagger`, que é gerada automaticamente e está disponível em:
 
 - **[http://localhost:PORTA/docs](http://localhost:PORTA/docs)**
 
