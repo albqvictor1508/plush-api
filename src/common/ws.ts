@@ -2,12 +2,8 @@ import {
   EventType,
   type IncomingEventMap,
   type OutgoingEventMap,
+  type WsHandler,
 } from "src/@types/ws";
-
-type WsHandler = {
-  //@ts-expect-error
-  [K in EventType]: (body: IncomingEventMap[K]) => Promise<void>;
-};
 
 export const handlers: WsHandler = {
   [EventType.JOIN_CHAT]: async (body) => {
@@ -29,8 +25,10 @@ export const sendEvent = async <T extends keyof OutgoingEventMap>(
   ws.send(JSON.stringify({ type, body }));
 };
 
-export const onEvent = async <T extends keyof IncomingEventMap>(
+/*
+ *export const onEvent = async <T extends keyof IncomingEventMap>(
   ws: WebSocket,
   type: T,
   handler: (body: IncomingEventMap[T]) => void,
 ) => { };
+ * */

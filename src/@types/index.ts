@@ -24,6 +24,17 @@ export type Chat = {
   updatedAt: Date;
 };
 
+export type Message = {
+  id: string;
+  userId: string;
+  chatId: string;
+  content: string;
+  photo: string;
+  sendedAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
+};
+
 export type ChatParticipants = {
   chatId: string;
   userId: string;

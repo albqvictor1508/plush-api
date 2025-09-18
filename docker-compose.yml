@@ -1,4 +1,4 @@
-name: plush
+name: lume
 
 services:
   pg:

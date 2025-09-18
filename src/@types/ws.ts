@@ -44,3 +44,15 @@ export type WSIncomingEvent = {
 export type WSOutgoingEvent = {
   [K in keyof OutgoingEventMap]: { type: K; body: OutgoingEventMap[K] };
 }[keyof OutgoingEventMap];
+
+//input
+export type WsHandler = {
+  //@ts-expect-error
+  [K in EventType]: (body: IncomingEventMap[K]) => Promise<void>;
+};
+
+//output
+export type WsEmitter = {
+  //@ts-expect-error
+  [K in EventType]: (body: OutgoingEventMap[K]) => Promise<void>;
+};
