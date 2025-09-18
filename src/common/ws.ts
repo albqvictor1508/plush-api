@@ -10,7 +10,10 @@ type WsHandler = {
 };
 
 export const handlers: WsHandler = {
-  [EventType.JOIN_CHAT]: async (body) => { },
+  [EventType.JOIN_CHAT]: async (body) => {
+    const { chatId, userId } = body;
+    console.log(`CHAT ID: ${chatId}, USER ID: ${userId}`);
+  },
   [EventType.UPDATE_CHAT]: async (body) => { },
   [EventType.OUT_CHAT]: async (body) => { },
   [EventType.MESSAGE_CREATED]: async (body) => { },
