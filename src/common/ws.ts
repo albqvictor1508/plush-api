@@ -1,16 +1,55 @@
+import { eq } from "drizzle-orm";
 import {
   EventType,
-  type IncomingEventMap,
   type OutgoingEventMap,
   type WsHandler,
 } from "src/@types/ws";
+import { db } from "src/db/client";
+import { chatParticipants } from "src/db/schema/chat-participants";
+import { chats } from "src/db/schema/chats";
+import { users } from "src/db/schema/users";
+import { createChat } from "src/functions/chats/create";
 
 export const handlers: WsHandler = {
-  [EventType.JOIN_CHAT]: async (body) => {
-    const { chatId, userId } = body;
-    console.log(`CHAT ID: ${chatId}, USER ID: ${userId}`);
+  [EventType.CHAT_CREATED]: async (body) => {
+    const { ownerId, participants } = body;
+
+    const ownerExist = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.id, ownerId));
+    if (!ownerExist) throw new Error("error"); //WARN: tratar erro
+
+    await createChat(body);
   },
-  [EventType.UPDATE_CHAT]: async (body) => { },
+
+  [EventType.JOIN_CHAT]: async (body) => {
+    const { chatId, participants } = body;
+
+    const [chat] = await db
+      .select({ id: chats.id })
+      .from(chats)
+      .where(eq(chats.id, chatId));
+    if (!chat) throw new Error("error"); //WARN: tratar erro
+
+    for (const id of participants) {
+      const participant = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, id));
+
+      if (!participant) throw new Error("error"); //WARN: tratar erro
+
+      await db.insert(chatParticipants).values({
+        role: "member",
+        userId: id,
+        addedAt: new Date(),
+        updatedAt: new Date(),
+        chatId: chat.id,
+      });
+    }
+  },
+  [EventType.CHAT_UPDATED]: async (body) => { },
   [EventType.OUT_CHAT]: async (body) => { },
   [EventType.MESSAGE_CREATED]: async (body) => { },
   [EventType.MESSAGE_DELETED]: async (body) => { },

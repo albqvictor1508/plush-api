@@ -2,16 +2,25 @@ export enum EventType {
   MESSAGE_CREATED = "message_created",
   MESSAGE_UPDATED = "message_updated",
   MESSAGE_DELETED = "message_deleted",
+
+  CHAT_CREATED = "chat_created",
   JOIN_CHAT = "chat_join",
   OUT_CHAT = "chat_out",
-  UPDATE_CHAT = "chat_update",
+  CHAT_UPDATED = "chat_updated",
 }
 
 export interface IncomingEventMap {
-  [EventType.JOIN_CHAT]: { chatId: string; userId: string };
-  [EventType.OUT_CHAT]: { chatId: string; userId: string };
+  [EventType.CHAT_CREATED]: {
+    title: string;
+    description: string;
+    ownerId: string;
+    avatar: string;
+    participants: Set<string>;
+  };
+  [EventType.JOIN_CHAT]: { chatId: number; participants: Set<string> };
+  [EventType.OUT_CHAT]: { chatId: number; userId: string };
   [EventType.MESSAGE_CREATED]: {
-    chatId: string;
+    chatId: number;
     senderId: string;
     content: string;
   };
@@ -19,22 +28,17 @@ export interface IncomingEventMap {
 
 export interface OutgoingEventMap {
   [EventType.MESSAGE_CREATED]: {
-    chatId: string;
+    chatId: number;
     senderId: string;
     content: string;
     ts: number;
   };
   [EventType.MESSAGE_UPDATED]: {
-    chatId: string;
+    chatId: number;
     messageId: string;
     content: string;
   };
-  [EventType.MESSAGE_DELETED]: { chatId: string; messageId: string };
-  [EventType.UPDATE_CHAT]: {
-    chatId: string;
-    name?: string;
-    lastMessage?: string;
-  };
+  [EventType.MESSAGE_DELETED]: { chatId: number; messageId: string };
 }
 
 export type WSIncomingEvent = {

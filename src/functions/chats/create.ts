@@ -5,52 +5,35 @@ import { chatParticipants } from "src/db/schema/chat-participants";
 import { chats } from "src/db/schema/chats";
 import { users } from "src/db/schema/users";
 
-type ChatOptions = Omit<Chat, "id">;
+export const createChat = async (body: Chat) => {
+  const { avatar, description, title, participants, ownerId } = body;
 
-export const createChat = async (body: ChatOptions) => {
-	const {
-		avatar,
-		createdAt,
-		description,
-		title,
-		updatedAt,
-		participants: participantIds,
-		ownerId,
-	} = body;
+  //WARN: analisar o ownerId e o membro com role 'admin'
+  const [chat] = await db
+    .insert(chats)
+    .values({
+      ownerId,
+      avatar,
+      description,
+      title,
+    })
+    .returning({ id: chats.id, ownerId: chats.ownerId });
+  if (!chat) throw new Error("error"); //WARN: tratar erro
 
-	const ownerExist = await db
-		.select({ id: users.id })
-		.from(users)
-		.where(eq(users.id, ownerId));
-	if (!ownerExist) throw new Error("error"); //WARN: tratar erro
+  for (const id of participants) {
+    const participant = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.id, id));
 
-	const [chat] = await db
-		.insert(chats)
-		.values({
-			ownerId,
-			avatar,
-			description,
-			title,
-			createdAt,
-			updatedAt,
-		})
-		.returning({ id: chats.id, ownerId: chats.ownerId });
-	if (!chat) throw new Error("error"); //WARN: tratar erro
+    if (!participant) throw new Error("error"); //WARN: tratar erro
 
-	for (const id of participantIds) {
-		const participant = await db
-			.select({ id: users.id })
-			.from(users)
-			.where(eq(users.id, id));
-
-		if (!participant) throw new Error("error"); //WARN: tratar erro
-
-		await db.insert(chatParticipants).values({
-			chatId: chat.id,
-			role: "member",
-			userId: id,
-			addedAt: new Date(),
-			updatedAt: new Date(),
-		});
-	}
+    await db.insert(chatParticipants).values({
+      role: "member",
+      userId: id,
+      addedAt: new Date(),
+      updatedAt: new Date(),
+      chatId: chat.id,
+    });
+  }
 };
