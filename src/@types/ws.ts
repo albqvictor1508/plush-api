@@ -1,14 +1,17 @@
-export enum EventType {
-	MESSAGE_CREATED = "message:created",
-	MESSAGE_UPDATED = "message:updated",
-	MESSAGE_DELETED = "message:deleted",
+enum EventType {
+	MESSAGE_CREATED = "message_created",
+	MESSAGE_UPDATED = "message_updated",
+	MESSAGE_DELETED = "message_deleted",
 
-	JOIN_CHAT = "chat:join",
-	OUT_CHAT = "chat:out",
-	UPDATE_CHAT = "chat:update",
+	JOIN_CHAT = "chat_join",
+	OUT_CHAT = "chat_out",
+	UPDATE_CHAT = "chat_update",
 }
 
-export interface DataSchema {
-	type: EventType;
-	body: {}; //esse body tem que mudar para cada evento
+interface EventBody<T extends EventType> {
+	[EventType.JOIN_CHAT]: { userId: string; chatId: string };
+	[EventType.OUT_CHAT]: { userId: string; chatId: string };
+	[EventType.UPDATE_CHAT]: { userId: string; chatId: string; role: string };
 }
+
+interface WebsocketBody extends DataSchema<EventType, {}> {}
