@@ -3,7 +3,7 @@ import fastifyJwt from "@fastify/jwt";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifyWebsocket from "@fastify/websocket";
-import { fastify } from "fastify";
+import { fastify, type FastifyPluginAsync } from "fastify";
 import {
 	serializerCompiler,
 	validatorCompiler,
