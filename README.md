@@ -1,15 +1,8 @@
-# api
+# Plush API
 
-To install dependencies:
+Welcome to the Plush API!
 
-```bash
-bun install
-```
+Please select your preferred language to view the documentation:
 
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.19. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+- [**English**](./README.en.md)
+- [**Português (Brasil)**](./README.pt-br.md)
