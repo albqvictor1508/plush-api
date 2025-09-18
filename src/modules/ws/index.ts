@@ -1,22 +1,18 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { EventType } from "src/@types/ws";
+import type { WSIncomingEvent } from "src/@types/ws";
+import { handlers } from "src/common/ws";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
-	app.get("/ws", { websocket: true }, async (ws, req) => {
-		ws.on("message", (msg) => {
-			//@ts-expect-error
-			const data: DataSchema = JSON.parse(msg);
+  app.get("/ws", { websocket: true }, async (ws, req) => {
+    ws.on("message", async (msg) => {
+      //@ts-expect-error
+      const data: WSIncomingEvent = JSON.parse(msg);
+      const handler = handlers[data.type];
 
-			ws.send("hello from fastify ws!");
-			switch (data.type) {
-				case EventType.MESSAGE_CREATED: {
-					return;
-				}
+      //@ts-expect-error
+      await handler(data.body);
 
-				case EventType.MESSAGE_DELETED: {
-					return;
-				}
-			}
-		});
-	});
+      ws.send("hello from fastify ws!");
+    });
+  });
 };

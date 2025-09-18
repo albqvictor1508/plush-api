@@ -6,16 +6,16 @@ import {
 
 type WsHandler = {
   //@ts-expect-error
-  [K in EventType]: (body: IncomingEventMap[K] & OutgoingEventMap[K]) => void;
+  [K in EventType]: (body: IncomingEventMap[K]) => Promise<void>;
 };
 
 export const handlers: WsHandler = {
-  [EventType.JOIN_CHAT]: (body) => { },
-  [EventType.UPDATE_CHAT]: (body) => { },
-  [EventType.OUT_CHAT]: (body) => { },
-  [EventType.MESSAGE_CREATED]: (body) => { },
-  [EventType.MESSAGE_DELETED]: (body) => { },
-  [EventType.MESSAGE_UPDATED]: (body) => { },
+  [EventType.JOIN_CHAT]: async (body) => { },
+  [EventType.UPDATE_CHAT]: async (body) => { },
+  [EventType.OUT_CHAT]: async (body) => { },
+  [EventType.MESSAGE_CREATED]: async (body) => { },
+  [EventType.MESSAGE_DELETED]: async (body) => { },
+  [EventType.MESSAGE_UPDATED]: async (body) => { },
 } as const;
 
 export const sendEvent = async <T extends keyof OutgoingEventMap>(
