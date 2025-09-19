@@ -12,7 +12,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 			//@ts-expect-error
 			await handler(data.body);
 
-			ws.send("hello from fastify ws!");
+			ws.send(JSON.stringify(data.body));
 		});
 
 		ws.on("close", async (code) => {

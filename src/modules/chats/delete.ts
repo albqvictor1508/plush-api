@@ -1,4 +1,4 @@
-import { eq, and, or } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { ErrorCodes } from "src/common/error/codes";
 import { ErrorMessages, ErrorStatus } from "src/common/error/messages";
@@ -41,8 +41,8 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 
 			if (!chat)
 				return reply
-					.code(ErrorStatus[ErrorCodes.ErrorToCreateChat])
-					.send(ErrorMessages[ErrorCodes.ErrorToCreateChat]); //WARN: tratar erro
+					.code(ErrorStatus[ErrorCodes.NotFound])
+					.send(ErrorMessages[ErrorCodes.NotFound]); //WARN: tratar erro
 
 			const [user] = await db
 				.select({ id: users.id })
@@ -51,8 +51,8 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 
 			if (!user)
 				return reply
-					.code(ErrorCodes.ErrorToCreateChat)
-					.send(ErrorMessages[ErrorCodes.ErrorToCreateChat]); //WARN: tratar erro
+					.code(ErrorCodes.NotFound)
+					.send(ErrorMessages[ErrorCodes.NotFound]); //WARN: tratar erro
 
 			const [userCanDeleteChat] = await db
 				.select({ id: chatParticipants.userId })
