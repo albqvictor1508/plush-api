@@ -68,6 +68,8 @@ export const route: FastifyPluginAsyncZod = async (app) => {
           deletedAt: new Date(),
         })
         .where(eq(chats.id, id));
+
+      return reply.code(200);
     },
   );
 };
