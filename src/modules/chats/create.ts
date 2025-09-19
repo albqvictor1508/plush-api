@@ -50,7 +50,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 			});
 
 			const data = { id, avatar: url, ...request.body };
-			const [response, _] = await Promise.all([
+			const [response] = await Promise.all([
 				createChat(data),
 				redis.send("XADD", [
 					"stream:chat",
@@ -62,8 +62,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 				]),
 			]);
 
-			//@ts-expect-error
-			if ("error" in response)
+			if (typeof response === "object" && "error" in response)
 				return reply.code(response.code as number).send(response.error);
 
 			return reply.code(201);
