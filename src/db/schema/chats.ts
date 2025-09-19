@@ -11,4 +11,5 @@ export const chats = pgTable("chats", {
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => new Date()),
+  deletedAt: timestamp(),
 });
