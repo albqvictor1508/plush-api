@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { db } from "src/db/client";
 import { chatParticipants } from "src/db/schema/chat-participants";
@@ -32,22 +32,32 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 
       //WARN: analisar essa tranqueira toda aq
 
-      //const [user] = await db.select().from(users).where(eq(users.id, userId));
+      const [chat] = await db
+        .select({ id: chats.id })
+        .from(chats)
+        .where(eq(chats.id, id));
+      if (!chat) return reply.code(400).send("invalid chat id"); //WARN: tratar erro
 
-      const [adm] = await db
+      const [user] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, userId));
+      if (!user) return reply.code(400).send("invalid user id"); //WARN: tratar erro
+
+      const [userCanDeleteChat] = await db
         .select({ id: chatParticipants.userId })
         .from(chatParticipants)
         .where(
           and(
             eq(chatParticipants.userId, userId),
-            eq(chatParticipants.role, "admin"),
+            or(
+              eq(chatParticipants.role, "admin"),
+              eq(chatParticipants.role, "owner"),
+            ),
           ),
         );
-      const [chat] = await db
-        .select({ id: chats.id })
-        .from(chats)
-        .where(and(eq(chats.id, id), eq(chats.ownerId, userId)));
-      if (!adm || !chat)
+
+      if (!userCanDeleteChat)
         return reply
           .code(400)
           .send("the user must to be admin or owner to delete chat"); //WARN: tratar erro

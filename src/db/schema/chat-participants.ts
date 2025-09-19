@@ -10,7 +10,7 @@ export const chatParticipants = pgTable("chat_participants", {
   userId: text()
     .notNull()
     .references(() => users.id),
-  role: text({ enum: ["member", "admin"] }).notNull(),
+  role: text({ enum: ["member", "admin", "owner"] }).notNull(),
   addedAt: timestamp("added_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
