@@ -1,10 +1,10 @@
-import { chatParticipants } from "src/db/schema/chat-participants";
 import { eq } from "drizzle-orm";
-import { db } from "src/db/client";
-import { chats } from "src/db/schema/chats";
-import { users } from "src/db/schema/users";
 import { ErrorCodes } from "src/common/error/codes";
 import { ErrorMessages, ErrorStatus } from "src/common/error/messages";
+import { db } from "src/db/client";
+import { chatParticipants } from "src/db/schema/chat-participants";
+import { chats } from "src/db/schema/chats";
+import { users } from "src/db/schema/users";
 
 type ChatOptions = {
 	id: string;
@@ -18,19 +18,19 @@ export const createChat = async (body: ChatOptions) => {
 	try {
 		const { id, avatar, description, title, participants } = body;
 
-		//WARN: analisar o ownerId e o membro com role 'admin'
 		const [chat] = await db
 			.insert(chats)
 			.values({
 				id,
-				avatar: avatar as string,
+				avatar,
 				description,
 				title,
 			})
 			.returning({ id: chats.id });
+
 		if (!chat)
 			return {
-				error: ErrorCodes.ErrorToCreateChat,
+				error: ErrorMessages[ErrorCodes.ErrorToCreateChat],
 				code: ErrorStatus[ErrorCodes.ErrorToCreateChat],
 			};
 
@@ -42,8 +42,8 @@ export const createChat = async (body: ChatOptions) => {
 
 			if (!participant)
 				return {
-					error: ErrorCodes.ErrorToCreateChatParticipant,
-					code: ErrorStatus[ErrorCodes.ErrorToCreateChat],
+					error: ErrorMessages[ErrorCodes.ErrorToCreateChatParticipant],
+					code: ErrorStatus[ErrorCodes.ErrorToCreateChatParticipant],
 				};
 
 			await db.insert(chatParticipants).values({
