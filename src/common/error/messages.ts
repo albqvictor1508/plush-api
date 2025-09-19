@@ -20,3 +20,24 @@ export const ErrorMessages: Record<ErrorCodes, string> = {
   [ErrorCodes.UnknownChatParticipant]: "Unknown chat participant",
   [ErrorCodes.UnknownMessage]: "Unknown message",
 };
+
+export const ErrorStatus: Record<ErrorCodes, number> = {
+  [ErrorCodes.InternalServerError]: 500,
+  [ErrorCodes.Unauthorized]: 401,
+  [ErrorCodes.Forbidden]: 403,
+  [ErrorCodes.NotFound]: 404,
+
+  [ErrorCodes.EmailInUse]: 400,
+  [ErrorCodes.InvalidEmail]: 400,
+
+  [ErrorCodes.ErrorToCreateUser]: 500,
+  [ErrorCodes.ErrorToCreateChat]: 500,
+  [ErrorCodes.ErrorToCreateChatParticipant]: 500,
+  [ErrorCodes.ErrorToCreateMessage]: 500,
+  [ErrorCodes.ErrorToCreateSession]: 500,
+
+  [ErrorCodes.UnknownUser]: 404,
+  [ErrorCodes.UnknownChat]: 404,
+  [ErrorCodes.UnknownChatParticipant]: 404,
+  [ErrorCodes.UnknownMessage]: 404,
+};
