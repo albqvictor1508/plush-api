@@ -4,7 +4,7 @@ import { db } from "src/db/client";
 import { chats } from "src/db/schema/chats";
 import { users } from "src/db/schema/users";
 import { ErrorCodes } from "src/common/error/codes";
-import { ErrorMessages } from "src/common/error/messages";
+import { ErrorMessages, ErrorStatus } from "src/common/error/messages";
 
 type ChatOptions = {
 	id: string;
@@ -28,7 +28,11 @@ export const createChat = async (body: ChatOptions) => {
 				title,
 			})
 			.returning({ id: chats.id });
-		if (!chat) return { error: ErrorCodes.ErrorToCreateChat }; //WARN: tratar erro
+		if (!chat)
+			return {
+				error: ErrorCodes.ErrorToCreateChat,
+				code: ErrorStatus[ErrorCodes.ErrorToCreateChat],
+			};
 
 		for (const id of participants) {
 			const participant = await db
@@ -37,7 +41,10 @@ export const createChat = async (body: ChatOptions) => {
 				.where(eq(users.id, id));
 
 			if (!participant)
-				return { error: ErrorCodes.ErrorToCreateChatParticipant }; //WARN: tratar erro
+				return {
+					error: ErrorCodes.ErrorToCreateChatParticipant,
+					code: ErrorStatus[ErrorCodes.ErrorToCreateChat],
+				};
 
 			await db.insert(chatParticipants).values({
 				role: "member",
