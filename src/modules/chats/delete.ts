@@ -61,6 +61,13 @@ export const route: FastifyPluginAsyncZod = async (app) => {
         return reply
           .code(400)
           .send("the user must to be admin or owner to delete chat"); //WARN: tratar erro
+
+      await db
+        .update(chats)
+        .set({
+          deletedAt: new Date(),
+        })
+        .where(eq(chats.id, id));
     },
   );
 };
