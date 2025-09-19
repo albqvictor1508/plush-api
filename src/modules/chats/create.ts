@@ -3,7 +3,6 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { EventType } from "src/@types/ws";
 import { getChatAvatar, s3 } from "src/common/bucket";
 import { redis } from "src/common/cache";
-import { env } from "src/common/env";
 import { Snowflake } from "src/common/snowflake";
 import { db } from "src/db/client";
 import { users } from "src/db/schema/users";
@@ -62,6 +61,8 @@ export const route: FastifyPluginAsyncZod = async (app) => {
           JSON.stringify(data),
         ]),
       ]);
+
+      return reply.code(201);
     },
   );
 };
