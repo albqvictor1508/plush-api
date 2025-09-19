@@ -1,10 +1,10 @@
-import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { chats } from "./chats";
 import { users } from "./users";
 
 export const messages = pgTable("messages", {
   id: text().notNull().primaryKey(),
-  chatId: serial("chat_id")
+  chatId: string("chat_id")
     .notNull()
     .references(() => chats.id),
   userId: text("user_id")
