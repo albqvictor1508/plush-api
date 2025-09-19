@@ -23,7 +23,9 @@ export async function createApp() {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  await app.register(fastifyMultipart);
+  await app.register(fastifyMultipart, {
+    attachFieldsToBody: true,
+  });
 
   await app.register(fastifyJwt, {
     secret: env.JWT_SECRET,

@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { EventType } from "src/@types/ws";
-import { s3 } from "src/common/bucket";
+import { getChatAvatar, s3 } from "src/common/bucket";
 import { redis } from "src/common/cache";
+import { env } from "src/common/env";
 import { Snowflake } from "src/common/snowflake";
 import { db } from "src/db/client";
 import { users } from "src/db/schema/users";
@@ -20,14 +21,14 @@ export const route: FastifyPluginAsyncZod = async (app) => {
         body: z.object({
           title: z.string(),
           ownerId: z.string(),
-          avatar: z.file(),
+          file: z.file(),
           description: z.string(),
           participants: z.set(z.string()).min(1),
         }),
       },
     },
     async (request, reply) => {
-      const { ownerId, avatar } = request.body;
+      const { ownerId, file } = request.body;
       //const { user } = app;
       //const { id: ownerId } = user;
 
@@ -38,12 +39,18 @@ export const route: FastifyPluginAsyncZod = async (app) => {
       if (!ownerExist) throw new Error("error"); //WARN: tratar erro
 
       const id = (await new Snowflake().create()).toString();
-      s3.file(`${avatar.formData()}`);
-      await s3.write(`${ownerId}/chats/${id}`, avatar);
-      s3.file;
+      const buffer = await file.arrayBuffer();
+      const path = getChatAvatar(id, ownerId);
 
-      const data = { id, ...request.body };
+      const meta = s3.file(path);
 
+      await s3.write(await meta.json(), buffer);
+      const url = meta.presign({
+        acl: "public-read", //LER SOBRE ISSO
+        expiresIn: 60 * 60 * 24,
+      });
+
+      const data = { id, avatar: url, ...request.body };
       await Promise.all([
         createChat(data),
         redis.send("XADD", [
