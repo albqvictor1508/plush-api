@@ -17,7 +17,6 @@ deletedAt: Date;
 
 //fazer um macete com essas data required pra ser mais performático
 export type Chat = {
-  ownerId: string;
   title: string;
   avatar: File | string;
   description: string;
