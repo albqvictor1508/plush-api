@@ -17,10 +17,10 @@ export interface IncomingEventMap {
     avatar: string;
     participants: Set<string>;
   };
-  [EventType.JOIN_CHAT]: { chatId: number; participants: Set<string> };
-  [EventType.OUT_CHAT]: { chatId: number; userId: string };
+  [EventType.JOIN_CHAT]: { chatId: string; participants: Set<string> };
+  [EventType.OUT_CHAT]: { chatId: string; userId: string };
   [EventType.MESSAGE_CREATED]: {
-    chatId: number;
+    chatId: string;
     senderId: string;
     content: string;
   };
@@ -28,13 +28,13 @@ export interface IncomingEventMap {
 
 export interface OutgoingEventMap {
   [EventType.MESSAGE_CREATED]: {
-    chatId: number;
+    chatId: string;
     senderId: string;
     content: string;
     ts: number;
   };
   [EventType.MESSAGE_UPDATED]: {
-    chatId: number;
+    chatId: string;
     messageId: string;
     content: string;
   };

@@ -1,4 +1,3 @@
-/*
 import { env } from "./env";
 
 const { S3Client } = Bun;
@@ -9,4 +8,3 @@ export const s3 = new S3Client({
   secretAccessKey: BUCKET_SECRET_ACCESS_KEY,
   bucket: APP_NAME,
 });
-*/

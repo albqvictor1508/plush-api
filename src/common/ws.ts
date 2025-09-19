@@ -11,17 +11,7 @@ import { users } from "src/db/schema/users";
 import { createChat } from "src/functions/chats/create";
 
 export const handlers: WsHandler = {
-  [EventType.CHAT_CREATED]: async (body) => {
-    const { ownerId, participants } = body;
-
-    const ownerExist = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.id, ownerId));
-    if (!ownerExist) throw new Error("error"); //WARN: tratar erro
-
-    await createChat(body);
-  },
+  [EventType.CHAT_CREATED]: async (body) => { },
 
   [EventType.JOIN_CHAT]: async (body) => {
     const { chatId, participants } = body;

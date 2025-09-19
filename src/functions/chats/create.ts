@@ -5,13 +5,16 @@ import { chatParticipants } from "src/db/schema/chat-participants";
 import { chats } from "src/db/schema/chats";
 import { users } from "src/db/schema/users";
 
-export const createChat = async (body: Chat) => {
-  const { avatar, description, title, participants, ownerId } = body;
+type ChatOptions = Chat & { id: string };
+
+export const createChat = async (body: ChatOptions) => {
+  const { id, avatar, description, title, participants, ownerId } = body;
 
   //WARN: analisar o ownerId e o membro com role 'admin'
   const [chat] = await db
     .insert(chats)
     .values({
+      id,
       ownerId,
       avatar,
       description,

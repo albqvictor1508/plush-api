@@ -19,7 +19,7 @@ deletedAt: Date;
 export type Chat = {
   ownerId: string;
   title: string;
-  avatar: string;
+  avatar: File | string;
   description: string;
   participants: Set<string>;
 };
