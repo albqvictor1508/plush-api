@@ -3,17 +3,18 @@ import { chats } from "./chats";
 import { users } from "./users";
 
 export const messages = pgTable("messages", {
-	id: text().notNull().primaryKey(),
-	chatId: text("chat_id")
-		.notNull()
-		.references(() => chats.id),
-	userId: text("user_id")
-		.notNull()
-		.references(() => users.id),
-	photo: text(),
-	content: varchar({ length: 255 }).notNull(),
-	sendedAt: timestamp("sended_at").notNull().defaultNow(),
-	updatedAt: timestamp("updated_at")
-		.notNull()
-		.$onUpdate(() => new Date()),
+  id: text().notNull().primaryKey(),
+  chatId: text("chat_id")
+    .notNull()
+    .references(() => chats.id),
+  senderId: text()
+    .notNull()
+    .references(() => users.id),
+  photo: text(),
+  status: text({ enum: ["sended", "delivered", "viewed"] }).notNull(),
+  content: varchar({ length: 255 }).notNull(),
+  sendedAt: timestamp("sended_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
