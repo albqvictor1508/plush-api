@@ -20,13 +20,13 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 				body: z.object({
 					chatId: z.string(),
 					content: z.string().min(1),
-					photo: z.file(),
+					file: z.file(),
 					userId: z.string(),
 				}),
 			},
 		},
 		async (request, reply) => {
-			const { chatId, content, photo, userId } = request.body;
+			const { chatId, content, file, userId } = request.body;
 
 			const [userExist] = await db
 				.select({ id: users.id })
@@ -50,9 +50,16 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 				};
 
 			const id = (await new Snowflake().create()).toString();
-			const data = { id, sendedAt: new Date(), content, avatar: "" };
+			const data = {
+				id,
+				senderId: userId,
+				sendedAt: new Date(),
+				content,
+				status: "sended",
+				photo: "",
+			};
 
-			if (photo) {
+			if (file) {
 				const meta = s3.file(
 					`chats/${id}/media/${userId}/Lume - ${data.sendedAt}`,
 				);
@@ -64,7 +71,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 					acl: "public-read",
 					expiresIn: 59 * 60 * 24,
 				});
-				data.avatar = url;
+				data.photo = url;
 			}
 
 			await redis.send("XADD", [

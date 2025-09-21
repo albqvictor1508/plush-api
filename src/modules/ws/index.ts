@@ -19,8 +19,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 
 			ws.send(JSON.stringify(data.body));
 
-			//isso aq é o broadcast, vai enviar a mensagem pra todas as outras
-			//conexões, menos para você mesmo
+			//isso aq é o broadcast, vai enviar a mensagem pra todas as outras conexões, menos para você mesmo
 			for (const conn of connections) {
 				if (conn !== ws)
 					ws.send(JSON.stringify({ type: "message_created", body: data }));

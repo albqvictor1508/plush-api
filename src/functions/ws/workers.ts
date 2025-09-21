@@ -1,25 +1,56 @@
-import { redis } from "src/common/cache";
 import { randomUUID } from "node:crypto";
+import { redis } from "src/common/cache";
+import { db } from "src/db/client";
+import { messages } from "src/db/schema/messages";
 
-const key = `stream:chat`; //nome da queue (vai ser importante quando tiver outras filas como de notification e td mais)
-const group = "lume_api_group"; //cada chat (grupo de consumers)
+const key = `stream:chats`; //por enquanto será 1 só key e a validação vai ser feita dentro do payload
+const group = "lume_api_group"; //grupo de workers que vão ler essa mensagem
 const consumer = `consumer-${randomUUID()}`; //cada membro do chat
 
 export const persistMessages = async () => {
 	while (true) {
-		const res = redis.send("XREADGROUP", []);
+		const res = await redis.send("XREADGROUP", []);
 
 		if (!res) continue;
 
+		for (const [_, msgs] of res) {
+			for (const [_, fields] of msgs) {
+				const [_, raw] = fields;
+				const msg = await JSON.parse(raw);
+
+				const { id, chatId, content, senderId, status, photo, sendedAt } = msg;
+
+				await db.insert(messages).values({
+					id,
+					chatId,
+					content,
+					senderId,
+					status,
+					photo,
+					sendedAt,
+				});
+				await redis.send("XACK", [`chat:${chatId}`, group, id]);
+			}
+		}
 		//percorrer pelos dados enviados no evento, que provavelmente vai ser um array
 		//de msgs enfileiradas, e ir adicionando uma por uma no banco enquanto o outro
 		//worker distribue essas mensagens
 	}
 	//salvar no banco e enviar via redis um "XACK" pra avisar que consumiu os
 	//dados
-	//
-	//
 };
-export const listenMessages = async () => {
-	//ouvir as mensagens
+export const broadcastMessages = async (chatId: string) => {
+	while (true) {
+		const res = await redis.send("XREADGROUP", [
+			"GROUP",
+			group,
+			consumer,
+			"BLOCK",
+			"5000",
+			"COUNT",
+			"10",
+			"STREAMS",
+			key,
+		]);
+	}
 };
