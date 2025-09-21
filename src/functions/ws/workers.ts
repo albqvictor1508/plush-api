@@ -11,7 +11,7 @@ const consumer = `consumer-${randomUUID()}`; //cada membro do chat
 
 export const persistMessages = async () => {
 	while (true) {
-		const res = await redis.send("XREADGROUP", []);
+		const res = await redis.send("XREADGROUP", []); //TODO: PASSAR AS PARADA AQ
 
 		if (!res) continue;
 
