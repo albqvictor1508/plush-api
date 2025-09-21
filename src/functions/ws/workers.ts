@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { EventType } from "src/@types/ws";
 import { redis } from "src/common/cache";
 import { db } from "src/db/client";
 import { messages } from "src/db/schema/messages";
+import { chatConnections } from "src/modules/ws";
 
 const key = `stream:chats`; //por enquanto será 1 só key e a validação vai ser feita dentro do payload
 const group = "lume_api_group"; //grupo de workers que vão ler essa mensagem
@@ -39,7 +41,7 @@ export const persistMessages = async () => {
 	//salvar no banco e enviar via redis um "XACK" pra avisar que consumiu os
 	//dados
 };
-export const broadcastMessages = async (chatId: string) => {
+export const broadcastMessages = async () => {
 	while (true) {
 		const res = await redis.send("XREADGROUP", [
 			"GROUP",
@@ -57,13 +59,24 @@ export const broadcastMessages = async (chatId: string) => {
 		if (!res) continue;
 
 		for (const [_, msgs] of res) {
-			for (const [id, fields] of msgs) {
+			for (const [_, fields] of msgs) {
 				const [_, raw] = fields;
 				const msg = JSON.parse(raw);
 
 				const { chatId } = msg;
-				//pegar todos os clientes WS dentro desse chat (provavelmente tornando o
-				//connections um Map, mas n sei como vou fazer isso) e fazer o broadcast
+				const clients = chatConnections.get(chatId);
+				if (clients) {
+					for (const cli of clients) {
+						if (cli.readyState === 1) {
+							cli.send(
+								JSON.stringify({
+									type: EventType.MESSAGE_CREATED,
+									body: msg,
+								}),
+							);
+						}
+					}
+				}
 			}
 		}
 	}
