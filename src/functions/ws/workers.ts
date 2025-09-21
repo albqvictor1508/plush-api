@@ -51,6 +51,20 @@ export const broadcastMessages = async (chatId: string) => {
 			"10",
 			"STREAMS",
 			key,
+			">",
 		]);
+
+		if (!res) continue;
+
+		for (const [_, msgs] of res) {
+			for (const [id, fields] of msgs) {
+				const [_, raw] = fields;
+				const msg = JSON.parse(raw);
+
+				const { chatId } = msg;
+				//pegar todos os clientes WS dentro desse chat (provavelmente tornando o
+				//connections um Map, mas n sei como vou fazer isso) e fazer o broadcast
+			}
+		}
 	}
 };
