@@ -58,9 +58,9 @@ export const broadcastMessages = async () => {
 
 		if (!res) continue;
 
-		for (const [_, msgs] of res) {
+		for (const [streamKey, msgs] of res) {
 			for (const [_, fields] of msgs) {
-				const [_, raw] = fields;
+				const [id, raw] = fields;
 				const msg = JSON.parse(raw);
 
 				const { chatId } = msg;
@@ -77,6 +77,8 @@ export const broadcastMessages = async () => {
 						}
 					}
 				}
+
+				await redis.send("XACK", [streamKey, group, id]);
 			}
 		}
 	}
