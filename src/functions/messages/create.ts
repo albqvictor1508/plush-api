@@ -1,19 +1,18 @@
-import { eq } from "drizzle-orm";
-import type { Message } from "src/@types";
+import { and, eq } from "drizzle-orm";
+import { s3 } from "src/common/bucket";
+import { redis } from "src/common/cache";
+import { ErrorCodes } from "src/common/error/codes";
+import { ErrorStatus } from "src/common/error/messages";
+import { Snowflake } from "src/common/snowflake";
 import { db } from "src/db/client";
+import { chatParticipants } from "src/db/schema/chat-participants";
+import { chats } from "src/db/schema/chats";
 import { users } from "src/db/schema/users";
 
-type MessageOptions = Omit<Message, "id">;
-
-export const createMessage = async (body: MessageOptions) => {
-  const { chatId, content, deletedAt, photo, sendedAt, updatedAt, userId } =
-    body;
-
-  const userExist = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(eq(users.id, userId));
-  if (userExist) throw new Error("error"); //WARN: tratar erro
-
-  const chatExist = await db.select({ id });
+type MessageOptions = {
+	chatId: string;
+	content: string;
+	photo?: File;
+	userId: string;
 };
+export const createMessage = async (body: MessageOptions) => {};
