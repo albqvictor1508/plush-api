@@ -12,7 +12,7 @@ import {
 } from "fastify-type-provider-zod";
 import { env } from "src/common/env";
 import { authHook, headersHook } from "src/common/hooks";
-import { broadcastMessages, persistMessages } from "src/functions/ws/workers";
+//import { broadcastMessages, persistMessages } from "src/functions/ws/workers";
 
 export const TWO_MIN_IN_SECS = "120";
 export const isProd = env.NODE_ENV === "prod";
@@ -27,9 +27,6 @@ export async function createApp() {
 	await app.register(fastifyMultipart, {
 		attachFieldsToBody: true,
 	});
-
-	await persistMessages();
-	await broadcastMessages();
 
 	await app.register(fastifyJwt, {
 		secret: env.JWT_SECRET,

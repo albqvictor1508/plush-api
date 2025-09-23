@@ -9,77 +9,79 @@ import { users } from "src/db/schema/users";
 import z from "zod";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
-	app.delete(
-		"/chats/:id",
-		{
-			schema: {
-				params: z.object({
-					id: z.string(),
-				}),
-				querystring: z.object({
-					userId: z.optional(z.string()),
-				}),
-			},
-		},
-		async (request, reply) => {
-			let userId: string;
-			const { id } = request.params;
-			userId = request.query.userId || "";
+  app.delete(
+    "/chats/:id",
+    {
+      schema: {
+        summary: "Delete chat by id route.",
+        tags: ["chats"],
+        params: z.object({
+          id: z.string(),
+        }),
+        querystring: z.object({
+          userId: z.optional(z.string()),
+        }),
+      },
+    },
+    async (request, reply) => {
+      let userId: string;
+      const { id } = request.params;
+      userId = request.query.userId || "";
 
-			if (!userId) {
-				//@ts-expect-error
-				const { user } = app;
-				userId = user.id;
-			}
+      if (!userId) {
+        //@ts-expect-error
+        const { user } = app;
+        userId = user.id;
+      }
 
-			//WARN: analisar essa tranqueira toda aq
+      //WARN: analisar essa tranqueira toda aq
 
-			const [chat] = await db
-				.select({ id: chats.id })
-				.from(chats)
-				.where(eq(chats.id, id));
+      const [chat] = await db
+        .select({ id: chats.id })
+        .from(chats)
+        .where(eq(chats.id, id));
 
-			if (!chat)
-				return reply
-					.code(ErrorStatus[ErrorCodes.NotFound])
-					.send(ErrorMessages[ErrorCodes.NotFound]); //WARN: tratar erro
+      if (!chat)
+        return reply
+          .code(ErrorStatus[ErrorCodes.NotFound])
+          .send(ErrorMessages[ErrorCodes.NotFound]); //WARN: tratar erro
 
-			const [user] = await db
-				.select({ id: users.id })
-				.from(users)
-				.where(eq(users.id, userId));
+      const [user] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, userId));
 
-			if (!user)
-				return reply
-					.code(ErrorCodes.NotFound)
-					.send(ErrorMessages[ErrorCodes.NotFound]); //WARN: tratar erro
+      if (!user)
+        return reply
+          .code(ErrorCodes.NotFound)
+          .send(ErrorMessages[ErrorCodes.NotFound]); //WARN: tratar erro
 
-			const [userCanDeleteChat] = await db
-				.select({ id: chatParticipants.userId })
-				.from(chatParticipants)
-				.where(
-					and(
-						eq(chatParticipants.userId, userId),
-						or(
-							eq(chatParticipants.role, "admin"),
-							eq(chatParticipants.role, "owner"),
-						),
-					),
-				);
+      const [userCanDeleteChat] = await db
+        .select({ id: chatParticipants.userId })
+        .from(chatParticipants)
+        .where(
+          and(
+            eq(chatParticipants.userId, userId),
+            or(
+              eq(chatParticipants.role, "admin"),
+              eq(chatParticipants.role, "owner"),
+            ),
+          ),
+        );
 
-			if (!userCanDeleteChat)
-				return reply
-					.code(ErrorCodes.Forbidden)
-					.send(ErrorMessages[ErrorCodes.Forbidden]); //WARN: tratar erro
+      if (!userCanDeleteChat)
+        return reply
+          .code(ErrorCodes.Forbidden)
+          .send(ErrorMessages[ErrorCodes.Forbidden]); //WARN: tratar erro
 
-			await db
-				.update(chats)
-				.set({
-					deletedAt: new Date(),
-				})
-				.where(eq(chats.id, id));
+      await db
+        .update(chats)
+        .set({
+          deletedAt: new Date(),
+        })
+        .where(eq(chats.id, id));
 
-			return reply.code(200);
-		},
-	);
+      return reply.code(200);
+    },
+  );
 };

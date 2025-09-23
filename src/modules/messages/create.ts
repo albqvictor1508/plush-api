@@ -12,75 +12,78 @@ import { users } from "src/db/schema/users";
 import z from "zod";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
-	app.post(
-		"/messages",
-		{
-			schema: {
-				consumes: ["multipart/form-data"],
-				body: z.object({
-					chatId: z.string(),
-					content: z.string().min(1),
-					file: z.file(),
-					userId: z.string(),
-				}),
-			},
-		},
-		async (request, reply) => {
-			const { chatId, content, file, userId } = request.body;
+  app.post(
+    "/messages",
+    {
+      schema: {
+        summary: "Create message route",
+        tags: ["messages"],
+        consumes: ["multipart/form-data"],
+        body: z.object({
+          chatId: z.string(),
+          content: z.string().min(1),
+          file: z.file(),
+          userId: z.string(),
+        }),
+      },
+    },
+    async (request, reply) => {
+      const { chatId, content, file, userId } = request.body;
 
-			const [userExist] = await db
-				.select({ id: users.id })
-				.from(users)
-				.where(eq(users.id, userId));
-			if (!userExist)
-				return reply
-					.code(ErrorStatus[ErrorCodes.UnknownUser])
-					.send(ErrorMessages[ErrorCodes.UnknownUser]);
+      const [userExist] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, userId));
 
-			const [chatExist] = await db
-				.select({ id: chats.id })
-				.from(chats)
-				.innerJoin(chatParticipants, eq(chatParticipants.chatId, chats.id))
-				.where(and(eq(chats.id, chatId), eq(chatParticipants.userId, userId)));
+      if (!userExist)
+        return reply
+          .code(ErrorStatus[ErrorCodes.UnknownUser])
+          .send(ErrorMessages[ErrorCodes.UnknownUser]);
 
-			if (!chatExist)
-				return {
-					error: ErrorCodes.UnknownChat,
-					code: ErrorStatus[ErrorCodes.UnknownChat],
-				};
+      const [chatExist] = await db
+        .select({ id: chats.id })
+        .from(chats)
+        .innerJoin(chatParticipants, eq(chatParticipants.chatId, chats.id))
+        .where(and(eq(chats.id, chatId), eq(chatParticipants.userId, userId)));
 
-			const id = (await new Snowflake().create()).toString();
-			const data = {
-				id,
-				senderId: userId,
-				sendedAt: new Date(),
-				content,
-				status: "sended",
-				photo: "",
-			};
+      if (!chatExist)
+        return {
+          error: ErrorCodes.UnknownChat,
+          code: ErrorStatus[ErrorCodes.UnknownChat],
+        };
 
-			if (file) {
-				const meta = s3.file(
-					`chats/${id}/media/${userId}/Lume - ${data.sendedAt}`,
-				);
-				const buffer = await meta.arrayBuffer();
+      const id = (await new Snowflake().create()).toString();
+      const data = {
+        id,
+        senderId: userId,
+        sendedAt: new Date(),
+        content,
+        status: "sended",
+        photo: "",
+      };
 
-				await s3.write(await meta.json(), buffer);
+      if (file) {
+        const meta = s3.file(
+          `chats/${id}/media/${userId}/Lume - ${data.sendedAt}`,
+        );
+        const buffer = await meta.arrayBuffer();
 
-				const url = meta.presign({
-					acl: "public-read",
-					expiresIn: 59 * 60 * 24,
-				});
-				data.photo = url;
-			}
+        await s3.write(await meta.json(), buffer);
 
-			await redis.send("XADD", [
-				`chat:${id}`,
-				"*",
-				"data",
-				JSON.stringify(data),
-			]);
-			return reply.code(200);
-		},
-	);
+        const url = meta.presign({
+          acl: "public-read",
+          expiresIn: 59 * 60 * 24,
+        });
+        data.photo = url;
+      }
+
+      await redis.send("XADD", [
+        `chat:${id}`,
+        "*",
+        "data",
+        JSON.stringify(data),
+      ]);
+      return reply.code(200);
+    },
+  );
 };

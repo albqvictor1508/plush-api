@@ -8,6 +8,8 @@ export const route: FastifyPluginAsyncZod = async (app) => {
     "/sessions/signup",
     {
       schema: {
+        summary: "Signup user route.",
+        tags: ["sessions"],
         body: z.object({
           authId: z.optional(z.string()),
           email: z.email({ error: "Invalid email." }),

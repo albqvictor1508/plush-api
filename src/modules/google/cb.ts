@@ -29,6 +29,8 @@ export const route: FastifyPluginAsyncZod = async (app) => {
     "/sessions/google/cb",
     {
       schema: {
+        summary: "Oauth google callback route.",
+        tags: ["sessions"],
         querystring: z.object({
           code: z.string(),
           state: z.string(),
