@@ -4,12 +4,11 @@ import { EventType } from "src/@types/ws";
 import { getChatAvatar, s3 } from "src/common/bucket";
 import { redis } from "src/common/cache";
 import { Snowflake } from "src/common/snowflake";
+import { STREAM_KEY } from "src/common/ws";
 import { db } from "src/db/client";
 import { users } from "src/db/schema/users";
 import { createChat } from "src/functions/chats/create";
 import z from "zod";
-
-//rota multipart
 
 export const route: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -55,7 +54,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
       const [response] = await Promise.all([
         createChat(data),
         redis.send("XADD", [
-          "stream:chat",
+          STREAM_KEY,
           "*",
           "type",
           EventType.CHAT_CREATED,

@@ -8,6 +8,13 @@
       "when": 1758282888302,
       "tag": "0000_futuristic_wiccan",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1758667108722,
+      "tag": "0001_curious_warbird",
+      "breakpoints": true
     }
   ]
 }

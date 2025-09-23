@@ -26,53 +26,66 @@ export const signup = async ({
 }: SignupOptions) => {
   const TWO_MIN_IN_SECS = "120";
   const { browser, ip, os } = meta;
+  try {
+    const isEmailUsed = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.email, email));
+    if (isEmailUsed) throw new Error("tratar erro"); //WARN: tratar erro
 
-  const isEmailUsed = await db
-    .select({ email: users.email })
-    .from(users)
-    .where(eq(users.email, email));
-  if (isEmailUsed) throw new Error("tratar erro"); //WARN: tratar erro
+    const isNameUsed = await db
+      .select({ name: users.name })
+      .from(users)
+      .where(eq(users.name, name));
+    if (isNameUsed) throw new Error("tratar erro"); //WARN: tratar erro
 
-  const isNameUsed = await db
-    .select({ name: users.name })
-    .from(users)
-    .where(eq(users.name, name));
-  if (isNameUsed) throw new Error("tratar erro"); //WARN: tratar erro
+    const [user] = await db
+      .insert(users)
+      .values({
+        id: (await new Snowflake().create()).toString(),
+        email,
+        name,
+        password,
+        authId,
+        avatar,
+      })
+      .returning();
+    if (!user) throw new Error("tratar erro"); //WARN: tratar erro
 
-  const [user] = await db
-    .insert(users)
-    .values({
-      id: (await new Snowflake().create()).toString(),
-      email,
-      name,
-      password,
-      authId,
-      avatar,
-    })
-    .returning();
-  if (!user) throw new Error("tratar erro"); //WARN: tratar erro
+    await redis.send("SETEX", [
+      `users:${user.id}`,
+      TWO_MIN_IN_SECS,
+      JSON.stringify(user),
+    ]);
 
-  await redis.send("SETEX", [
-    `users:${user.id}`,
-    TWO_MIN_IN_SECS,
-    JSON.stringify(user),
-  ]);
+    const { hash, token } = generateRefreshToken();
 
-  const { hash, token } = generateRefreshToken();
+    const FIFTEEN_DAYS_LATER = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000);
 
-  const FIFTEEN_DAYS_LATER = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000);
+    await db.insert(sessions).values({
+      hash,
+      expiresAt: FIFTEEN_DAYS_LATER,
+      userId: user.id,
+      browser,
+      ip,
+      os,
+    });
 
-  await db.insert(sessions).values({
-    hash,
-    expiresAt: FIFTEEN_DAYS_LATER,
-    userId: user.id,
-    browser,
-    ip,
-    os,
-  });
+    return {
+      refresh: token,
+      access: await generateAccessToken(user),
+    };
+  } catch (error: any) {
+    if (error.code === "23505") {
+      if (error.detail.includes("email"))
+        throw new Error("Este e-mail já está em uso");
 
-  return {
-    refresh: token,
-    access: await generateAccessToken(user),
-  };
+      if (error.detail.includes("name"))
+        throw new Error("Este e-mail já está em uso");
+
+      throw new Error(" E-mail ou Nome já está em uso");
+    }
+
+    throw error;
+  }
 };

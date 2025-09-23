@@ -8,9 +8,52 @@ import { chatParticipants } from "src/db/schema/chat-participants";
 import { chats } from "src/db/schema/chats";
 import { users } from "src/db/schema/users";
 import { createChat } from "src/functions/chats/create";
-import type { WebSocket } from "ws";
+import { WebSocket } from "ws";
 
-export const connections = new Map<string, WebSocket[]>();
+export const CONSUMER_NAME = `consumer-${process.pid}`;
+export const STREAM_KEY = "lume:stream";
+export const GROUP_NAME = "lume:group";
+
+export const connections = new Map<string, WebSocket>();
+
+export const addConnection = (userId: string, ws: WebSocket) => {
+  if (connections.has(userId)) {
+    connections.get(userId)?.close(1000, "New connection established");
+  }
+  connections.set(userId, ws);
+  console.log(
+    `[WS] User ${userId} connected. Total connections: ${connections.size}`,
+  );
+};
+
+export const removeConnection = (userId: string) => {
+  if (connections.has(userId)) {
+    connections.delete(userId);
+    console.log(
+      `[WS] User ${userId} disconnected. Total connections: ${connections.size}`,
+    );
+  }
+};
+
+export const broadcast = (userIds: string[], payload: object) => {
+  const stringifiedPayload = JSON.stringify(payload);
+  let sentCount = 0;
+
+  for (const userId of userIds) {
+    const ws = connections.get(userId);
+
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(stringifiedPayload);
+      sentCount++;
+    }
+  }
+
+  if (userIds.length > 0) {
+    console.log(
+      `[WS] Broadcast sent to ${sentCount}/${userIds.length} targeted users.`,
+    );
+  }
+};
 
 export const handlers: WsHandler = {
   [EventType.CHAT_CREATED]: async (body) => {
@@ -31,18 +74,3 @@ export const handlers: WsHandler = {
   [EventType.MESSAGE_DELETED]: async (body) => { },
   [EventType.MESSAGE_UPDATED]: async (body) => { },
 } as const;
-
-export const broadcast = async (
-  ws: WebSocket,
-  chatId: string,
-  data: unknown,
-) => {
-  const connection = connections.get(chatId);
-  if (!connection) throw new Error(); //WARN: tratar erro
-
-  for (const conn of connection) {
-    if (conn !== ws) {
-      ws.send(JSON.stringify(data));
-    }
-  }
-};

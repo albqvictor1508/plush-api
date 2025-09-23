@@ -1,10 +1,5 @@
 import { redis } from "src/common/cache";
-
-const STREAM_KEY = "api-events";
-const GROUP_NAME = "lume-group";
-
-// Use process.pid to create a unique consumer name per process
-const CONSUMER_NAME = `consumer-${process.pid}`;
+import { CONSUMER_NAME, GROUP_NAME, STREAM_KEY } from "src/common/ws";
 
 export async function consumeEvents() {
   console.log(
