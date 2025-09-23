@@ -1,5 +1,5 @@
 {
-  "id": "b77fb69f-69bf-4aff-b962-f8acba06a22d",
+  "id": "b9227cb3-eabe-4082-9c9c-074f6c5d6167",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -11,7 +11,7 @@
         "chat_id": {
           "name": "chat_id",
           "type": "text",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "user_id": {
@@ -70,7 +70,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "chat_participants_chat_id_user_id_pk": {
+          "name": "chat_participants_chat_id_user_id_pk",
+          "columns": [
+            "chat_id",
+            "user_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -85,12 +93,6 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true
-        },
-        "owner_id": {
-          "name": "owner_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         },
         "title": {
           "name": "title",
@@ -123,24 +125,16 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "chats_owner_id_users_id_fk": {
-          "name": "chats_owner_id_users_id_fk",
-          "tableFrom": "chats",
-          "tableTo": "users",
-          "columnsFrom": [
-            "owner_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -163,8 +157,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "sender_id": {
+          "name": "sender_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -174,6 +168,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         },
         "content": {
           "name": "content",
@@ -210,12 +210,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "messages_user_id_users_id_fk": {
-          "name": "messages_user_id_users_id_fk",
+        "messages_sender_id_users_id_fk": {
+          "name": "messages_sender_id_users_id_fk",
           "tableFrom": "messages",
           "tableTo": "users",
           "columnsFrom": [
-            "user_id"
+            "sender_id"
           ],
           "columnsTo": [
             "id"
