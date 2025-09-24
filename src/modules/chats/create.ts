@@ -1,3 +1,5 @@
+import type { MultipartFile } from "@fastify/multipart";
+import { S3Client } from "bun";
 import { eq } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { EventType } from "src/@types/ws";
@@ -10,85 +12,63 @@ import { users } from "src/db/schema/users";
 import { createChat } from "src/functions/chats/create";
 import z from "zod";
 
+const fields: Record<string, any> = {};
+
 export const route: FastifyPluginAsyncZod = async (app) => {
-  app.post(
-    "/chats",
-    {
-      preValidation: (request, reply, done) => {
-        const body = request.body;
-        const newBody: { [key: string]: any } = {};
+	app.post(
+		"/chats",
+		{
+			schema: {
+				summary: "Create chat route.",
+				tags: ["chats"],
+				consumes: ["multipart/form-data"],
+			},
+		},
+		async (request, reply) => {
+			let file: MultipartFile | null = null;
+			let path = "http://";
 
-        for (const key in body) {
-          //@ts-expect-error
-          const part = body[key];
+			const parts = request.parts();
+			//const { user } = app;
+			//const { id: ownerId } = user;
+			for await (const part of parts) {
+				if (part.type !== "file") {
+					fields[part.fieldname] = part.value;
+					continue;
+				}
 
-          if (part.file) {
-            newBody[key] = part;
-            continue;
-          }
+				file = part;
+			}
+			const id = (await new Snowflake().create()).toString();
+			if (file) {
+				path = getChatAvatar(id);
+				const buffer = await file.toBuffer();
+				s3cli.file(path);
+			}
 
-          if (key === "participants" && typeof part.value === "string") {
-            newBody[key] = new Set(
-              part.value.split(",").map((s: string) => s.trim()),
-            );
-            continue;
-          }
+			await s3.write(await meta.json(), buffer);
+			const url = meta.presign({
+				acl: "public-read", //LER SOBRE ISSO
+				expiresIn: 60 * 60 * 24,
+			});
 
-          newBody[key] = part.value;
-        }
+			const data = { id, avatar: url, ...request.body };
+			const [response] = await Promise.all([
+				createChat(data),
+				redis.send("XADD", [
+					STREAM_KEY,
+					"*",
+					"type",
+					EventType.CHAT_CREATED,
+					"body",
+					JSON.stringify(data),
+				]),
+			]);
 
-        //@ts-expect-error
-        request.body = newBody;
-        done();
-      },
-      schema: {
-        summary: "Create chat route.",
-        tags: ["chats"],
-        consumes: ["multipart/form-data"],
-        body: z.object({
-          title: z.string(),
-          // @ts-ignore - O tipo file é provido pelo plugin, mas z.any() é mais seguro aqui
-          file: z.any(),
-          description: z.string(),
-          participants: z.set(z.string()).min(1),
-        }),
-      },
-    },
-    async (request, reply) => {
-      const { file } = request.body;
+			if (typeof response === "object" && "error" in response)
+				return reply.code(response.code as number).send(response.error);
 
-      //const { user } = app;
-      //const { id: ownerId } = user;
-
-      const id = (await new Snowflake().create()).toString();
-      const buffer = await file.arrayBuffer();
-      const path = getChatAvatar(id);
-
-      const meta = s3.file(path);
-
-      await s3.write(await meta.json(), buffer);
-      const url = meta.presign({
-        acl: "public-read", //LER SOBRE ISSO
-        expiresIn: 60 * 60 * 24,
-      });
-
-      const data = { id, avatar: url, ...request.body };
-      const [response] = await Promise.all([
-        createChat(data),
-        redis.send("XADD", [
-          STREAM_KEY,
-          "*",
-          "type",
-          EventType.CHAT_CREATED,
-          "body",
-          JSON.stringify(data),
-        ]),
-      ]);
-
-      if (typeof response === "object" && "error" in response)
-        return reply.code(response.code as number).send(response.error);
-
-      return reply.code(201);
-    },
-  );
+			return reply.code(201);
+		},
+	);
 };

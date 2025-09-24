@@ -13,7 +13,7 @@ export const getUserAvatar = (userId: string) => {
 	return `${userId}/Lume - profile.webp`;
 };
 
-export const s3 = new S3Client({
+export const s3cli = new S3Client({
 	accessKeyId: BUCKET_ACCESS_KEY_ID,
 	secretAccessKey: BUCKET_SECRET_ACCESS_KEY,
 	bucket: APP_NAME,
