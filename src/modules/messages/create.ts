@@ -19,6 +19,7 @@ interface CreateMessageOptions {
 	senderId: string;
 	status: "sended" | "delivered" | "viewed";
 	content: string;
+	sendedAt: Date;
 }
 
 const createMessageSchema = z.object({
@@ -42,7 +43,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 		},
 		async (request, reply) => {
 			let file: MultipartFile;
-			let path = "http://";
+			let path = "utils/default-photo.webp";
 
 			const parts = request.parts();
 
@@ -56,6 +57,8 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 			}
 
 			const id = (await new Snowflake().create()).toString();
+
+			//@ts-expect-error
 			const data: CreateMessageOptions = {
 				id,
 				photo: "",
