@@ -5,16 +5,16 @@ const { APP_NAME, BUCKET_ACCESS_KEY_ID, BUCKET_SECRET_ACCESS_KEY } = env;
 
 //webp e jpg
 
-export const getChatAvatar = (chatId: string, ownerId: string) => {
-  return `${ownerId}/chats/${chatId}/${APP_NAME}-${new Date()}.webp`;
+export const getChatAvatar = (chatId: string) => {
+	return `/chats/${chatId}/${APP_NAME}-${new Date()}.webp`;
 };
 
 export const getUserAvatar = (userId: string) => {
-  return `${userId}/Lume - profile.webp`;
+	return `${userId}/Lume - profile.webp`;
 };
 
 export const s3 = new S3Client({
-  accessKeyId: BUCKET_ACCESS_KEY_ID,
-  secretAccessKey: BUCKET_SECRET_ACCESS_KEY,
-  bucket: APP_NAME,
+	accessKeyId: BUCKET_ACCESS_KEY_ID,
+	secretAccessKey: BUCKET_SECRET_ACCESS_KEY,
+	bucket: APP_NAME,
 });

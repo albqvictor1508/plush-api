@@ -1,7 +1,9 @@
 import { faker } from "@faker-js/faker";
 import { Snowflake } from "../common/snowflake";
 import { db, sql } from "./client";
-import { chats, users, chatParticipants, messages, sessions } from "./schema";
+import { schema } from "./schema";
+
+const { chatParticipants, chats, messages, sessions, users } = schema;
 
 async function main() {
 	await db.delete(messages);
@@ -16,7 +18,7 @@ async function main() {
 	for (let i = 0; i < 10; i++) {
 		usersToInsert.push({
 			id: (await snowflake.create()).toString(),
-			name: faker.internet.userName() + i,
+			name: faker.internet.username() + i,
 			email: faker.internet.email() + i,
 			avatar: faker.image.avatar(),
 		});
@@ -34,14 +36,13 @@ async function main() {
 	}
 	const createdChats = await db.insert(chats).values(chatsToInsert).returning();
 
-	console.log("👥 Adicionando participantes aos chats...");
 	const participantsToInsert = [];
 
 	if (createdChats.length > 0 && createdUsers.length >= 5) {
 		for (let i = 0; i < 5; i++) {
 			participantsToInsert.push({
-				chatId: createdChats[0].id,
-				userId: createdUsers[i].id,
+				chatId: createdChats[0].id!,
+				userId: createdUsers[i].id!,
 				role: i === 0 ? "admin" : "member",
 			});
 		}
@@ -50,8 +51,8 @@ async function main() {
 	if (createdChats.length > 1 && createdUsers.length >= 8) {
 		for (let i = 3; i < 8; i++) {
 			participantsToInsert.push({
-				chatId: createdChats[1].id,
-				userId: createdUsers[i].id,
+				chatId: createdChats[1].id!,
+				userId: createdUsers[i].id!,
 				role: "member",
 			});
 		}

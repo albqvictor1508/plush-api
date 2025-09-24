@@ -14,33 +14,55 @@ export const route: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/chats",
     {
+      preValidation: (request, reply, done) => {
+        const body = request.body;
+        const newBody: { [key: string]: any } = {};
+
+        for (const key in body) {
+          //@ts-expect-error
+          const part = body[key];
+
+          if (part.file) {
+            newBody[key] = part;
+            continue;
+          }
+
+          if (key === "participants" && typeof part.value === "string") {
+            newBody[key] = new Set(
+              part.value.split(",").map((s: string) => s.trim()),
+            );
+            continue;
+          }
+
+          newBody[key] = part.value;
+        }
+
+        //@ts-expect-error
+        request.body = newBody;
+        done();
+      },
       schema: {
         summary: "Create chat route.",
         tags: ["chats"],
         consumes: ["multipart/form-data"],
         body: z.object({
           title: z.string(),
-          ownerId: z.string(),
-          file: z.file(),
+          // @ts-ignore - O tipo file é provido pelo plugin, mas z.any() é mais seguro aqui
+          file: z.any(),
           description: z.string(),
           participants: z.set(z.string()).min(1),
         }),
       },
     },
     async (request, reply) => {
-      const { ownerId, file } = request.body;
+      const { file } = request.body;
+
       //const { user } = app;
       //const { id: ownerId } = user;
 
-      const ownerExist = await db
-        .select({ id: users.id })
-        .from(users)
-        .where(eq(users.id, ownerId));
-      if (!ownerExist) throw new Error("error"); //WARN: tratar erro
-
       const id = (await new Snowflake().create()).toString();
       const buffer = await file.arrayBuffer();
-      const path = getChatAvatar(id, ownerId);
+      const path = getChatAvatar(id);
 
       const meta = s3.file(path);
 
