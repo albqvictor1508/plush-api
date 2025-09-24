@@ -1,16 +1,11 @@
 import type { MultipartFile } from "@fastify/multipart";
-import { S3Client } from "bun";
-import { eq } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { EventType } from "src/@types/ws";
-import { getChatAvatar, s3 } from "src/common/bucket";
+import { getChatAvatar, s3cli } from "src/common/bucket";
 import { redis } from "src/common/cache";
 import { Snowflake } from "src/common/snowflake";
 import { STREAM_KEY } from "src/common/ws";
-import { db } from "src/db/client";
-import { users } from "src/db/schema/users";
 import { createChat } from "src/functions/chats/create";
-import z from "zod";
 
 const fields: Record<string, any> = {};
 
@@ -43,30 +38,25 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 			if (file) {
 				path = getChatAvatar(id);
 				const buffer = await file.toBuffer();
-				s3cli.file(path);
+				s3cli.file(path).write(buffer);
 			}
 
-			await s3.write(await meta.json(), buffer);
-			const url = meta.presign({
-				acl: "public-read", //LER SOBRE ISSO
-				expiresIn: 60 * 60 * 24,
-			});
+			const url = s3cli.presign(path);
 
-			const data = { id, avatar: url, ...request.body };
-			const [response] = await Promise.all([
-				createChat(data),
-				redis.send("XADD", [
-					STREAM_KEY,
-					"*",
-					"type",
-					EventType.CHAT_CREATED,
-					"body",
-					JSON.stringify(data),
-				]),
+			const data = { id, avatar: url, ...fields };
+			//@ts-expect-error
+			const res = await createChat(data);
+			if (typeof res === "object" && "error" in res)
+				return reply.code(res.code as number).send(res.error);
+
+			redis.send("XADD", [
+				STREAM_KEY,
+				"*",
+				"type",
+				EventType.CHAT_CREATED,
+				"body",
+				JSON.stringify(data),
 			]);
-
-			if (typeof response === "object" && "error" in response)
-				return reply.code(response.code as number).send(response.error);
 
 			return reply.code(201);
 		},
