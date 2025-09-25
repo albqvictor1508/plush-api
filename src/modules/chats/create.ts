@@ -13,14 +13,6 @@ import { createChat } from "src/functions/chats/create";
 import z from "zod";
 
 type FileExtension = "pdf" | "docx" | "jpg" | "png" | "webp" | "jpeg";
-const fields: Record<string, any> = {};
-
-const createChatSchema = z.object({
-	title: z.string(),
-	ownerId: z.string(),
-	description: z.string(),
-	extension: z.enum(["df"]),
-});
 
 export const route: FastifyPluginAsyncZod = async (app) => {
 	app.post(
@@ -33,12 +25,22 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 			},
 		},
 		async (request, reply) => {
+			const fields: Record<string, any> = {};
+
+			const createChatSchema = z.object({
+				title: z.string(),
+				ownerId: z.string(),
+				description: z.string(),
+				extension: z.enum(["df"]),
+			});
+
 			let file: MultipartFile | null = null;
-			let path = "http://";
+			let path = "http://"; //TODO: colocar uma foto real aq
 
 			const parts = request.parts();
 			//const { user } = app;
 			//const { id: ownerId } = user;
+
 			for await (const part of parts) {
 				if (part.type !== "file") {
 					fields[part.fieldname] = part.value;
@@ -64,13 +66,14 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 				path = getChatMedia(chatId, fileId, "profile", file.mimetype);
 				const buffer = await file.toBuffer();
 
-				await db.insert(files).values({
-					id: fileId,
-					extension: file.mimetype as FileExtension,
-					sendedAt: new Date(),
-				});
-
-				s3cli.file(path).write(buffer);
+				await Promise.all([
+					db.insert(files).values({
+						id: fileId,
+						extension: file.mimetype as FileExtension,
+						sendedAt: new Date(),
+					}),
+					s3cli.file(path).write(buffer),
+				]);
 			}
 
 			const url = s3cli.presign(path);
