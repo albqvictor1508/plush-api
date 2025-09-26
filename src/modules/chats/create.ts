@@ -14,87 +14,102 @@ import z from "zod";
 
 type FileExtension = "pdf" | "docx" | "jpg" | "png" | "webp" | "jpeg";
 
+const createChatSchema = z.object({
+  title: z.string(),
+  ownerId: z.string(),
+  description: z.string(),
+});
 export const route: FastifyPluginAsyncZod = async (app) => {
-	app.post(
-		"/chats",
-		{
-			schema: {
-				summary: "Create chat route.",
-				tags: ["chats"],
-				consumes: ["multipart/form-data"],
-			},
-		},
-		async (request, reply) => {
-			const fields: Record<string, any> = {};
+  app.post(
+    "/chats",
+    {
+      schema: {
+        summary: "Create chat route.",
+        tags: ["chats"],
+        consumes: ["multipart/form-data"],
+      },
+    },
+    async (request, reply) => {
+      const fields: Record<string, any> = {};
 
-			const createChatSchema = z.object({
-				title: z.string(),
-				ownerId: z.string(),
-				description: z.string(),
-				extension: z.enum(["df"]),
-			});
+      let file: MultipartFile | null = null;
+      let path =
+        "https://pub-ddcbc3eda9ad4fa8a63869d92b1eab7c.r2.dev/wider_image.png"; //TODO: colocar uma foto real aq
+      const parts = request.parts();
+      //const { user } = app;
+      //const { id: ownerId } = user;
 
-			let file: MultipartFile | null = null;
-			let path = "http://"; //TODO: colocar uma foto real aq
+      for await (const part of parts) {
+        if (part.type !== "file") {
+          console.log(part.fieldname);
+          fields[part.fieldname] = part.value;
+          continue;
+        }
 
-			const parts = request.parts();
-			//const { user } = app;
-			//const { id: ownerId } = user;
+        console.log(part.filename);
+        file = part;
+      }
 
-			for await (const part of parts) {
-				if (part.type !== "file") {
-					fields[part.fieldname] = part.value;
-					continue;
-				}
+      try {
+        createChatSchema.parse(fields);
+      } catch (error: any) {
+        return reply.code(400).send(error.message);
+      }
 
-				file = part;
-			}
-			if (!createChatSchema.safeParse(fields))
-				return reply.code(400).send("Bad Credentials");
+      //@ts-expect-error
+      const {
+        title,
+        description,
+        ownerId,
+      }: { title: string; description: string; ownerId: string } = fields;
 
-			const { title, description, ownerId } = fields;
+      const [user] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, ownerId));
+      if (!user) return reply.code(404).send("Unknown User");
+      const chatId = (await new Snowflake().create()).toString();
 
-			const [user] = await db
-				.select({ id: users.id })
-				.from(users)
-				.where(eq(users.id, ownerId));
-			if (!user) return reply.code(404).send("Unknown User");
+      let url: string;
+      try {
+        if (file) {
+          const fileId = (await new Snowflake().create()).toString();
 
-			const chatId = (await new Snowflake().create()).toString();
-			const fileId = (await new Snowflake().create()).toString();
-			if (file) {
-				path = getChatMedia(chatId, fileId, "profile", file.mimetype);
-				const buffer = await file.toBuffer();
+          path = getChatMedia(chatId, fileId, "profile", file.mimetype);
+          const buffer = await file.toBuffer();
 
-				await Promise.all([
-					db.insert(files).values({
-						id: fileId,
-						extension: file.mimetype as FileExtension,
-						sendedAt: new Date(),
-					}),
-					s3cli.file(path).write(buffer),
-				]);
-			}
+          await Promise.all([
+            db.insert(files).values({
+              id: fileId,
+              extension: file.mimetype as FileExtension,
+              sendedAt: new Date(),
+            }),
+            s3cli.file(path).write(buffer),
+          ]);
+        }
 
-			const url = s3cli.presign(path);
+        url = s3cli.presign(path);
+      } catch (error) {
+        console.log(`error to save file: ${error}`);
+        throw error;
+      }
 
-			const data = { chatId, avatar: url, ...fields };
+      const data = { id: chatId, avatar: url, ...fields };
+      //@ts-expect-error
+      const res = await createChat(data);
+      if (typeof res === "object" && "error" in res)
+        return reply.code(res.code as number).send(res.error);
 
-			//@ts-expect-error
-			const res = await createChat(data);
-			if (typeof res === "object" && "error" in res)
-				return reply.code(res.code as number).send(res.error);
+      redis.send("XADD", [
+        STREAM_KEY,
+        "*",
+        "type",
+        EventType.CHAT_CREATED,
+        "body",
+        JSON.stringify(data),
+      ]);
 
-			redis.send("XADD", [
-				STREAM_KEY,
-				"*",
-				"type",
-				EventType.CHAT_CREATED,
-				"body",
-				JSON.stringify(data),
-			]);
-
-			return reply.code(201);
-		},
-	);
+      return reply.code(201);
+    },
+  );
 };

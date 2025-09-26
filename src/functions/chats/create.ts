@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import type { ErrorSchema } from "src/@types";
 import { ErrorCodes } from "src/common/error/codes";
 import { ErrorMessages, ErrorStatus } from "src/common/error/messages";
 import { db } from "src/db/client";
@@ -7,55 +8,56 @@ import { chats } from "src/db/schema/chats";
 import { users } from "src/db/schema/users";
 
 type ChatOptions = {
-	id: string;
-	title: string;
-	avatar: string;
-	description: string;
-	participants: Set<string>;
+  id: string;
+  title: string;
+  avatar: string;
+  description: string;
+  participants: Set<string>;
 };
 
 export const createChat = async (body: ChatOptions) => {
-	try {
-		const { id, avatar, description, title, participants } = body;
+  try {
+    const { id, avatar, description, title, participants } = body;
 
-		const [chat] = await db
-			.insert(chats)
-			.values({
-				id,
-				avatar,
-				description,
-				title,
-			})
-			.returning({ id: chats.id });
+    const [chat] = await db
+      .insert(chats)
+      .values({
+        id,
+        avatar,
+        description,
+        title,
+      })
+      .returning({ id: chats.id });
+    if (!chat)
+      return {
+        error: "bugou aq",
+        code: 500,
+      };
 
-		if (!chat)
-			return {
-				error: ErrorMessages[ErrorCodes.ErrorToCreateChat],
-				code: ErrorStatus[ErrorCodes.ErrorToCreateChat],
-			};
+    for (const id of participants) {
+      const participant = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, id));
 
-		for (const id of participants) {
-			const participant = await db
-				.select({ id: users.id })
-				.from(users)
-				.where(eq(users.id, id));
+      if (!participant)
+        return {
+          error: ErrorMessages[ErrorCodes.ErrorToCreateChatParticipant],
+          code: ErrorStatus[ErrorCodes.ErrorToCreateChatParticipant],
+        };
 
-			if (!participant)
-				return {
-					error: ErrorMessages[ErrorCodes.ErrorToCreateChatParticipant],
-					code: ErrorStatus[ErrorCodes.ErrorToCreateChatParticipant],
-				};
+      await db.insert(chatParticipants).values({
+        role: "member",
+        userId: id,
+        addedAt: new Date(),
+        updatedAt: new Date(),
+        chatId: chat.id,
+      });
+    }
 
-			await db.insert(chatParticipants).values({
-				role: "member",
-				userId: id,
-				addedAt: new Date(),
-				updatedAt: new Date(),
-				chatId: chat.id,
-			});
-		}
-	} catch (error) {
-		console.log(error);
-		throw error;
-	}
+    return { id: chat.id };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };

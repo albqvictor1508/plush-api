@@ -11,7 +11,7 @@ import {
 	type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { env } from "src/common/env";
-import { authHook, headersHook } from "src/common/hooks";
+import { authHook } from "src/common/hooks";
 //import { broadcastMessages, persistMessages } from "src/functions/ws/workers";
 
 export const TWO_MIN_IN_SECS = "120";
@@ -24,9 +24,7 @@ export async function createApp() {
 	app.setValidatorCompiler(validatorCompiler);
 	app.setSerializerCompiler(serializerCompiler);
 
-	await app.register(fastifyMultipart, {
-		attachFieldsToBody: true,
-	});
+	await app.register(fastifyMultipart, {});
 
 	await app.register(fastifyJwt, {
 		secret: env.JWT_SECRET,
@@ -58,7 +56,7 @@ export async function createApp() {
 	await app.register(fastifyWebsocket);
 
 	await app.register(authHook);
-	await app.register(headersHook);
+	//await app.register(headersHook);
 
 	return app;
 }

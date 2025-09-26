@@ -3,15 +3,15 @@ import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 //TODO: ver uma forma de um usuário conseguir atribuir um apelido a outro
 
 export const users = pgTable("users", {
-	id: text().primaryKey().notNull(),
-	authId: text("auth_id"),
-	avatar: text("avatar"),
-	name: varchar("name").notNull().unique(),
-	email: text("email").unique().notNull(),
-	password: text("password"),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	deletedAt: timestamp("deleted_at"),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date()),
+  id: text().primaryKey().notNull(),
+  authId: text(),
+  avatar: text(),
+  name: varchar().notNull().unique(),
+  email: text().unique().notNull(),
+  password: text(),
+  createdAt: timestamp().defaultNow().notNull(),
+  deletedAt: timestamp(),
+  updatedAt: timestamp()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
