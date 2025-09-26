@@ -1,6 +1,5 @@
 import { eq } from "drizzle-orm";
-import { useId } from "react";
-import type { ErrorSchema } from "src/@types";
+
 import { ErrorCodes } from "src/common/error/codes";
 import { ErrorMessages, ErrorStatus } from "src/common/error/messages";
 import { db } from "src/db/client";
