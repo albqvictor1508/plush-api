@@ -5,7 +5,7 @@ import z from "zod";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
 	app.get(
-		"/ws",
+		"/ws/:userId",
 		{
 			schema: {
 				summary: "Websocket route.",
@@ -18,8 +18,12 @@ export const route: FastifyPluginAsyncZod = async (app) => {
 		},
 		async (ws, request) => {
 			const { userId } = request.params;
-			console.log("connection with success!");
-			addConnection(userId, ws);
+
+			ws.on("open", () => {
+				console.log(JSON.stringify("connection added with success"));
+				addConnection(userId, ws);
+				ws.send("hello");
+			});
 
 			ws.on("message", async (msg) => {
 				//@ts-expect-error

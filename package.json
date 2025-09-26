@@ -14,6 +14,7 @@
     "test": "bun run --env-file .env --watch src/test/index.test.ts",
     "dev": "bun run --env-file .env --watch src/app.ts",
     "seed": "bun run --env-file .env src/db/seed.ts",
+    "consume": "bun run --env-file .env src/functions/ws/consumer.ts",
     "format": "biome format"
   },
   "peerDependencies": {

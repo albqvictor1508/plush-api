@@ -9,7 +9,7 @@ export const CONSUMER_NAME = `consumer-${process.pid}`;
 export const STREAM_KEY = "lume:stream";
 export const GROUP_NAME = "lume:group";
 
-const connections = new Map<string, WebSocket>();
+export const connections = new Map<string, WebSocket>();
 
 export const addConnection = (userId: string, ws: WebSocket) => {
 	if (connections.has(userId)) {
