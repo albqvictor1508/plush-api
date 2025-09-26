@@ -61,13 +61,27 @@ export const route: FastifyPluginAsyncZod = async (app) => {
         title,
         description,
         ownerId,
-      }: { title: string; description: string; ownerId: string } = fields;
+        participants,
+      }: {
+        title: string;
+        description: string;
+        ownerId: string;
+        participants: Set<string>;
+      } = fields;
 
-      const [user] = await db
-        .select({ id: users.id })
-        .from(users)
-        .where(eq(users.id, ownerId));
-      if (!user) return reply.code(404).send("Unknown User");
+      //TODO: ver como fica a tratativa de erros padronizada
+      let user: { id: string } | undefined;
+      try {
+        [user] = await db
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.id, ownerId));
+        if (!user) return reply.code(404).send("Unknown User");
+      } catch (error) {
+        console.log(error);
+        console.log(`error to get user: ${error}`);
+        throw error;
+      }
       const chatId = (await new Snowflake().create()).toString();
 
       let url: string;
@@ -95,6 +109,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
       }
 
       const data = { id: chatId, avatar: url, ...fields };
+
       //@ts-expect-error
       const res = await createChat(data);
       if (typeof res === "object" && "error" in res)
@@ -109,7 +124,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
         JSON.stringify(data),
       ]);
 
-      return reply.code(201);
+      return reply.code(201).send(res);
     },
   );
 };
