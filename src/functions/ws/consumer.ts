@@ -1,16 +1,5 @@
-import {
-  EventType,
-  type IncomingEventMap,
-  type WSIncomingEvent,
-} from "src/@types/ws";
 import { redis } from "src/common/cache";
-import {
-  broadcast,
-  connections,
-  CONSUMER_NAME,
-  GROUP_NAME,
-  STREAM_KEY,
-} from "src/common/ws";
+import { CONSUMER_NAME, GROUP_NAME, STREAM_KEY } from "src/common/ws";
 
 export async function consumeEvents() {
   console.log(
@@ -54,7 +43,8 @@ export async function consumeEvents() {
         body: JSON.parse(dataArr[3]),
       };
 
-      const { participants } = data.body;
+      const { id: chatId, ...payload } = data.body;
+      await redis.send("PUBLISH", [`chats:${chatId}`, JSON.stringify(payload)]);
       //TODO: tenho os id's dos usuários, n tenho
       console.log(data);
     } catch (error) {

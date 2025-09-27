@@ -1,6 +1,6 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import type { IncomingEventMap, WSIncomingEvent } from "src/@types/ws";
-import { addConnection, handlers } from "src/common/ws";
+import type { WSIncomingEvent } from "src/@types/ws";
+import { handlers } from "src/common/ws";
 import z from "zod";
 
 export const route: FastifyPluginAsyncZod = async (app) => {
@@ -17,10 +17,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
       websocket: true,
     },
     async (ws, request) => {
-      const { userId } = request.params;
-
-      addConnection(userId, ws);
-
+      //const { userId } = request.params; -> pegar do cookie
       ws.send("hello");
 
       ws.on("message", async (msg) => {
