@@ -5,6 +5,10 @@ import { CONSUMER_NAME, GROUP_NAME, STREAM_KEY } from "./ws";
 class Dragonfly {
   private client = new RedisClient();
 
+  async ping() {
+    return await this.client.ping();
+  }
+
   async send(cmd: string, args: string[]) {
     return await this.client.send(cmd, args);
   }
