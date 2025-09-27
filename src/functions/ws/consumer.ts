@@ -1,4 +1,4 @@
-import { redis } from "src/common/cache";
+import { dragonfly } from "src/common/dragonfly";
 import { CONSUMER_NAME, GROUP_NAME, STREAM_KEY } from "src/common/ws";
 
 export async function consumeEvents() {
@@ -7,7 +7,7 @@ export async function consumeEvents() {
   );
 
   try {
-    await redis.send("XGROUP", [
+    await .send("XGROUP", [
       "CREATE",
       STREAM_KEY,
       GROUP_NAME,

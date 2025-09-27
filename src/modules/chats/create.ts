@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { EventType } from "src/@types/ws";
 import { getChatMedia, s3cli } from "src/common/bucket";
-import { redis } from "src/common/cache";
+import { dragonfly } from "src/common/dragonfly";
 import { Snowflake } from "src/common/snowflake";
 import { STREAM_KEY } from "src/common/ws";
 import { db } from "src/db/client";
@@ -125,14 +125,7 @@ export const route: FastifyPluginAsyncZod = async (app) => {
         return reply.code(res.code as number).send(res.error);
 
       console.log(`DATA STRINGIFYED: ${JSON.stringify(data)}`);
-      redis.send("XADD", [
-        STREAM_KEY,
-        "*",
-        "type",
-        EventType.CHAT_CREATED,
-        "body",
-        JSON.stringify(data),
-      ]);
+      dragonfly.xadd(EventType.CHAT_CREATED, data);
 
       return reply.code(201).send(res);
     },
